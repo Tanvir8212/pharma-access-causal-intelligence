@@ -15,6 +15,12 @@ public sealed class PharmaAccessDbContext(DbContextOptions<PharmaAccessDbContext
     public DbSet<SourceFile> SourceFiles => Set<SourceFile>();
     public DbSet<StateDrugUtilization> StateDrugUtilizations => Set<StateDrugUtilization>();
     public DbSet<JobRun> JobRuns => Set<JobRun>();
+    public DbSet<FdaFirstGenericApprovalRaw> FdaFirstGenericApprovalRawRecords => Set<FdaFirstGenericApprovalRaw>();
+    public DbSet<MedicaidStateDrugUtilizationRaw> MedicaidStateDrugUtilizationRawRecords => Set<MedicaidStateDrugUtilizationRaw>();
+    public DbSet<StateReferenceRaw> StateReferenceRawRecords => Set<StateReferenceRaw>();
+    public DbSet<FdaFirstGenericApprovalNormalized> FdaFirstGenericApprovalNormalizedRecords => Set<FdaFirstGenericApprovalNormalized>();
+    public DbSet<MedicaidStateDrugUtilizationNormalized> MedicaidStateDrugUtilizationNormalizedRecords => Set<MedicaidStateDrugUtilizationNormalized>();
+    public DbSet<StateReferenceNormalized> StateReferenceNormalizedRecords => Set<StateReferenceNormalized>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {

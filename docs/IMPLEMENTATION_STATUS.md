@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-Milestone 1 — Domain Model and Database Foundation — complete. Milestone 2 ingestion was not started.
+Milestone 1 — Domain Model and Database Foundation — complete. Milestone 2 remains incomplete; its EF raw/staging persistence model and unapplied migration are now present, while importer orchestration is still outstanding.
 
 ## Environment and packages
 
@@ -90,4 +90,8 @@ No `raw`, `stg`, `feature`, `ml`, `causal`, `rag`, or `research` table/schema is
 
 ## Next milestone
 
-Milestone 2 may begin only when explicitly requested. Its proposed scope is local FDA/Medicaid CSV ingestion contracts, safe synthetic sample inputs, file hashing/registration, NDC normalization, mapping with unmatched-row preservation, data-quality results, immutable dataset-version registration, and tests. It must not yet add feature generation, model training, causal estimation, Python, or Gemini.
+Milestone 2 EF model repair added `raw.FdaFirstGenericApprovalRaw`, `raw.MedicaidStateDrugUtilizationRaw`, `raw.StateReferenceRaw`, `stg.FdaFirstGenericApprovalNormalized`, `stg.MedicaidStateDrugUtilizationNormalized`, and `stg.StateReferenceNormalized`. All rows retain `SourceFileId` and `SourceRowNumber`; raw records retain original source strings; provenance foreign keys use restricted deletion. Migration `AddRawAndStagingIngestion` was generated but not applied, and no database connection or update was performed.
+
+EF model repair verification: solution restore succeeded; solution build succeeded with 0 warnings and 0 errors; 91 tests passed with 0 failures and 0 skips. `dotnet ef migrations has-pending-model-changes` reported no changes after migration generation. No database connection or migration application was performed.
+
+Milestone 2 is not complete until the separately requested ingestion contracts, hashing, parsing, normalization, dry-run behavior, synthetic samples, and tests are implemented. Milestone 3 must not begin.

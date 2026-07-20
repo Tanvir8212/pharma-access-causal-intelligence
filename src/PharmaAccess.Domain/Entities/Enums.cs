@@ -6,4 +6,6 @@ public enum SourceType { FDAFirstGeneric, MedicaidStateDrugUtilization, RxNorm, 
 public enum SourceFileImportStatus { Registered, Imported, Rejected }
 public enum DataQualityStatus { Unchecked, Valid, Warning, Error, Blocking }
 public enum JobRunStatus { Pending, Running, Succeeded, Failed, Cancelled }
-
+public enum RawParseStatus { Pending, Parsed, Rejected }
+public enum StagingMappingStatus { Unmapped, Mapped, NotApplicable, Rejected }
+public enum IngestionValidationStatus { Pending, Valid, Warning, Invalid }

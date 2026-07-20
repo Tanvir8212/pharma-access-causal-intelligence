@@ -29,6 +29,12 @@ public sealed class ModelMetadataTests
     [InlineData(typeof(SourceFile), "SourceFile", "core")]
     [InlineData(typeof(StateDrugUtilization), "StateDrugUtilization", "core")]
     [InlineData(typeof(JobRun), "JobRun", "audit")]
+    [InlineData(typeof(FdaFirstGenericApprovalRaw), "FdaFirstGenericApprovalRaw", "raw")]
+    [InlineData(typeof(MedicaidStateDrugUtilizationRaw), "MedicaidStateDrugUtilizationRaw", "raw")]
+    [InlineData(typeof(StateReferenceRaw), "StateReferenceRaw", "raw")]
+    [InlineData(typeof(FdaFirstGenericApprovalNormalized), "FdaFirstGenericApprovalNormalized", "stg")]
+    [InlineData(typeof(MedicaidStateDrugUtilizationNormalized), "MedicaidStateDrugUtilizationNormalized", "stg")]
+    [InlineData(typeof(StateReferenceNormalized), "StateReferenceNormalized", "stg")]
     public void Entities_use_expected_tables(Type type, string table, string schema)
     {
         var entity = Model.FindEntityType(type);
@@ -44,6 +50,32 @@ public sealed class ModelMetadataTests
     [Fact] public void Reimbursement_has_required_precision() { var property = Entity<StateDrugUtilization>().FindProperty(nameof(StateDrugUtilization.ReimbursementAmount)); Assert.NotNull(property); Assert.Equal(19, property.GetPrecision()); Assert.Equal(4, property.GetScale()); }
     [Fact] public void Status_enums_are_converted_to_strings() { var property = Entity<DatasetVersion>().FindProperty(nameof(DatasetVersion.Status)); Assert.NotNull(property); Assert.Equal(typeof(string), property.GetProviderClrType()); }
     [Fact] public void Required_properties_are_not_nullable() { var property = Entity<Drug>().FindProperty(nameof(Drug.NormalizedIngredient)); Assert.NotNull(property); Assert.False(property.IsNullable); }
+    [Fact]
+    public void Ingestion_rows_have_unique_source_row_identity_and_restrict_provenance_deletion()
+    {
+        foreach (var type in new[] { typeof(FdaFirstGenericApprovalRaw), typeof(MedicaidStateDrugUtilizationRaw), typeof(StateReferenceRaw), typeof(FdaFirstGenericApprovalNormalized), typeof(MedicaidStateDrugUtilizationNormalized), typeof(StateReferenceNormalized) })
+        {
+            var entity = Model.FindEntityType(type);
+            Assert.NotNull(entity);
+            Assert.Contains(entity.GetIndexes(), index => index.IsUnique && index.Properties.Select(p => p.Name).SequenceEqual(["SourceFileId", "SourceRowNumber"]));
+            Assert.All(entity.GetForeignKeys(), key => Assert.Equal(DeleteBehavior.Restrict, key.DeleteBehavior));
+        }
+    }
+
+    [Fact]
+    public void Medicaid_ingestion_reimbursement_uses_required_precision()
+    {
+        foreach (var property in new[]
+        {
+            Entity<MedicaidStateDrugUtilizationRaw>().FindProperty(nameof(MedicaidStateDrugUtilizationRaw.ParsedReimbursementAmount)),
+            Entity<MedicaidStateDrugUtilizationNormalized>().FindProperty(nameof(MedicaidStateDrugUtilizationNormalized.ReimbursementAmount))
+        })
+        {
+            Assert.NotNull(property);
+            Assert.Equal(19, property.GetPrecision());
+            Assert.Equal(4, property.GetScale());
+        }
+    }
 
     private static IEntityType Entity<TEntity>()
     {
