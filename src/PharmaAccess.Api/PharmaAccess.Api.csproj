@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PharmaAccess.Application\PharmaAccess.Application.csproj" />
+    <ProjectReference Include="..\PharmaAccess.Infrastructure\PharmaAccess.Infrastructure.csproj" />
+    <ProjectReference Include="..\PharmaAccess.Data\PharmaAccess.Data.csproj" />
+    <ProjectReference Include="..\PharmaAccess.ML\PharmaAccess.ML.csproj" />
+    <ProjectReference Include="..\PharmaAccess.Causal\PharmaAccess.Causal.csproj" />
+    <ProjectReference Include="..\PharmaAccess.Llm\PharmaAccess.Llm.csproj" />
+  </ItemGroup>
+</Project>

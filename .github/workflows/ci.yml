@@ -1,0 +1,29 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  dotnet:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.302
+      - name: Restore
+        run: dotnet restore PharmaAccess.sln
+      - name: Build
+        run: dotnet build PharmaAccess.sln --configuration Release --no-restore
+      - name: Test
+        run: dotnet test PharmaAccess.sln --configuration Release --no-build
+
+  python-boundary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Confirm Python work remains deferred
+        shell: bash
+        run: test ! -f research/python/pyproject.toml

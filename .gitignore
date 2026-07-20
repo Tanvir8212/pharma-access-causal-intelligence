@@ -1,0 +1,53 @@
+# .NET build output
+**/bin/
+**/obj/
+TestResults/
+*.trx
+
+# IDE and user settings
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+secrets.json
+appsettings.Local.json
+appsettings.*.local.json
+
+# Logs and temporary output
+*.log
+logs/
+tmp/
+temp/
+artifacts/models/**
+artifacts/experiments/**
+artifacts/reports/**
+!artifacts/**/.gitkeep
+
+# Data and local databases
+data/raw/
+samples/data/*.csv
+samples/data/*.parquet
+*.bak
+*.mdf
+*.ldf
+*.sqlite
+*.db
+
+# Python (reserved for Milestone 7)
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Generated research output
+research/snapshots/**
+research/figures/generated/
+research/tables/generated/
