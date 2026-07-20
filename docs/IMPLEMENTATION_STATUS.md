@@ -2,62 +2,92 @@
 
 ## Current milestone
 
-Milestone 0 configuration repair complete. No Milestone 1 work was performed.
+Milestone 1 — Domain Model and Database Foundation — complete. Milestone 2 ingestion was not started.
 
-## Environment verified
+## Environment and packages
 
-- Operating system: Windows 10.0.19045, `win10-x64`.
-- Installed .NET SDKs: 2.1.402 and 10.0.302.
-- Selected SDK: stable .NET SDK 10.0.302 through `global.json`; preview SDKs are disabled and roll-forward is limited to the latest installed patch in the selected feature band.
-- Target framework: `net10.0` for all production and test projects.
-- Installed .NET 10 runtime: 10.0.10.
-- No software was installed.
+- Selected stable SDK: .NET SDK 10.0.302; all 17 projects target `net10.0`.
+- EF Core package family: 10.0.10 for `Microsoft.EntityFrameworkCore`, `Microsoft.EntityFrameworkCore.Relational`, `Microsoft.EntityFrameworkCore.SqlServer`, and `Microsoft.EntityFrameworkCore.Design`.
+- `Microsoft.EntityFrameworkCore.Design` is private to `PharmaAccess.Data` with explicit private assets.
+- Repository-local tool: `dotnet-ef` 10.0.10 in `.config/dotnet-tools.json`; no global tool was installed.
+- No Dapper, direct SqlClient, ML.NET, Gemini, authentication, mediator, Python, or unrelated packages were added.
+- Nullable reference analysis and implicit usings are enabled centrally; warnings remain errors.
 
-## Root cause and repair
+## Projects modified
 
-The original `global.json` pinned SDK 2.1.402 with roll-forward disabled even though stable SDK 10.0.302 was installed. Production hosts and tests targeted `netcoreapp2.1`, libraries targeted `netstandard2.0`, and test identity was assigned globally through a project-name condition in `Directory.Build.props`. Under MSBuild 15.8/.NET Core 2.1, the mixed main solution attempted to execute production assemblies as tests.
+- `PharmaAccess.Domain`: pure value objects, entities, enums, invariant guards, and distribution calculations.
+- `PharmaAccess.Application`: focused `IDatasetVersionRepository` persistence port; Application still has no Data dependency.
+- `PharmaAccess.Data`: EF Core context, configurations, SQL Server DI registration, repository implementation, design-time factory, and migration.
+- `PharmaAccess.Api`: empty non-secret connection-string placeholder only; existing health behavior is unchanged and the context is not resolved at startup.
+- `PharmaAccess.Domain.Tests`: invariant, lifecycle, calculation, and strengthened dependency tests.
+- `PharmaAccess.Application.Tests`: strengthened outer-layer dependency checks.
+- `PharmaAccess.Data.Tests`: EF metadata/configuration tests without a database.
 
-The repair retargeted every project to `net10.0`, selected installed SDK 10.0.302, removed global test identity logic, and made every project under `tests` explicitly set `IsTestProject` to true and `IsPackable` to false. Test SDK and xUnit references exist only in test projects. Central package management now declares versions without creating package references globally. Obsolete explicit `Microsoft.AspNetCore.App` references were removed, and the API/Web hosts plus API integration test were updated from obsolete WebHost construction to modern generic-host construction.
+## Domain foundation
 
-## Package configuration
+Value objects: `CalendarQuarter`, `StateCode`, `Percentage`, `AccessGapValue`, and `DatasetVersionCode`.
 
-- `Microsoft.NET.Test.Sdk` 17.14.1: referenced only by the seven test projects.
-- `xunit` 2.9.3: referenced only by the seven test projects.
-- `xunit.runner.visualstudio` 3.1.5: referenced only by the seven test projects with private assets.
-- `Microsoft.AspNetCore.TestHost` 10.0.10: referenced only by the API integration-test project.
-- Coverlet is not configured.
-- No project under `src` contains test SDK, xUnit, runner, Coverlet, or `IsTestProject=true` configuration.
+Entities: `Drug`, `DrugProduct`, `FirstGenericApproval`, `State`, `QuarterDimension`, `DatasetVersion`, `SourceFile`, `StateDrugUtilization`, and `JobRun`, with controlled dataset/source/quality/job enums.
 
-## Test quality
+Pure services implement Numeric Distribution, frozen-weight Weighted Distribution, and Access Gap. Undefined zero denominators throw explicit domain errors and never return zero or NaN. No rounding or research result generation occurs.
 
-The seven existing tests are meaningful Milestone 0 architecture-boundary or API-health tests. No `Assert.True(true)` tests were present or added. No advanced Milestone 1 behavior or fabricated coverage was introduced.
+Dataset lifecycle transitions are explicit: Draft → Validating → Validated → Finalized → Archived, with rejection from draft/validation. Rejected or unvalidated versions cannot be finalized, and only finalization sets the UTC finalization time.
 
-## Final Milestone 0 audit
+## Persistence foundation
 
-- Generated output cleanup: safely removed 34 `bin`/`obj` directories beneath the repository before verification.
-- Final `dotnet restore .\PharmaAccess.sln`: succeeded with exit code 0; all projects were up to date.
-- `dotnet build .\PharmaAccess.sln --no-restore`: succeeded with exit code 0, 0 warnings, and 0 errors.
-- `dotnet test .\PharmaAccess.sln --no-build`: succeeded with exit code 0; 7 passed, 0 failed, and 0 skipped.
-- Test output contained only assemblies under `tests`; there were no `Test run for ...\src\...` entries and no aborted runs.
-- Live API health request to `http://127.0.0.1:5077/health`: HTTP 200, content type `application/json`, body `{"status":"Healthy","milestone":0}`. The temporary API process was stopped and its temporary logs were removed.
-- All ten projects under `src` and all seven projects under `tests` target `net10.0`; no `netcoreapp2.1` or `netstandard2.0` project targets remain.
-- Project-reference audit confirms inward dependency direction: Domain has no project dependencies; Application depends only on Domain; Infrastructure, Data, ML, Causal, and Llm depend on inward boundaries; API, Web, and Worker are outer composition/host projects. Predictive ML and causal projects remain separate.
-- Repository scans found no real secret values, API keys, connection strings, private keys, or credential files.
-- Database folders are empty reservations except for explanatory documentation. No schema, migration, database package, connection, or database operation exists.
-- No ML.NET package, `MLContext`, trainer, model, or research metric output exists.
-- No Gemini provider package, client, call, or API key exists.
-- No Python dependency manifest, virtual environment, installed-package directory, or Python implementation exists in the repository. No software was installed during the repair or audit.
-- No fabricated predictive, causal, or research metrics exist. The only numeric results recorded are actual environment, build, test, and health-check observations.
-- Git inspection found no commit history against which to produce a tracked diff; the complete repository worktree is currently untracked. All listed repository files were included in the audit. No commit was created.
+`PharmaAccessDbContext` exposes DbSets for all nine Milestone 1 entities. Every entity uses a separate `IEntityTypeConfiguration<T>`. SQL Server mappings define keys, foreign keys, lengths, required fields, enum conversions, UTC materialization, indexes, unique constraints, `decimal(19,4)` reimbursement, and restrictive provenance deletion.
 
-## Unresolved issues
+The migration defines only:
 
-- `PharmaAccess.Tests.sln` remains as a legacy convenience artifact, but it is no longer required or used by documented build/CI commands; the authoritative verification command uses `PharmaAccess.sln`.
-- CI configuration was corrected to .NET SDK 10.0.302 and the main solution but was not executed remotely.
-- Python, Docker, SQL Server, database, ML, causal estimation, and Gemini work remain intentionally deferred to their explicit milestones.
-- No license has been selected because ownership/licensing intent remains unspecified.
-- Because the repository has no baseline commit and every file is untracked, future review history will begin only when the owner explicitly authorizes an initial commit.
+- `core`: Drug, DrugProduct, FirstGenericApproval, State, CalendarQuarter, DatasetVersion, SourceFile, StateDrugUtilization.
+- `audit`: JobRun.
+
+No `raw`, `stg`, `feature`, `ml`, `causal`, `rag`, or `research` table/schema is created.
+
+`AddPharmaAccessData` configures SQL Server through DI. A connection string is required only when the context is resolved. The API does not resolve it for `/health`, does not call `Database.Migrate`, and does not require SQL Server for build or tests.
+
+## Migration and database safety
+
+- Migration: `20260720192846_InitialCoreFoundation` under `src/PharmaAccess.Data/Migrations`.
+- Design-time strategy: Data-project `IDesignTimeDbContextFactory` with a non-secret LocalDB-shaped placeholder used only for model construction.
+- EF migration list command used `--no-connect` with the Data project as both project and startup project.
+- EF reported the migration and confirmed: `No changes have been made to the model since the last migration.`
+- EF correctly could not show applied/pending status because connectivity was deliberately disabled.
+- Review-only idempotent SQL generated at ignored `artifacts/reports/milestone-1/InitialCoreFoundation.idempotent.sql` (12,826 bytes).
+- During initial migration generation and `--no-connect` verification, no database connection occurred. The later required API-startup migration listing used only the non-production design-time LocalDB placeholder for a read-only status check. No database was created or modified, no migration was applied, and no data was seeded.
+
+## Verification
+
+- `dotnet tool restore`: succeeded; local `dotnet-ef` 10.0.10 restored.
+- `dotnet restore .\PharmaAccess.sln`: succeeded; all projects up to date.
+- `dotnet build .\PharmaAccess.sln --no-restore`: succeeded with 0 warnings and 0 errors.
+- `dotnet test .\PharmaAccess.sln --no-build`: succeeded; 83 passed, 0 failed, 0 skipped.
+- Test runs contained only the seven projects under `tests`.
+- Domain dependency audit: no NuGet packages and no project references.
+- Authoritative blueprint and master-prompt SHA-256 hashes are unchanged from the completed Milestone 0 audit.
+
+## Scope and safety audit
+
+- No local or real source file was ingested and no previous-project data was accessed.
+- No real secrets, credentials, or populated connection strings exist.
+- No ML.NET training, feature generation, causal estimator, Gemini/RAG client, Python environment, research metrics, or fabricated records were added.
+- No commit was created.
+
+## Warnings and unresolved issues
+
+- There is no available authorized isolated SQL Server test database, so SQL Server execution semantics were not integration-tested. EF metadata tests validate the SQL Server model without pretending the in-memory or SQLite provider proves SQL Server behavior.
+- Applied/pending migration state is intentionally unknown because `migrations list --no-connect` was used. The migration source and model snapshot are consistent.
+- `PharmaAccess.Tests.sln` remains a redundant legacy convenience solution; documented verification uses `PharmaAccess.sln`.
+- Remote CI was not run, and no project license has been selected.
+- `git diff --check` found no whitespace errors; Git emitted Windows `core.autocrlf` LF-to-CRLF normalization notices for modified text files. These are not compiler warnings.
+
+## EF API startup-project tooling repair
+
+- Added a development-only `Microsoft.EntityFrameworkCore.Design` reference to `PharmaAccess.Api`, inheriting centrally managed stable version 10.0.10. The existing private Design reference in `PharmaAccess.Data` is preserved; no other project received the package.
+- Final tool restore, solution restore, build, and all 83 tests succeeded; build produced 0 warnings and 0 errors.
+- `dotnet ef migrations list --project .\src\PharmaAccess.Data\PharmaAccess.Data.csproj --startup-project .\src\PharmaAccess.Api\PharmaAccess.Api.csproj` succeeded and reported `20260720192846_InitialCoreFoundation (Pending)`.
+- The command used only the non-production design-time LocalDB placeholder to read migration status. It did not apply the migration, modify a database, or access an existing research database. `dotnet ef database update` was not run.
 
 ## Next milestone
 
-Milestone 0 is technically ready for Milestone 1. Milestone 1 may begin only when explicitly requested; do not infer authorization from this readiness statement.
+Milestone 2 may begin only when explicitly requested. Its proposed scope is local FDA/Medicaid CSV ingestion contracts, safe synthetic sample inputs, file hashing/registration, NDC normalization, mapping with unmatched-row preservation, data-quality results, immutable dataset-version registration, and tests. It must not yet add feature generation, model training, causal estimation, Python, or Gemini.

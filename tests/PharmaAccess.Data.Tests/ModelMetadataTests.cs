@@ -1,0 +1,54 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using PharmaAccess.Domain.Entities;
+using Xunit;
+
+namespace PharmaAccess.Data.Tests;
+
+public sealed class ModelMetadataTests
+{
+    private static IModel Model
+    {
+        get
+        {
+            var options = new DbContextOptionsBuilder<Data.PharmaAccessDbContext>()
+                .UseSqlServer("Server=localhost;Database=MetadataOnly;Trusted_Connection=True;TrustServerCertificate=True")
+                .Options;
+            using var context = new Data.PharmaAccessDbContext(options);
+            return context.Model;
+        }
+    }
+
+    [Theory]
+    [InlineData(typeof(Drug), "Drug", "core")]
+    [InlineData(typeof(DrugProduct), "DrugProduct", "core")]
+    [InlineData(typeof(FirstGenericApproval), "FirstGenericApproval", "core")]
+    [InlineData(typeof(State), "State", "core")]
+    [InlineData(typeof(QuarterDimension), "CalendarQuarter", "core")]
+    [InlineData(typeof(DatasetVersion), "DatasetVersion", "core")]
+    [InlineData(typeof(SourceFile), "SourceFile", "core")]
+    [InlineData(typeof(StateDrugUtilization), "StateDrugUtilization", "core")]
+    [InlineData(typeof(JobRun), "JobRun", "audit")]
+    public void Entities_use_expected_tables(Type type, string table, string schema)
+    {
+        var entity = Model.FindEntityType(type);
+        Assert.NotNull(entity);
+        Assert.Equal(table, entity.GetTableName());
+        Assert.Equal(schema, entity.GetSchema());
+    }
+
+    [Fact] public void State_code_is_unique() => Assert.Contains(Entity<State>().GetIndexes(), index => index.IsUnique && index.Properties.Single().Name == nameof(State.StateCode));
+    [Fact] public void Dataset_version_code_is_unique() => Assert.Contains(Entity<DatasetVersion>().GetIndexes(), index => index.IsUnique && index.Properties.Single().Name == nameof(DatasetVersion.VersionCode));
+    [Fact] public void Quarter_year_and_number_are_unique() => Assert.Contains(Entity<QuarterDimension>().GetIndexes(), index => index.IsUnique && index.Properties.Select(p => p.Name).SequenceEqual([nameof(QuarterDimension.CalendarYear), nameof(QuarterDimension.QuarterNumber)]));
+    [Fact] public void Provenance_relationships_restrict_deletion() { Assert.All(Entity<SourceFile>().GetForeignKeys(), key => Assert.Equal(DeleteBehavior.Restrict, key.DeleteBehavior)); Assert.All(Entity<StateDrugUtilization>().GetForeignKeys(), key => Assert.Equal(DeleteBehavior.Restrict, key.DeleteBehavior)); }
+    [Fact] public void Reimbursement_has_required_precision() { var property = Entity<StateDrugUtilization>().FindProperty(nameof(StateDrugUtilization.ReimbursementAmount)); Assert.NotNull(property); Assert.Equal(19, property.GetPrecision()); Assert.Equal(4, property.GetScale()); }
+    [Fact] public void Status_enums_are_converted_to_strings() { var property = Entity<DatasetVersion>().FindProperty(nameof(DatasetVersion.Status)); Assert.NotNull(property); Assert.Equal(typeof(string), property.GetProviderClrType()); }
+    [Fact] public void Required_properties_are_not_nullable() { var property = Entity<Drug>().FindProperty(nameof(Drug.NormalizedIngredient)); Assert.NotNull(property); Assert.False(property.IsNullable); }
+
+    private static IEntityType Entity<TEntity>()
+    {
+        var entity = Model.FindEntityType(typeof(TEntity));
+        Assert.NotNull(entity);
+        return entity;
+    }
+}

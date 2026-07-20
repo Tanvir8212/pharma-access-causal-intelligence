@@ -2,11 +2,12 @@
 
 PharmaAccess AI is a research-oriented platform for studying state-level adoption of newly approved generic drugs in U.S. Medicaid markets. Its planned unit of analysis is **Drug × State × Quarter**, with strict separation between prediction and observational causal estimation.
 
-Milestone 0 contains only the buildable Clean Architecture foundation, governance documents, runnable API/Web proofs, and architecture tests. It contains no database schema, migrations, ingestion, ML training, causal estimators, Python environment, or Gemini calls.
+Milestone 1 adds pure domain primitives/entities/calculations and an EF Core 10 SQL Server persistence foundation with a source-only migration. No migration has been applied, no database is required, and ingestion, ML training, causal estimators, Python, and Gemini remain deferred.
 
 ## Build
 
 ```powershell
+dotnet tool restore
 dotnet restore PharmaAccess.sln
 dotnet build PharmaAccess.sln --no-restore
 dotnet test PharmaAccess.sln --no-build

@@ -10,7 +10,7 @@ namespace PharmaAccess.Domain.Tests
         {
             var references = typeof(Domain.AssemblyMarker).Assembly.GetReferencedAssemblies();
             var forbiddenPrefixes = new[] { "Microsoft.AspNetCore", "Microsoft.EntityFrameworkCore", "Microsoft.ML", "PharmaAccess." };
-            Assert.DoesNotContain(references, reference => forbiddenPrefixes.Any(prefix => reference.Name.StartsWith(prefix)));
+            Assert.DoesNotContain(references, reference => reference.Name is not null && forbiddenPrefixes.Any(prefix => reference.Name.StartsWith(prefix, System.StringComparison.Ordinal)));
         }
     }
 }

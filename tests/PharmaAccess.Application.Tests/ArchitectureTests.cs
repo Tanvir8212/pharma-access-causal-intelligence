@@ -12,6 +12,9 @@ namespace PharmaAccess.Application.Tests
             Assert.Contains("PharmaAccess.Domain", names);
             Assert.DoesNotContain("PharmaAccess.Infrastructure", names);
             Assert.DoesNotContain("PharmaAccess.Data", names);
+            Assert.DoesNotContain("PharmaAccess.ML", names);
+            Assert.DoesNotContain("PharmaAccess.Causal", names);
+            Assert.DoesNotContain("PharmaAccess.Llm", names);
         }
     }
 }

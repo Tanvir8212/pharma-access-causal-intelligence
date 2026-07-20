@@ -1,3 +1,3 @@
 # Local setup
 
-Milestone 0 uses the already-installed stable .NET SDK 10.0.302 and targets `net10.0`. Do not install software; NuGet dependencies are obtained only through `dotnet restore`. Build and test the main solution with the commands in the root README. Python is not configured, Docker is absent, and SQL Server is not configured or required. API health is available at `/health` when `PharmaAccess.Api` is run.
+Milestone 1 uses the installed stable .NET SDK 10.0.302 and targets `net10.0`. Run `dotnet tool restore` for repository-local `dotnet-ef` 10.0.10, then use the root README commands. SQL Server is not required for build, tests, migration metadata, or API `/health`; no migration runs automatically. Use user secrets or environment-specific configuration for future credentials. See `local-development.md` for no-connect EF commands.
