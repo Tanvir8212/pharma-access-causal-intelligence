@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using PharmaAccess.Domain.Entities;
+using PharmaAccess.Domain.Features;
 using Xunit;
 
 namespace PharmaAccess.Data.Tests;
@@ -35,6 +36,13 @@ public sealed class ModelMetadataTests
     [InlineData(typeof(FdaFirstGenericApprovalNormalized), "FdaFirstGenericApprovalNormalized", "stg")]
     [InlineData(typeof(MedicaidStateDrugUtilizationNormalized), "MedicaidStateDrugUtilizationNormalized", "stg")]
     [InlineData(typeof(StateReferenceNormalized), "StateReferenceNormalized", "stg")]
+    [InlineData(typeof(GenericLaunch), "GenericLaunch", "core")]
+    [InlineData(typeof(FeatureSetVersion), "FeatureSetVersion", "feature")]
+    [InlineData(typeof(FeatureDefinition), "FeatureDefinition", "feature")]
+    [InlineData(typeof(DrugStateQuarterFeature), "DrugStateQuarterFeature", "feature")]
+    [InlineData(typeof(LaunchQuarterSummary), "LaunchQuarterSummary", "feature")]
+    [InlineData(typeof(StateHistoricalProfile), "StateHistoricalProfile", "feature")]
+    [InlineData(typeof(RegionalHistoricalProfile), "RegionalHistoricalProfile", "feature")]
     public void Entities_use_expected_tables(Type type, string table, string schema)
     {
         var entity = Model.FindEntityType(type);
@@ -75,6 +83,33 @@ public sealed class ModelMetadataTests
             Assert.Equal(19, property.GetPrecision());
             Assert.Equal(4, property.GetScale());
         }
+    }
+
+    [Fact]
+    public void Analytical_grains_and_feature_names_are_unique()
+    {
+        Assert.Contains(Entity<DrugStateQuarterFeature>().GetIndexes(), x => x.IsUnique && x.Properties.Select(p => p.Name).SequenceEqual(["FeatureSetVersionId", "GenericLaunchId", "StateId", "ObservationQuarterId"]));
+        Assert.Contains(Entity<LaunchQuarterSummary>().GetIndexes(), x => x.IsUnique && x.Properties.Select(p => p.Name).SequenceEqual(["FeatureSetVersionId", "GenericLaunchId", "ObservationQuarterId"]));
+        Assert.Contains(Entity<StateHistoricalProfile>().GetIndexes(), x => x.IsUnique && x.Properties.Select(p => p.Name).SequenceEqual(["FeatureSetVersionId", "StateId", "AvailableAsOfQuarterId"]));
+        Assert.Contains(Entity<RegionalHistoricalProfile>().GetIndexes(), x => x.IsUnique && x.Properties.Select(p => p.Name).SequenceEqual(["FeatureSetVersionId", "Region", "AvailableAsOfQuarterId"]));
+        Assert.Contains(Entity<FeatureDefinition>().GetIndexes(), x => x.IsUnique && x.Properties.Select(p => p.Name).SequenceEqual(["FeatureSetVersionId", "FeatureName"]));
+    }
+
+    [Fact]
+    public void Feature_lineage_never_cascade_deletes()
+    {
+        foreach (var type in new[] { typeof(GenericLaunch), typeof(FeatureSetVersion), typeof(FeatureDefinition), typeof(DrugStateQuarterFeature), typeof(LaunchQuarterSummary), typeof(StateHistoricalProfile), typeof(RegionalHistoricalProfile) })
+        {
+            var entity = Model.FindEntityType(type); Assert.NotNull(entity); Assert.All(entity.GetForeignKeys(), key => Assert.Equal(DeleteBehavior.Restrict, key.DeleteBehavior));
+        }
+    }
+
+    [Fact]
+    public void Feature_status_enums_are_strings_and_precision_is_explicit()
+    {
+        Assert.Equal(typeof(string), Entity<FeatureSetVersion>().FindProperty(nameof(FeatureSetVersion.Status))!.GetProviderClrType());
+        var property = Entity<LaunchQuarterSummary>().FindProperty(nameof(LaunchQuarterSummary.NumericDistribution)); Assert.Equal(19, property!.GetPrecision()); Assert.Equal(6, property.GetScale());
+        var money = Entity<LaunchQuarterSummary>().FindProperty(nameof(LaunchQuarterSummary.TotalReimbursementAmount)); Assert.Equal(19, money!.GetPrecision()); Assert.Equal(4, money.GetScale());
     }
 
     private static IEntityType Entity<TEntity>()

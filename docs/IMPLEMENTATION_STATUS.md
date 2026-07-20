@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-Milestone 1 — Domain Model and Database Foundation — complete. Milestone 2 remains incomplete; its EF raw/staging persistence model and unapplied migration are now present, while importer orchestration is still outstanding.
+Milestone 3 — Feature Engineering Foundation — implemented and verified. No model training or later-milestone work was added.
 
 ## Environment and packages
 
@@ -70,13 +70,13 @@ No `raw`, `stg`, `feature`, `ml`, `causal`, `rag`, or `research` table/schema is
 
 - No local or real source file was ingested and no previous-project data was accessed.
 - No real secrets, credentials, or populated connection strings exist.
-- No ML.NET training, feature generation, causal estimator, Gemini/RAG client, Python environment, research metrics, or fabricated records were added.
+- Feature engineering foundation was added, but no ML.NET training, causal estimator, Gemini/RAG client, Python environment, research metrics, or fabricated records were added.
 - No commit was created.
 
 ## Warnings and unresolved issues
 
 - There is no available authorized isolated SQL Server test database, so SQL Server execution semantics were not integration-tested. EF metadata tests validate the SQL Server model without pretending the in-memory or SQLite provider proves SQL Server behavior.
-- Applied/pending migration state is intentionally unknown because `migrations list --no-connect` was used. The migration source and model snapshot are consistent.
+- Applied migration state is intentionally not queried. Migration sources and the model snapshot are verified without a database connection.
 - `PharmaAccess.Tests.sln` remains a redundant legacy convenience solution; documented verification uses `PharmaAccess.sln`.
 - Remote CI was not run, and no project license has been selected.
 - `git diff --check` found no whitespace errors; Git emitted Windows `core.autocrlf` LF-to-CRLF normalization notices for modified text files. These are not compiler warnings.
@@ -88,10 +88,18 @@ No `raw`, `stg`, `feature`, `ml`, `causal`, `rag`, or `research` table/schema is
 - `dotnet ef migrations list --project .\src\PharmaAccess.Data\PharmaAccess.Data.csproj --startup-project .\src\PharmaAccess.Api\PharmaAccess.Api.csproj` succeeded and reported `20260720192846_InitialCoreFoundation (Pending)`.
 - The command used only the non-production design-time LocalDB placeholder to read migration status. It did not apply the migration, modify a database, or access an existing research database. `dotnet ef database update` was not run.
 
+## Milestone 3 feature engineering foundation
+
+- Added pure feature-set lifecycle, configurable state-entry policies, frozen historical market weights, ordinary growth, concentration metrics, and persistent-inequality policy.
+- Added deterministic Application feature building at `GenericLaunchId × StateId × ObservationQuarter`, exact-quarter lags, nullable next-quarter/Q4 labels, dry-run isolation, reproducibility hashing, and a dedicated blocking leakage audit.
+- Added `core.GenericLaunch` and six `feature` tables with restrictive lineage, controlled enums, precision, required indexes, and migration `AddFeatureEngineeringFoundation`; the migration was not applied.
+- Added a machine-readable feature dictionary and a clearly labeled synthetic fixture. The executable pipeline test uses two launches, four states, 32 state-quarter observations, eight launch-quarter summaries, complete Q4 follow-up for one launch, and censored follow-up for the other.
+- No ML.NET, causal, Gemini/RAG, Python, real data, database connection, database update, or commit was added.
+- Final verification: local tool restore and solution restore succeeded; build succeeded with 0 warnings and 0 errors; 127 tests passed with 0 failures and 0 skips. The synthetic dry-run generated 32 state-quarter rows and 8 launch-quarter summaries, emitted state/regional historical profiles, persisted nothing, and produced a stable SHA-256 reproducibility hash across repeated builds.
+- EF reported no pending model changes after `AddFeatureEngineeringFoundation`; `migrations list --no-connect` listed all three migrations. A review-only idempotent script was generated under ignored `artifacts/reports/milestone-3/` and was not applied.
+
+Known baseline limitation: the branch received for Milestone 3 still documents Milestone 2 importer orchestration as incomplete and lacks `docs/data/INGESTION_PIPELINE.md`. Milestone 3 therefore consumes explicit validated-snapshot contracts and does not claim an operational file-to-feature path.
+
 ## Next milestone
 
-Milestone 2 EF model repair added `raw.FdaFirstGenericApprovalRaw`, `raw.MedicaidStateDrugUtilizationRaw`, `raw.StateReferenceRaw`, `stg.FdaFirstGenericApprovalNormalized`, `stg.MedicaidStateDrugUtilizationNormalized`, and `stg.StateReferenceNormalized`. All rows retain `SourceFileId` and `SourceRowNumber`; raw records retain original source strings; provenance foreign keys use restricted deletion. Migration `AddRawAndStagingIngestion` was generated but not applied, and no database connection or update was performed.
-
-EF model repair verification: solution restore succeeded; solution build succeeded with 0 warnings and 0 errors; 91 tests passed with 0 failures and 0 skips. `dotnet ef migrations has-pending-model-changes` reported no changes after migration generation. No database connection or migration application was performed.
-
-Milestone 2 is not complete until the separately requested ingestion contracts, hashing, parsing, normalization, dry-run behavior, synthetic samples, and tests are implemented. Milestone 3 must not begin.
+Milestone 4 must not begin until the Milestone 2 baseline inconsistency is resolved and Milestone 3 is accepted. Its proposed scope is temporal grouped split generation, ML.NET predictive training/evaluation, baselines, calibrated metrics, and versioned model artifacts—without causal estimation, Gemini, or Python.

@@ -12,3 +12,8 @@ dotnet ef migrations script --idempotent --project .\src\PharmaAccess.Data\Pharm
 ```
 
 Do not run `dotnet ef database update` against an existing database. Automatic startup migration is disabled. Database provisioning and migration application require an explicitly approved environment and operational procedure.
+## Milestone 3 feature foundation
+
+Run `dotnet tool restore`, restore/build/test the solution, then use `dotnet ef migrations has-pending-model-changes` with the Data project, API startup project, and `PharmaAccessDbContext`. Review scripts may be generated with `dotnet ef migrations script --idempotent`; never run `database update` implicitly. Feature builds default to dry-run at their caller boundary and require explicit configured persistence.
+
+The feature dictionary review artifact is under `artifacts/reports/milestone-3/`. No SQL Server is required for metadata tests or the synthetic in-memory pipeline.

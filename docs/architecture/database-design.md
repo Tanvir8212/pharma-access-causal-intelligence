@@ -7,6 +7,7 @@
 - `core`: Drug, DrugProduct, FirstGenericApproval, State, CalendarQuarter, DatasetVersion, SourceFile, and StateDrugUtilization.
 - `audit`: JobRun.
 - `raw`, `stg`, `feature`, `ml`, `causal`, `rag`, and `research` are not created by Milestone 1.
+- `feature` (Milestone 3): FeatureSetVersion, FeatureDefinition, DrugStateQuarterFeature, LaunchQuarterSummary, StateHistoricalProfile, and RegionalHistoricalProfile. `core.GenericLaunch` owns the documented approval-proxy identity.
 
 Integer surrogate keys favor clear SQL Server and EF compatibility. Reimbursement uses `decimal(19,4)`; prescription counts and provenance row counts use `bigint` where scale warrants it. Enums persist as controlled strings. A model-wide converter restores `DateTimeKind.Utc` when UTC timestamps are materialized. Calendar dates use `date`.
 

@@ -23,3 +23,7 @@
 ## Foundational calculations
 
 ND is active eligible states divided by eligible states times 100. WD uses nonnegative frozen baseline weights. Both reject an undefined zero denominator rather than returning zero or NaN. Access Gap is WD minus ND and may be negative. These are pure calculations only; no research result is generated.
+
+## Milestone 3 feature entities
+
+`GenericLaunch` records the drug, primary approval proxy, approval quarter, observation bounds, eligibility, and reference type. `FeatureSetVersion` and `FeatureDefinition` version the feature contract. `DrugStateQuarterFeature` uses generic-launch/state/quarter grain and carries observations, exact lags, historical/regional placeholders, nullable future labels, quality, and definition hash. `LaunchQuarterSummary`, `StateHistoricalProfile`, and `RegionalHistoricalProfile` store deterministic as-of aggregates. Monetary values use `decimal(19,4)` and rates/shares use `decimal(19,6)`.

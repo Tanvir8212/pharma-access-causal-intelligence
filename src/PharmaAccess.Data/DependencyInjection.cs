@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using PharmaAccess.Application.Features;
 using PharmaAccess.Application.Persistence;
 
 namespace PharmaAccess.Data;
@@ -19,6 +20,7 @@ public static class DependencyInjection
             options.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(typeof(PharmaAccessDbContext).Assembly.FullName));
         });
         services.AddScoped<IDatasetVersionRepository, DatasetVersionRepository>();
+        services.AddScoped<IFeatureBuildPersistence, FeatureBuildPersistence>();
         return services;
     }
 }
