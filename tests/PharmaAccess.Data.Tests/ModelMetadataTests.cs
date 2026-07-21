@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using PharmaAccess.Domain.Entities;
 using PharmaAccess.Domain.Features;
+using PharmaAccess.Domain.Research;
 using PharmaAccess.Data.Entities;
 using Xunit;
 
@@ -184,4 +185,13 @@ public sealed class ModelMetadataTests
         Assert.NotNull(entity);
         return entity;
     }
+}
+
+public sealed class MilestoneEightResearchMetadataTests
+{
+    private readonly Microsoft.EntityFrameworkCore.Metadata.IModel model=new Data.PharmaAccessDbContext(new DbContextOptionsBuilder<Data.PharmaAccessDbContext>().UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=MetadataOnly;Trusted_Connection=True").Options).Model;
+    [Theory][InlineData(typeof(ResearchProtocol),"ResearchProtocol")][InlineData(typeof(ResearchDataFreeze),"ResearchDataFreeze")][InlineData(typeof(ResearchSourceRegistration),"ResearchSourceRegistration")][InlineData(typeof(ResearchProtocolApprovalEntity),"ResearchProtocolApproval")][InlineData(typeof(ResearchFreezeSourceEntity),"ResearchFreezeSource")][InlineData(typeof(ResearchFreezeFindingEntity),"ResearchFreezeFinding")][InlineData(typeof(ResearchFreezeArtifactEntity),"ResearchFreezeArtifact")][InlineData(typeof(ResearchCohortDefinitionEntity),"ResearchCohortDefinition")][InlineData(typeof(ResearchExclusionRuleEntity),"ResearchExclusionRule")][InlineData(typeof(ResearchAnalysisPlanEntity),"ResearchAnalysisPlan")]
+    public void Research_entities_map_to_research_schema(Type type,string table){var e=model.FindEntityType(type);Assert.NotNull(e);Assert.Equal("research",e.GetSchema());Assert.Equal(table,e.GetTableName());}
+    [Fact]public void Research_versions_and_lineage_are_unique_and_restricted(){var p=model.FindEntityType(typeof(ResearchProtocol))!;Assert.Contains(p.GetIndexes(),x=>x.IsUnique&&x.Properties.Select(y=>y.Name).SequenceEqual([nameof(ResearchProtocol.ProtocolCode),nameof(ResearchProtocol.ProtocolVersion)]));var f=model.FindEntityType(typeof(ResearchDataFreeze))!;Assert.All(f.GetForeignKeys(),x=>Assert.Equal(DeleteBehavior.Restrict,x.DeleteBehavior));var s=model.FindEntityType(typeof(ResearchFreezeSourceEntity))!;Assert.All(s.GetForeignKeys(),x=>Assert.Equal(DeleteBehavior.Restrict,x.DeleteBehavior));}
+    [Fact]public void Research_statuses_are_string_converted(){Assert.Equal(typeof(string),model.FindEntityType(typeof(ResearchProtocol))!.FindProperty(nameof(ResearchProtocol.Status))!.GetProviderClrType());Assert.Equal(typeof(string),model.FindEntityType(typeof(ResearchDataFreeze))!.FindProperty(nameof(ResearchDataFreeze.Status))!.GetProviderClrType());}
 }

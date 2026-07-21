@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PharmaAccess.Domain.Entities;
 using PharmaAccess.Domain.Features;
+using PharmaAccess.Domain.Research;
 using PharmaAccess.Data.Entities;
 
 namespace PharmaAccess.Data;
@@ -53,6 +54,16 @@ public sealed class PharmaAccessDbContext(DbContextOptions<PharmaAccessDbContext
     public DbSet<CausalDiagnosticEntity> CausalDiagnostics => Set<CausalDiagnosticEntity>();
     public DbSet<CounterfactualScenarioEntity> CounterfactualScenarios => Set<CounterfactualScenarioEntity>();
     public DbSet<CounterfactualResultEntity> CounterfactualResults => Set<CounterfactualResultEntity>();
+    public DbSet<ResearchProtocol> ResearchProtocols => Set<ResearchProtocol>();
+    public DbSet<ResearchDataFreeze> ResearchDataFreezes => Set<ResearchDataFreeze>();
+    public DbSet<ResearchSourceRegistration> ResearchSourceRegistrations => Set<ResearchSourceRegistration>();
+    public DbSet<ResearchProtocolApprovalEntity> ResearchProtocolApprovals => Set<ResearchProtocolApprovalEntity>();
+    public DbSet<ResearchFreezeSourceEntity> ResearchFreezeSources => Set<ResearchFreezeSourceEntity>();
+    public DbSet<ResearchFreezeFindingEntity> ResearchFreezeFindings => Set<ResearchFreezeFindingEntity>();
+    public DbSet<ResearchFreezeArtifactEntity> ResearchFreezeArtifacts => Set<ResearchFreezeArtifactEntity>();
+    public DbSet<ResearchCohortDefinitionEntity> ResearchCohortDefinitions => Set<ResearchCohortDefinitionEntity>();
+    public DbSet<ResearchExclusionRuleEntity> ResearchExclusionRules => Set<ResearchExclusionRuleEntity>();
+    public DbSet<ResearchAnalysisPlanEntity> ResearchAnalysisPlans => Set<ResearchAnalysisPlanEntity>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {

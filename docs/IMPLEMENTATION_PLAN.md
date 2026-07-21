@@ -13,3 +13,5 @@ Milestone 5 extends that task only with validation-fitted Platt calibration, sup
 Milestone 6 added the `PeerStateExposureToNextQuarterEntry` observational causal foundation: versioned treatment/outcome/DAG/adjustment definitions, ATT/ATE risk differences, deterministic propensity/outcome nuisance models, weighting, balance/positivity diagnostics, AIPW, grouped bootstrap, placebo/sensitivity infrastructure, exploratory subgroup effects, support-aware scenarios, causal persistence, and synthetic-only reports.
 
 Milestone 7 adds isolated Python 3.12 validation, a hashed filesystem contract, deterministic C# synthetic cohort/nuisance/fold export, strict formula parity, independently fitted DoWhy/EconML diagnostics, and reproducible synthetic-only reports. It adds no database schema and does not start Milestone 8.
+
+Milestone 8 adds research-protocol approval, local source registration, deterministic profiling/cohort construction, predictive and causal pre-analysis freezes, environment/Git safety gates, immutable freeze approval, synthetic package export, and `research` metadata persistence. It does not run real data, final training, or final causal estimation.

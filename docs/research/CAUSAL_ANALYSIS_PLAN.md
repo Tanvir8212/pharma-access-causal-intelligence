@@ -1,0 +1,3 @@
+# Frozen causal analysis plan
+
+The synthetic reference freezes high neighbor-adoption exposure, continuous eligible-peer share, threshold 0.5, next-quarter first entry, observation-quarter time zero, ATT risk difference, AIPW primary and IPTW/outcome-regression/unadjusted secondary. It records the human-authored DAG, pretreatment adjustment set, propensity/clipping/overlap/balance/bootstrap settings, placebos, sensitivities and exploratory subgroups. Thresholds must be outcome-blind. Partial interference and unmeasured commercial/supply/launch-timing confounding remain limitations. No final effect is estimated here.

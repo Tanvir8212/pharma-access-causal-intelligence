@@ -1,0 +1,3 @@
+# Predictive analysis plan
+
+Primary task is `NextQuarterStateEntry`; primary validation metric is PR AUC. Secondary metrics are log loss, Brier, recall and ROC AUC. Candidates are the two meaningful baselines plus SDCA logistic regression, FastTree, FastForest and LightGBM with a maximum of eight declared configurations. Whole `GenericLaunchId` groups split chronologically. Calibration, thresholds, feature importance and subgroup plans use validation only. Tie-breakers are log loss, Brier and simplicity. `TestPartitionLockedForSelection = true`; final training and test evaluation are prohibited in Milestone 8.

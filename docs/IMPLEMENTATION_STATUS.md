@@ -1,5 +1,13 @@
 # Implementation status
 
+## Milestone 8 current verification
+
+Research Data Freeze and Pre-Analysis Protocol are implemented for deterministic synthetic development data only. The implementation adds explicit protocol review/approval, source registration with local-path and SHA-256 controls, immutable freeze lifecycle and lineage, cohort/exclusion manifests, predictive test-partition locking, a frozen observational-causal protocol, 30 blocking quality gates, profiling, environment and Git-safety manifests, and a hash-verifiable 24-artifact freeze bundle. The synthetic workflow reaches `ReadyForAnalysis`; this authorizes no real-data analysis and produces no predictive or causal research result.
+
+Persistence adds ten restrictive-lineage tables under `research` and migration `20260721022430_AddResearchFreezeFoundation`. EF reports no pending model changes. A review-only idempotent SQL script was generated under ignored `artifacts/reports/milestone-8/`; no migration was applied and no database was contacted or modified.
+
+Verification: solution restore succeeded; the final build succeeded with 0 warnings/errors; all 221 .NET tests passed; `pip check` succeeded; all 21 Python tests passed with 11 upstream SHAP Matplotlib/pydot pyparsing deprecation warnings. The synthetic freeze produced 24 required artifacts plus `file_hashes.json`, passed hash verification, and reproduced SHA-256 `14CBFA296D05EECD6066E7C17E6FC124277D083A2BECCDC1693571366D4DC83D` across deterministic runs. No real or previous-project data was accessed, no full training or final causal estimation was run, no Gemini/RAG work was started, no database update was performed, and no commit was created.
+
 ## Milestone 7 current verification
 
 Independent Python causal validation and cross-language estimate parity are implemented and verified for deterministic synthetic development data only. Contract 1.1 replaces the invalid numeric C# enum representation with explicit estimator, estimand, and effect-scale strings; Python rejects unknown, numeric, duplicate, or missing identifiers before parity. The standard AIPW ATE hand fixture produces row contributions `0.875` and `0.6333333333333333`, mean `0.7541666666666667`.

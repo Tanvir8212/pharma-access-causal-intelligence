@@ -31,3 +31,7 @@ Run only the deterministic synthetic causal workflow; never point it at a previo
 # Milestone 7 Python validation
 
 Run `scripts/setup-python-validation.ps1`, then `scripts/run-cross-language-parity.ps1 -StudyCode synthetic-peer-exposure -ValidationRunCode m7-synthetic-001`. PowerShell execution policy must be configured by the local administrator. The workflow uses synthetic data only and never contacts SQL Server.
+
+# Milestone 8 synthetic freeze
+
+Run `scripts/run-synthetic-research-freeze.ps1 -FreezeCode m8-synthetic-freeze-v1` after building. Output is ignored under `artifacts/research-freezes/`. It uses no database, network, real data, training or causal estimation.

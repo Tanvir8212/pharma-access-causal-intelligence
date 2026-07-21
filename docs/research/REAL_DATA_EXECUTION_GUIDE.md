@@ -1,0 +1,3 @@
+# Real-data execution guide
+
+Milestone 8 does not execute a real freeze. Before Milestone 9, a human must supply approved local source files and decide the observation window, state denominator, entry rule, mapping ambiguity, suppression/negative reimbursement, missing/censoring, market weights, predictive split/configuration ceiling, causal threshold/DAG/adjustment set, multiplicity/subgroups/stopping and dirty-worktree policy. Register files under an authorized import root, dry-run validation, review profiles/exclusions, approve the protocol, resolve every blocker, then approve a new real freeze. Only a later explicit milestone may train or estimate from it.

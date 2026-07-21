@@ -34,3 +34,6 @@ Schema `ml` adds ModelCalibration, CalibrationMetric, CalibrationBin, FeatureImp
 # Milestone 6 causal metadata
 
 Schema `causal` owns CausalStudy, CausalDagDefinition, CausalAdjustmentSet, TreatmentDefinition, CausalAnalysisRow, CausalEstimate, CausalDiagnostic, CounterfactualScenario, and CounterfactualResult. Dataset/feature/core-quarter/drug/state lineage is restrictive, analytical row grain is unique per study/drug/state/observation quarter, statuses are string-converted, and estimates use decimal-compatible `decimal(20,10)` storage. No cascade delete may erase finalized lineage.
+# Research schema
+
+Milestone 8 adds metadata-only `research` tables for protocol, approval, source registration, freeze, freeze-source lineage, findings, artifacts, cohort definition, exclusion rules and analysis plans. Relationships use restricted deletion. Large source files and reports remain filesystem artifacts referenced by relative path and SHA-256.
