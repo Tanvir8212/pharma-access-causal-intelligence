@@ -73,6 +73,18 @@ namespace PharmaAccess.Worker
                 Console.WriteLine($"Import reconciled {completion.Registered} rows and stopped with DatasetVersion non-final. Reconciliation: {completion.ReconciliationHash}");
                 return 0;
             }
+            if (args.Length > 0 && args[0] == "validate-real-import-initialization")
+            {
+                if (args.Length != 10) { Console.Error.WriteLine("Usage: validate-real-import-initialization <private-root> <manifest> <validation> <protocol-code> <protocol-version> <dataset-version> <correlation-id> <git-commit> <registered-by>"); return 2; }
+                var connection = Environment.GetEnvironmentVariable("ConnectionStrings__PharmaAccess");
+                if (string.IsNullOrWhiteSpace(connection)) { Console.Error.WriteLine("The process-scoped PharmaAccess connection is required."); return 2; }
+                var options = new DbContextOptionsBuilder<PharmaAccessDbContext>().UseSqlServer(connection).Options;
+                using var db = new PharmaAccessDbContext(options);
+                var plan = new ResearchImportExecutionService(db).ValidateInitializationAsync(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], CancellationToken.None).GetAwaiter().GetResult();
+                if (args[9] != "PharmaAccess.Worker/guarded-real-import") { Console.Error.WriteLine("Registered-by identity is not authoritative."); return 2; }
+                Console.WriteLine($"Validated initialization payload: VersionCode={plan.Dataset.VersionCode}; sources={plan.Sources.Count}; correlation={plan.Run.CorrelationId}; no records persisted.");
+                return 0;
+            }
             Console.WriteLine("PharmaAccess Worker is ready. No long-running jobs are configured."); return 0;
         }
     }

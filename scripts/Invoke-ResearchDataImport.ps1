@@ -107,9 +107,18 @@ Write-Host "Dry-run status: PASS; blocking findings 0; rejected rows 0"
 Write-Host "Batch size: $BatchSize; resume: $Resume; correlation ID: $CorrelationId"
 Write-Host 'Phases: safety, manifest, hashes, validation, registrations, raw FDA, raw Medicaid, references, FDA canonical selection, normalization, NDC quality, drug mapping, review queue, duplicate classification, reconciliation, non-final DatasetVersion, profiling, blocking gates.'
 
-if (-not $PSCmdlet.ShouldProcess("$approvedDatabase / $DatasetVersion", 'Execute guarded real-data import through validation without finalization, training, causal estimation, or freeze approval')) { return }
 $gitCommit = @(git rev-parse HEAD | Select-Object -Last 1)[0].Trim()
 Assert-NativeSuccess 'Reading Git commit'
+$env:ConnectionStrings__PharmaAccess = $connection
+try {
+    dotnet run --no-build --project '.\src\PharmaAccess.Worker\PharmaAccess.Worker.csproj' -- validate-real-import-initialization $PrivateRoot $ManifestPath $ValidationReportPath $ProtocolCode $ProtocolVersion $DatasetVersion $CorrelationId $gitCommit 'PharmaAccess.Worker/guarded-real-import'
+    Assert-NativeSuccess 'Validating exact import initialization payload'
+}
+finally {
+    Remove-Item Env:ConnectionStrings__PharmaAccess -ErrorAction SilentlyContinue
+}
+
+if (-not $PSCmdlet.ShouldProcess("$approvedDatabase / $DatasetVersion", 'Execute guarded real-data import through validation without finalization, training, causal estimation, or freeze approval')) { return }
 $env:ConnectionStrings__PharmaAccess = $connection
 try {
     dotnet run --no-build --project '.\src\PharmaAccess.Worker\PharmaAccess.Worker.csproj' -- execute-real-import $PrivateRoot $ManifestPath $ValidationReportPath $ProtocolCode $ProtocolVersion $DatasetVersion $BatchSize $CorrelationId $gitCommit ([bool]$Resume).ToString().ToLowerInvariant()
