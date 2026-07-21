@@ -1,0 +1,5 @@
+# Cross-language validation contract
+
+Contract `1.1` uses `artifacts/causal-validation/{ValidationRunCode}`. Version 1.1 replaces the invalid 1.0 language-enum integer serialization in `csharp_estimates.json` with explicit strings: estimands `ATE`/`ATT`; effect scales `RiskDifference`/`RiskRatio`/`OddsRatio`; and estimators `UnadjustedDifferenceInMeans`, `PropensityScoreWeighting`, `OutcomeRegression`, and `AugmentedInverseProbabilityWeighting`. Numeric, unknown, duplicate, or missing identifiers are rejected with a contract-validation error; enum declaration order is irrelevant.
+
+C# writes the exact ordered cohort, schema, lineage definitions, grouped folds, estimates/diagnostics, nuisance predictions, and SHA-256 manifest. Python has no database access and rejects missing/modified files, unsupported versions, unexpected columns, duplicate keys, count disagreement, invalid domains, nonfinite values, invalid propensities, or split launch groups. Run codes and canonical paths prevent traversal; existing runs require explicit replacement. CSV uses invariant round-trip numeric formatting.

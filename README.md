@@ -16,3 +16,6 @@ dotnet test PharmaAccess.sln --no-build
 The main solution contains all production and test projects. Test identity and dependencies are declared only by projects under `tests`, so the main-solution test command executes only those projects.
 
 See `START_HERE.md`, `docs/PROJECT_BLUEPRINT.md`, and `docs/CODEX_MASTER_PROMPT.md` before making changes.
+# Milestone 7 validation
+
+The optional isolated Python research-validation layer lives under `python/`. It validates deterministic synthetic C# exports through DoWhy, EconML, and transparent reference formulas. It is not the application runtime and its outputs are not research results.

@@ -1,12 +1,18 @@
 # Implementation status
 
+## Milestone 7 current verification
+
+Independent Python causal validation and cross-language estimate parity are implemented and verified for deterministic synthetic development data only. Contract 1.1 replaces the invalid numeric C# enum representation with explicit estimator, estimand, and effect-scale strings; Python rejects unknown, numeric, duplicate, or missing identifiers before parity. The standard AIPW ATE hand fixture produces row contributions `0.875` and `0.6333333333333333`, mean `0.7541666666666667`.
+
+Verification: `pip check` succeeded; 8 focused Python tests passed; all 21 Python tests passed; the deterministic 465-row C#/Python workflow passed all four formula comparisons. Solution restore succeeded, a full post-change build succeeded with 0 warnings/errors, and all 195 .NET tests passed. A subsequent redundant build attempt after restore was blocked while NuGet tried to fetch repository-signature metadata, despite an escalated retry; this did not affect the already successful build/test or parity results. Remaining warnings are upstream SHAP Matplotlib and pydot pyparsing deprecations. No database was contacted, no migration was created/applied, and Milestone 8/Gemini/RAG were not started.
+
 ## Historical status header (superseded below)
 
 Milestone 4 — Predictive ML Baseline Vertical Slice — implemented and verified for `NextQuarterStateEntry`. Milestone 5 was not started.
 
 ## Current milestone
 
-Milestone 6 — Causal Inference Foundation and Counterfactual Simulation — implemented and verified with deterministic synthetic development data only. Milestone 7 was not started.
+Milestone 6 — Causal Inference Foundation and Counterfactual Simulation — implemented and verified with deterministic synthetic development data only. This historical line is superseded by the Milestone 7 verification section above.
 
 ## Environment and packages
 
@@ -149,9 +155,9 @@ Milestone 6 is not started and requires explicit authorization. Proposed scope: 
 
 Unresolved identification risks: strict no-interference is implausible; unmeasured manufacturer, wholesaler, payer, supply, and true launch timing can confound estimates; approval and utilization are imperfect access measures; suppression/missingness may be informative; DAG and nuisance-model specifications may be wrong; and cross-fitting is not implemented. Cross-fitting and independent Python validation are required before final research analysis.
 
-## Milestone 7 boundary
+## Historical Milestone 7 boundary (superseded)
 
-Milestone 7 is not started. The exact proposed scope is an isolated, pinned Python research-validation environment; schema-versioned .NET export/import; independent cohort reconstruction; DoWhy identification/refutation; EconML DML/heterogeneous-effect sensitivity; and strict JSON result validation. It must not change the production C# estimates silently, use a real database without authorization, or add Gemini/RAG.
+The planned boundary was an isolated, pinned Python research-validation environment; schema-versioned .NET export/import; independent cohort reconstruction; DoWhy identification/refutation; EconML DML/heterogeneous-effect sensitivity; and strict JSON result validation. It must not change the production C# estimates silently, use a real database without authorization, or add Gemini/RAG.
 
 ## Superseded Milestone 4 handoff
 

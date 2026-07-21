@@ -28,3 +28,6 @@ Synthetic reports are generated beneath `artifacts/reports/milestone-5/` and mus
 # Milestone 6 causal development
 
 Run only the deterministic synthetic causal workflow; never point it at a previous or real research database. Set `PHARMAACCESS_M6_REPORT_PATH=artifacts/reports/milestone-6` to retain generated reports. Restore/build/test normally, generate migration metadata and an idempotent review script, and do not run `dotnet ef database update`. Causal execution endpoints remain disabled because authentication is absent.
+# Milestone 7 Python validation
+
+Run `scripts/setup-python-validation.ps1`, then `scripts/run-cross-language-parity.ps1 -StudyCode synthetic-peer-exposure -ValidationRunCode m7-synthetic-001`. PowerShell execution policy must be configured by the local administrator. The workflow uses synthetic data only and never contacts SQL Server.
