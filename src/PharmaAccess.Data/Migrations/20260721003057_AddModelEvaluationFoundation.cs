@@ -21,10 +21,10 @@ namespace PharmaAccess.Data.Migrations
                     ModelTrainingRunId = table.Column<long>(type: "bigint", nullable: false),
                     FeatureName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     MetricName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    BaselineValue = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false),
-                    PermutedValue = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false),
-                    ImportanceDelta = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false),
-                    StandardDeviation = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false),
+                    BaselineValue = table.Column<double>(type: "float(53)", nullable: false),
+                    PermutedValue = table.Column<double>(type: "float(53)", nullable: false),
+                    ImportanceDelta = table.Column<double>(type: "float(53)", nullable: false),
+                    StandardDeviation = table.Column<double>(type: "float(53)", nullable: false),
                     RepetitionCount = table.Column<int>(type: "int", nullable: false),
                     Rank = table.Column<int>(type: "int", nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -79,8 +79,8 @@ namespace PharmaAccess.Data.Migrations
                     ModelTrainingRunId = table.Column<long>(type: "bigint", nullable: false),
                     Method = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     Status = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    Slope = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: true),
-                    Intercept = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: true),
+                    Slope = table.Column<double>(type: "float(53)", nullable: true),
+                    Intercept = table.Column<double>(type: "float(53)", nullable: true),
                     ValidationRowCount = table.Column<int>(type: "int", nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     WarningsJson = table.Column<string>(type: "nvarchar(max)", maxLength: 8000, nullable: true)
@@ -110,9 +110,9 @@ namespace PharmaAccess.Data.Migrations
                     ObservationQuarterId = table.Column<int>(type: "int", nullable: false),
                     Category = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     ActualLabel = table.Column<bool>(type: "bit", nullable: false),
-                    Probability = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false),
+                    Probability = table.Column<double>(type: "float(53)", nullable: false),
                     PredictedLabel = table.Column<bool>(type: "bit", nullable: false),
-                    Threshold = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false),
+                    Threshold = table.Column<double>(type: "float(53)", nullable: false),
                     MissingFeatureCount = table.Column<int>(type: "int", nullable: false),
                     UncertaintyStatus = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     ContextJson = table.Column<string>(type: "nvarchar(max)", maxLength: 8000, nullable: true),
@@ -171,7 +171,7 @@ namespace PharmaAccess.Data.Migrations
                     Dimension = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     SubgroupValue = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     MetricName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    MetricValue = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: true),
+                    MetricValue = table.Column<double>(type: "float(53)", nullable: true),
                     RowCount = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -198,13 +198,13 @@ namespace PharmaAccess.Data.Migrations
                     ModelTrainingRunId = table.Column<long>(type: "bigint", nullable: false),
                     Policy = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     Partition = table.Column<string>(type: "nvarchar(16)", maxLength: 16, nullable: false),
-                    Threshold = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false),
+                    Threshold = table.Column<double>(type: "float(53)", nullable: false),
                     Objective = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     ConstraintsJson = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: true),
-                    Precision = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false),
-                    Recall = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false),
-                    F1 = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false),
-                    Specificity = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false),
+                    Precision = table.Column<double>(type: "float(53)", nullable: false),
+                    Recall = table.Column<double>(type: "float(53)", nullable: false),
+                    F1 = table.Column<double>(type: "float(53)", nullable: false),
+                    Specificity = table.Column<double>(type: "float(53)", nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -230,11 +230,11 @@ namespace PharmaAccess.Data.Migrations
                     Partition = table.Column<string>(type: "nvarchar(16)", maxLength: 16, nullable: false),
                     Binning = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     BinNumber = table.Column<int>(type: "int", nullable: false),
-                    LowerBound = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false),
-                    UpperBound = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false),
+                    LowerBound = table.Column<double>(type: "float(53)", nullable: false),
+                    UpperBound = table.Column<double>(type: "float(53)", nullable: false),
                     RowCount = table.Column<int>(type: "int", nullable: false),
-                    MeanProbability = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false),
-                    ObservedRate = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false)
+                    MeanProbability = table.Column<double>(type: "float(53)", nullable: false),
+                    ObservedRate = table.Column<double>(type: "float(53)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -258,7 +258,7 @@ namespace PharmaAccess.Data.Migrations
                     ModelCalibrationId = table.Column<long>(type: "bigint", nullable: false),
                     Partition = table.Column<string>(type: "nvarchar(16)", maxLength: 16, nullable: false),
                     MetricName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    MetricValue = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false),
+                    MetricValue = table.Column<double>(type: "float(53)", nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>

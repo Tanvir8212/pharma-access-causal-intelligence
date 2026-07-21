@@ -30,6 +30,8 @@ artifacts/reports/**
 
 # Data and local databases
 data/raw/
+data/private/**
+!data/private/.gitkeep
 samples/data/*.csv
 samples/data/*.parquet
 *.bak
@@ -57,3 +59,8 @@ research/figures/generated/
 research/tables/generated/
 artifacts/causal-validation/**
 artifacts/research-freezes/**
+artifacts/research-audit/**
+
+# Private Milestone 9 configuration and working files
+config/research-sources.private.json
+config/research-database.private.json

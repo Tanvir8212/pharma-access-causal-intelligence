@@ -39,19 +39,16 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("nvarchar(32)");
 
                     b.Property<double>("LowerBound")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<double>("MeanProbability")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<long>("ModelCalibrationId")
                         .HasColumnType("bigint");
 
                     b.Property<double>("ObservedRate")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<string>("Partition")
                         .IsRequired()
@@ -62,8 +59,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<double>("UpperBound")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.HasKey("CalibrationBinId");
 
@@ -90,8 +86,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("nvarchar(64)");
 
                     b.Property<double>("MetricValue")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<long>("ModelCalibrationId")
                         .HasColumnType("bigint");
@@ -190,8 +185,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<double?>("InfluenceFunctionValue")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<bool>("IsCensored")
                         .HasColumnType("bit");
@@ -203,19 +197,16 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<double?>("OutcomeRegressionTreated")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<double?>("OutcomeRegressionUntreated")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<bool>("OutcomeValue")
                         .HasColumnType("bit");
 
                     b.Property<double?>("PropensityScore")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<string>("RowHash")
                         .IsRequired()
@@ -226,12 +217,10 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<double>("TreatmentValue")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<double?>("Weight")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.HasKey("CausalAnalysisRowId");
 
@@ -336,8 +325,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("nvarchar(128)");
 
                     b.Property<double?>("MetricValue")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<string>("Recommendation")
                         .IsRequired()
@@ -355,8 +343,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("nvarchar(32)");
 
                     b.Property<double?>("Threshold")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<string>("VariableName")
                         .HasMaxLength(128)
@@ -384,12 +371,10 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<double?>("ConfidenceIntervalLower")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<double?>("ConfidenceIntervalUpper")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<int>("ControlCount")
                         .HasColumnType("int");
@@ -403,8 +388,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("nvarchar(32)");
 
                     b.Property<double?>("EffectiveSampleSize")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<string>("Estimand")
                         .IsRequired()
@@ -412,8 +396,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("nvarchar(64)");
 
                     b.Property<double>("Estimate")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<string>("EstimatorName")
                         .IsRequired()
@@ -431,12 +414,10 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("nvarchar(4000)");
 
                     b.Property<double?>("PValue")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<double?>("StandardError")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -568,8 +549,7 @@ namespace PharmaAccess.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("CounterfactualResultId"));
 
                     b.Property<double>("BaselinePredictedOutcome")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<long>("CounterfactualScenarioId")
                         .HasColumnType("bigint");
@@ -581,12 +561,10 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<double>("EstimatedDifference")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<double>("InterventionPredictedOutcome")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<int?>("ObservationQuarterId")
                         .HasColumnType("int");
@@ -600,12 +578,10 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("nvarchar(32)");
 
                     b.Property<double?>("UncertaintyLower")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<double?>("UncertaintyUpper")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<string>("WarningMessagesJson")
                         .IsRequired()
@@ -690,8 +666,7 @@ namespace PharmaAccess.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("FeatureImportanceResultId"));
 
                     b.Property<double>("BaselineValue")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -702,8 +677,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("nvarchar(128)");
 
                     b.Property<double>("ImportanceDelta")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<string>("MetricName")
                         .IsRequired()
@@ -714,8 +688,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<double>("PermutedValue")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<int>("Rank")
                         .HasColumnType("int");
@@ -724,8 +697,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<double>("StandardDeviation")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.HasKey("FeatureImportanceResultId");
 
@@ -953,8 +925,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<double?>("Intercept")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<string>("Method")
                         .IsRequired()
@@ -965,8 +936,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<double?>("Slope")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -1027,15 +997,13 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<double>("Probability")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<int>("StateId")
                         .HasColumnType("int");
 
                     b.Property<double>("Threshold")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<string>("UncertaintyStatus")
                         .IsRequired()
@@ -1070,8 +1038,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("nvarchar(64)");
 
                     b.Property<double>("MetricValue")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<long>("ModelTrainingRunId")
                         .HasColumnType("bigint");
@@ -1090,8 +1057,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<double?>("Threshold")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.HasKey("ModelMetricId");
 
@@ -1253,19 +1219,16 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<float>("Probability")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("real(20)");
+                        .HasColumnType("real");
 
                     b.Property<float>("Score")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("real(20)");
+                        .HasColumnType("real");
 
                     b.Property<int>("StateId")
                         .HasColumnType("int");
 
                     b.Property<double>("Threshold")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.HasKey("PredictionRecordId");
 
@@ -1363,6 +1326,40 @@ namespace PharmaAccess.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("ResearchCohortDefinition", "research");
+                });
+
+            modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchDatabaseOwnershipEntity", b =>
+                {
+                    b.Property<int>("ResearchDatabaseOwnershipId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResearchDatabaseOwnershipId"));
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ProjectId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("RepositoryMarker")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("ResearchDatabaseOwnershipId");
+
+                    b.HasIndex("ProjectId")
+                        .IsUnique();
+
+                    b.ToTable("ResearchDatabaseOwnership", "research");
                 });
 
             modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchExclusionRuleEntity", b =>
@@ -1573,8 +1570,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("nvarchar(64)");
 
                     b.Property<double?>("MetricValue")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<long>("ModelTrainingRunId")
                         .HasColumnType("bigint");
@@ -1621,8 +1617,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<double>("F1")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<long>("ModelTrainingRunId")
                         .HasColumnType("bigint");
@@ -1643,20 +1638,16 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("nvarchar(32)");
 
                     b.Property<double>("Precision")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<double>("Recall")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<double>("Specificity")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<double>("Threshold")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.HasKey("ThresholdEvaluationId");
 
@@ -1709,8 +1700,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("nvarchar(32)");
 
                     b.Property<double>("Threshold")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<string>("TreatmentName")
                         .IsRequired()

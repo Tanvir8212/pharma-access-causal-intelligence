@@ -1,0 +1,7 @@
+# Real source validation
+
+Every assigned file is checked for existence, approved canonical root, stable SHA-256, byte size, encoding, delimiter, header, versioned schema profile, row estimate, sample/full dry-run parsing, duplicate assignment, coverage declaration, and source authority. Validation preserves original strings and row numbers but public reports contain no raw values.
+
+For FDA annual first-generic sources, `fda/converted/fda_first_generic_YYYY.csv` is the sole canonical row-validation/import representation. Matching original CSV/XLSX files and the Orange Book ZIP remain registered and hash-verified for provenance but are never imported as duplicate research rows. `FdaConvertedContinuationFragmentV1` explicitly excludes a conversion fragment only when Generic Name and a path-matching SourceYear are populated while ANDA number, applicant, brand, approval date and indication are all blank. The exclusion records source-relative file, record number, rule and structural evidence. Any legitimate-shaped record missing an ANDA number or approval date remains blocking.
+
+FDA profiles map ingredient, dosage form, strength, applicant, application/product numbers, and approval date without inferring commercial launch. Medicaid profiles are versioned by actual headers and preserve missing, suppressed, zero, negative/correction, and unresolved NDC states. A bare ten-digit NDC is ambiguous and is never blindly padded.

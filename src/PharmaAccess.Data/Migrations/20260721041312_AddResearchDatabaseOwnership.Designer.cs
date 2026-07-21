@@ -12,8 +12,8 @@ using PharmaAccess.Data;
 namespace PharmaAccess.Data.Migrations
 {
     [DbContext(typeof(PharmaAccessDbContext))]
-    [Migration("20260721005403_AddCausalInferenceFoundation")]
-    partial class AddCausalInferenceFoundation
+    [Migration("20260721041312_AddResearchDatabaseOwnership")]
+    partial class AddResearchDatabaseOwnership
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1245,6 +1245,310 @@ namespace PharmaAccess.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("PredictionRecord", "ml");
+                });
+
+            modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchAnalysisPlanEntity", b =>
+                {
+                    b.Property<long>("ResearchAnalysisPlanId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ResearchAnalysisPlanId"));
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DefinitionHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("DefinitionJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PlanType")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<long>("ResearchProtocolId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("TestPartitionLockedForSelection")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("VersionCode")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.HasKey("ResearchAnalysisPlanId");
+
+                    b.HasIndex("ResearchProtocolId", "PlanType", "VersionCode")
+                        .IsUnique();
+
+                    b.ToTable("ResearchAnalysisPlan", "research");
+                });
+
+            modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchCohortDefinitionEntity", b =>
+                {
+                    b.Property<long>("ResearchCohortDefinitionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ResearchCohortDefinitionId"));
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DefinitionHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("PopulationDefinition")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RulesJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VersionCode")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.HasKey("ResearchCohortDefinitionId");
+
+                    b.HasIndex("DefinitionHash")
+                        .IsUnique();
+
+                    b.HasIndex("VersionCode")
+                        .IsUnique();
+
+                    b.ToTable("ResearchCohortDefinition", "research");
+                });
+
+            modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchDatabaseOwnershipEntity", b =>
+                {
+                    b.Property<int>("ResearchDatabaseOwnershipId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResearchDatabaseOwnershipId"));
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ProjectId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("RepositoryMarker")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("ResearchDatabaseOwnershipId");
+
+                    b.HasIndex("ProjectId")
+                        .IsUnique();
+
+                    b.ToTable("ResearchDatabaseOwnership", "research");
+                });
+
+            modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchExclusionRuleEntity", b =>
+                {
+                    b.Property<long>("ResearchExclusionRuleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ResearchExclusionRuleId"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<bool>("IsBlocking")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<long>("ResearchCohortDefinitionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("RuleCode")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("ResearchExclusionRuleId");
+
+                    b.HasIndex("ResearchCohortDefinitionId", "RuleCode")
+                        .IsUnique();
+
+                    b.ToTable("ResearchExclusionRule", "research");
+                });
+
+            modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchFreezeArtifactEntity", b =>
+                {
+                    b.Property<long>("ResearchFreezeArtifactId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ResearchFreezeArtifactId"));
+
+                    b.Property<string>("ArtifactType")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<long>("ByteSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RelativePath")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<long>("ResearchDataFreezeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Sha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.HasKey("ResearchFreezeArtifactId");
+
+                    b.HasIndex("ResearchDataFreezeId", "ArtifactType")
+                        .IsUnique();
+
+                    b.ToTable("ResearchFreezeArtifact", "research");
+                });
+
+            modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchFreezeFindingEntity", b =>
+                {
+                    b.Property<long>("ResearchFreezeFindingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ResearchFreezeFindingId"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Recommendation")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<long>("ResearchDataFreezeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Severity")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.HasKey("ResearchFreezeFindingId");
+
+                    b.HasIndex("ResearchDataFreezeId", "Severity", "Code");
+
+                    b.ToTable("ResearchFreezeFinding", "research");
+                });
+
+            modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchFreezeSourceEntity", b =>
+                {
+                    b.Property<long>("ResearchFreezeSourceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ResearchFreezeSourceId"));
+
+                    b.Property<long>("ResearchDataFreezeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ResearchSourceRegistrationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SchemaProfileVersion")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("SourceSha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.HasKey("ResearchFreezeSourceId");
+
+                    b.HasIndex("ResearchSourceRegistrationId");
+
+                    b.HasIndex("ResearchDataFreezeId", "ResearchSourceRegistrationId")
+                        .IsUnique();
+
+                    b.ToTable("ResearchFreezeSource", "research");
+                });
+
+            modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchProtocolApprovalEntity", b =>
+                {
+                    b.Property<long>("ResearchProtocolApprovalId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ResearchProtocolApprovalId"));
+
+                    b.Property<string>("Actor")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime>("DecidedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Decision")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<long>("ResearchProtocolId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ResearchProtocolApprovalId");
+
+                    b.HasIndex("ResearchProtocolId", "DecidedAtUtc");
+
+                    b.ToTable("ResearchProtocolApproval", "research");
                 });
 
             modelBuilder.Entity("PharmaAccess.Data.Entities.SubgroupMetricEntity", b =>
@@ -2953,6 +3257,388 @@ namespace PharmaAccess.Data.Migrations
                     b.ToTable("StateHistoricalProfile", "feature");
                 });
 
+            modelBuilder.Entity("PharmaAccess.Domain.Research.ResearchDataFreeze", b =>
+                {
+                    b.Property<long>("ResearchDataFreezeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ResearchDataFreezeId"));
+
+                    b.Property<int>("BlockingFindingCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CausalProtocolHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("CohortHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DatasetHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<int>("DatasetVersionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DotNetEnvironmentHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("FeatureSchemaHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<int>("FeatureSetVersionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FreezeCode")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("FreezeVersion")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<DateTime?>("FrozenAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FrozenBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GitCommitHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsSynthetic")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PredictiveSplitHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("PythonEnvironmentHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<long>("ResearchProtocolId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SourceManifestHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<int>("WarningCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("ResearchDataFreezeId");
+
+                    b.HasIndex("DatasetVersionId");
+
+                    b.HasIndex("FeatureSetVersionId");
+
+                    b.HasIndex("ResearchProtocolId");
+
+                    b.HasIndex("FreezeCode", "FreezeVersion")
+                        .IsUnique();
+
+                    b.ToTable("ResearchDataFreeze", "research");
+                });
+
+            modelBuilder.Entity("PharmaAccess.Domain.Research.ResearchProtocol", b =>
+                {
+                    b.Property<long>("ResearchProtocolId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ResearchProtocolId"));
+
+                    b.Property<long>("AdjustmentSetVersionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ApprovalNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ApprovedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ApprovedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CensoringPolicy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("DagVersionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("DefinitionHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("ExclusionRulesJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FeatureSetVersionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("InclusionRulesJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MarketWeightPolicyVersion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MissingDataPolicy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MultiplicityPolicy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ObservationWindow")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("OutcomeDefinitionVersionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("PopulationDefinition")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("PredictiveSplitDefinitionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("PrimaryCausalEstimand")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PrimaryCausalQuestion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PrimaryEffectScale")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PrimaryEstimator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PrimaryPredictionTask")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PrimaryPredictiveMetric")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProtocolCode")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("ProtocolVersion")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("ResearchQuestion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecondaryEstimators")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecondaryPredictiveMetrics")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SensitivityAnalysisPlan")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StateEligibilityPolicyVersion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StateEntryPolicyVersion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("StoppingRules")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SubgroupAnalysisPlan")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("TreatmentDefinitionVersionId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ResearchProtocolId");
+
+                    b.HasIndex("DefinitionHash")
+                        .IsUnique();
+
+                    b.HasIndex("ProtocolCode", "ProtocolVersion")
+                        .IsUnique();
+
+                    b.ToTable("ResearchProtocol", "research");
+                });
+
+            modelBuilder.Entity("PharmaAccess.Domain.Research.ResearchSourceRegistration", b =>
+                {
+                    b.Property<long>("SourceRegistryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SourceRegistryId"));
+
+                    b.Property<DateTime>("AccessedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("ByteSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateOnly?>("CoverageEnd")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("CoverageStart")
+                        .HasColumnType("date");
+
+                    b.Property<string>("DatasetName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Delimiter")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Encoding")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExpectedSchemaVersion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsSynthetic")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LicenseOrUsageNotes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LocalFileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OfficialSourceReference")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RegisteredAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RegisteredBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegisteredPath")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<long?>("RowCount")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Sha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("SourceAuthority")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SourceCode")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("SourceType")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("ValidationMessages")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ValidationStatus")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.HasKey("SourceRegistryId");
+
+                    b.HasIndex("Sha256");
+
+                    b.HasIndex("SourceCode");
+
+                    b.HasIndex("SourceCode", "Sha256")
+                        .IsUnique();
+
+                    b.ToTable("ResearchSourceRegistration", "research");
+                });
+
             modelBuilder.Entity("PharmaAccess.Data.Entities.CalibrationBinEntity", b =>
                 {
                     b.HasOne("PharmaAccess.Data.Entities.ModelCalibration", null)
@@ -3210,6 +3896,66 @@ namespace PharmaAccess.Data.Migrations
                     b.HasOne("PharmaAccess.Domain.Entities.State", null)
                         .WithMany()
                         .HasForeignKey("StateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchAnalysisPlanEntity", b =>
+                {
+                    b.HasOne("PharmaAccess.Domain.Research.ResearchProtocol", null)
+                        .WithMany()
+                        .HasForeignKey("ResearchProtocolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchExclusionRuleEntity", b =>
+                {
+                    b.HasOne("PharmaAccess.Data.Entities.ResearchCohortDefinitionEntity", null)
+                        .WithMany()
+                        .HasForeignKey("ResearchCohortDefinitionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchFreezeArtifactEntity", b =>
+                {
+                    b.HasOne("PharmaAccess.Domain.Research.ResearchDataFreeze", null)
+                        .WithMany()
+                        .HasForeignKey("ResearchDataFreezeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchFreezeFindingEntity", b =>
+                {
+                    b.HasOne("PharmaAccess.Domain.Research.ResearchDataFreeze", null)
+                        .WithMany()
+                        .HasForeignKey("ResearchDataFreezeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchFreezeSourceEntity", b =>
+                {
+                    b.HasOne("PharmaAccess.Domain.Research.ResearchDataFreeze", null)
+                        .WithMany()
+                        .HasForeignKey("ResearchDataFreezeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PharmaAccess.Domain.Research.ResearchSourceRegistration", null)
+                        .WithMany()
+                        .HasForeignKey("ResearchSourceRegistrationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchProtocolApprovalEntity", b =>
+                {
+                    b.HasOne("PharmaAccess.Domain.Research.ResearchProtocol", null)
+                        .WithMany()
+                        .HasForeignKey("ResearchProtocolId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -3531,6 +4277,27 @@ namespace PharmaAccess.Data.Migrations
                     b.HasOne("PharmaAccess.Domain.Entities.State", null)
                         .WithMany()
                         .HasForeignKey("StateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PharmaAccess.Domain.Research.ResearchDataFreeze", b =>
+                {
+                    b.HasOne("PharmaAccess.Domain.Entities.DatasetVersion", null)
+                        .WithMany()
+                        .HasForeignKey("DatasetVersionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PharmaAccess.Domain.Features.FeatureSetVersion", null)
+                        .WithMany()
+                        .HasForeignKey("FeatureSetVersionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PharmaAccess.Domain.Research.ResearchProtocol", null)
+                        .WithMany()
+                        .HasForeignKey("ResearchProtocolId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

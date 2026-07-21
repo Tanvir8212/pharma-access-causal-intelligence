@@ -199,8 +199,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("nvarchar(64)");
 
                     b.Property<double>("MetricValue")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.Property<long>("ModelTrainingRunId")
                         .HasColumnType("bigint");
@@ -219,8 +218,7 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<double?>("Threshold")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.HasKey("ModelMetricId");
 
@@ -332,19 +330,16 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<float>("Probability")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("real(20)");
+                        .HasColumnType("real");
 
                     b.Property<float>("Score")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("real(20)");
+                        .HasColumnType("real");
 
                     b.Property<int>("StateId")
                         .HasColumnType("int");
 
                     b.Property<double>("Threshold")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("float(20)");
+                        .HasColumnType("float(53)");
 
                     b.HasKey("PredictionRecordId");
 

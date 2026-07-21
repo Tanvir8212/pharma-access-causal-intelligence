@@ -149,11 +149,13 @@ public sealed class ModelMetadataTests
     }
 
     [Fact]
-    public void Ml_statuses_are_strings_and_metrics_have_precision()
+    public void Ml_statuses_are_strings_and_approximate_numbers_use_valid_sql_server_types()
     {
         Assert.Equal(typeof(string), Entity<MlExperiment>().FindProperty(nameof(MlExperiment.Status))!.GetProviderClrType());
         Assert.Equal(typeof(string), Entity<ModelArtifact>().FindProperty(nameof(ModelArtifact.ApprovalStatus))!.GetProviderClrType());
-        var metric = Entity<ModelMetric>().FindProperty(nameof(ModelMetric.MetricValue)); Assert.Equal(20, metric!.GetPrecision()); Assert.Equal(10, metric.GetScale());
+        var metric = Entity<ModelMetric>().FindProperty(nameof(ModelMetric.MetricValue))!; Assert.Equal("float(53)", metric.GetColumnType()); Assert.Null(metric.GetPrecision()); Assert.Null(metric.GetScale());
+        var score = Entity<PredictionRecord>().FindProperty(nameof(PredictionRecord.Score))!; Assert.Equal("real", score.GetColumnType()); Assert.Null(score.GetPrecision()); Assert.Null(score.GetScale());
+        var probability = Entity<PredictionRecord>().FindProperty(nameof(PredictionRecord.Probability))!; Assert.Equal("real", probability.GetColumnType()); Assert.Null(probability.GetPrecision()); Assert.Null(probability.GetScale());
     }
 
     [Fact]
@@ -165,18 +167,20 @@ public sealed class ModelMetadataTests
         }
         Assert.Contains(Entity<ModelRegistryEntry>().GetIndexes(), x => x.IsUnique && x.GetFilter() == "[IsChampion] = 1");
         Assert.Equal(typeof(string), Entity<ModelCalibration>().FindProperty(nameof(ModelCalibration.Status))!.GetProviderClrType());
-        Assert.Equal(20, Entity<CalibrationMetricEntity>().FindProperty(nameof(CalibrationMetricEntity.MetricValue))!.GetPrecision());
+        var metric = Entity<CalibrationMetricEntity>().FindProperty(nameof(CalibrationMetricEntity.MetricValue))!; Assert.Equal("float(53)", metric.GetColumnType()); Assert.Null(metric.GetPrecision()); Assert.Null(metric.GetScale());
     }
 
     [Fact]
-    public void Causal_lineage_is_restrictive_precise_and_unique()
+    public void Causal_lineage_is_restrictive_uses_approximate_numbers_and_is_unique()
     {
         foreach (var type in new[] { typeof(CausalStudyEntity), typeof(CausalAnalysisRowEntity), typeof(CausalEstimateEntity), typeof(CausalDiagnosticEntity), typeof(CounterfactualScenarioEntity), typeof(CounterfactualResultEntity) }) { var entity=Model.FindEntityType(type);Assert.NotNull(entity);Assert.All(entity.GetForeignKeys(),x=>Assert.Equal(DeleteBehavior.Restrict,x.DeleteBehavior)); }
         Assert.Contains(Entity<CausalStudyEntity>().GetIndexes(),x=>x.IsUnique&&x.Properties.Single().Name==nameof(CausalStudyEntity.StudyCode));
         Assert.Contains(Entity<CausalAnalysisRowEntity>().GetIndexes(),x=>x.IsUnique&&x.Properties.Select(p=>p.Name).SequenceEqual(["CausalStudyId","DrugId","StateId","ObservationQuarterId"]));
         Assert.Equal(typeof(string),Entity<CausalStudyEntity>().FindProperty(nameof(CausalStudyEntity.Status))!.GetProviderClrType());
-        Assert.Equal(20,Entity<CausalEstimateEntity>().FindProperty(nameof(CausalEstimateEntity.Estimate))!.GetPrecision());
-        Assert.Equal(10,Entity<CausalEstimateEntity>().FindProperty(nameof(CausalEstimateEntity.Estimate))!.GetScale());
+        var estimate=Entity<CausalEstimateEntity>().FindProperty(nameof(CausalEstimateEntity.Estimate))!;
+        Assert.Equal("float(53)",estimate.GetColumnType());
+        Assert.Null(estimate.GetPrecision());
+        Assert.Null(estimate.GetScale());
     }
 
     private static IEntityType Entity<TEntity>()

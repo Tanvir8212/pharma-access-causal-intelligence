@@ -1,0 +1,16 @@
+{
+  "version": "example-v1",
+  "privateRootEnvironmentVariable": "PHARMAACCESS_PRIVATE_DATA_ROOT",
+  "assignments": [
+    {
+      "relativePath": "fda/example-first-generic.csv",
+      "category": "FdaFirstGeneric",
+      "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "schemaProfileVersion": "fda-example-v1",
+      "coverageStart": "2021-01-01",
+      "coverageEnd": "2021-12-31",
+      "compressed": false,
+      "extractionPolicy": "none"
+    }
+  ]
+}

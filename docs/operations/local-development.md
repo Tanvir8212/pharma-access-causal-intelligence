@@ -35,3 +35,7 @@ Run `scripts/setup-python-validation.ps1`, then `scripts/run-cross-language-pari
 # Milestone 8 synthetic freeze
 
 Run `scripts/run-synthetic-research-freeze.ps1 -FreezeCode m8-synthetic-freeze-v1` after building. Output is ignored under `artifacts/research-freezes/`. It uses no database, network, real data, training or causal estimation.
+
+## Milestone 9A
+
+Set `PHARMAACCESS_PRIVATE_DATA_ROOT` to the ignored private root. Use the Worker `discover-research-sources` command for metadata-only discovery and `prepare-m9` for a sanitized missing-input report under ignored `artifacts/research-audit/`. Configure a future research connection only through user secrets or environment variables. `PHARMAACCESS_ALLOW_RESEARCH_DB_WRITE=YES` is separately required and is never set by the application. See `docs/research/MILESTONE_9_RUNBOOK.md`; do not run `database update`, real import, final training, or final causal estimation without explicit prerequisites and authorization.

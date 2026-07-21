@@ -133,8 +133,8 @@ namespace PharmaAccess.Data.Migrations
                     ModelTrainingRunId = table.Column<long>(type: "bigint", nullable: false),
                     Partition = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     MetricName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    MetricValue = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false),
-                    Threshold = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: true),
+                    MetricValue = table.Column<double>(type: "float(53)", nullable: false),
+                    Threshold = table.Column<double>(type: "float(53)", nullable: true),
                     SubgroupName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     SubgroupValue = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -164,10 +164,10 @@ namespace PharmaAccess.Data.Migrations
                     StateId = table.Column<int>(type: "int", nullable: false),
                     ObservationQuarterId = table.Column<int>(type: "int", nullable: false),
                     Label = table.Column<bool>(type: "bit", nullable: false),
-                    Score = table.Column<float>(type: "real(20)", precision: 20, scale: 10, nullable: false),
-                    Probability = table.Column<float>(type: "real(20)", precision: 20, scale: 10, nullable: false),
+                    Score = table.Column<float>(type: "real", nullable: false),
+                    Probability = table.Column<float>(type: "real", nullable: false),
                     PredictedLabel = table.Column<bool>(type: "bit", nullable: false),
-                    Threshold = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false),
+                    Threshold = table.Column<double>(type: "float(53)", nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>

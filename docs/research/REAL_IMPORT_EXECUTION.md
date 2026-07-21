@@ -1,0 +1,7 @@
+# Real import execution
+
+`ExecuteResearchDataImport` is a governed future write command. Inputs include approved protocol, private manifest, distinct real dataset code, dry-run/resume, batch size, maximum errors, partial-import policy, correlation ID, and requester. Deterministic batches use one controlled transaction each, idempotent file/row keys, checkpoints, cancellation, and bounded transient retry. Changed hashes invalidate resume. Deterministic validation failures are not retried.
+
+The operator entry point is `scripts/Invoke-ResearchDataImport.ps1`. It requires the exact local server/database, all eight migrations, both ownership-marker fields, `PHARMAACCESS_ALLOW_RESEARCH_DB_WRITE=YES`, an approved protocol, stable manifest hashes, a blocker-free complete validation report, a new dataset-version code, and Git safety. A dirty worktree requires both `-AllowDirtyWorktree` and a recorded reason. It supports `-WhatIf`, confirmation, cancellation, batch size, resume intent and correlation ID. Native failures terminate nonzero. The current repository deliberately keeps confirmed row persistence disabled until the real protocol and persistence adapter receive separate human review; preview/readiness cannot finalize a dataset, train a model, estimate an effect, or approve a freeze.
+
+Milestone 9A implements the plan and checkpoint guards only. No real row is persisted, and datasets are never automatically validated or finalized.
