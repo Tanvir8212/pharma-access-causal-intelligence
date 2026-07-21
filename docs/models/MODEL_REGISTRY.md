@@ -1,3 +1,3 @@
 # Model registry
 
-The registry is deferred. Every future artifact must record experiment, algorithm, parameters, feature/dataset versions, commit, split periods, metrics, approval status, path, and SHA-256 hash. Artifact hashes must be verified before loading.
+Experiment metadata uses the `ml` schema. Artifacts remain filesystem binaries with database metadata only. Statuses are Candidate, ValidationSelected, PendingApproval, Approved, Rejected, Archived, and Corrupted. Milestone 4 creates Candidate and ValidationSelected records only. Prediction requires an explicitly selected or registry-resolved scoreable artifact, matching feature-set/schema hashes, and successful artifact SHA-256 verification.

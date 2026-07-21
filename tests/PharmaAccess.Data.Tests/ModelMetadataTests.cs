@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using PharmaAccess.Domain.Entities;
 using PharmaAccess.Domain.Features;
+using PharmaAccess.Data.Entities;
 using Xunit;
 
 namespace PharmaAccess.Data.Tests;
@@ -43,6 +44,11 @@ public sealed class ModelMetadataTests
     [InlineData(typeof(LaunchQuarterSummary), "LaunchQuarterSummary", "feature")]
     [InlineData(typeof(StateHistoricalProfile), "StateHistoricalProfile", "feature")]
     [InlineData(typeof(RegionalHistoricalProfile), "RegionalHistoricalProfile", "feature")]
+    [InlineData(typeof(MlExperiment), "MlExperiment", "ml")]
+    [InlineData(typeof(ModelTrainingRun), "ModelTrainingRun", "ml")]
+    [InlineData(typeof(ModelMetric), "ModelMetric", "ml")]
+    [InlineData(typeof(ModelArtifact), "ModelArtifact", "ml")]
+    [InlineData(typeof(PredictionRecord), "PredictionRecord", "ml")]
     public void Entities_use_expected_tables(Type type, string table, string schema)
     {
         var entity = Model.FindEntityType(type);
@@ -110,6 +116,25 @@ public sealed class ModelMetadataTests
         Assert.Equal(typeof(string), Entity<FeatureSetVersion>().FindProperty(nameof(FeatureSetVersion.Status))!.GetProviderClrType());
         var property = Entity<LaunchQuarterSummary>().FindProperty(nameof(LaunchQuarterSummary.NumericDistribution)); Assert.Equal(19, property!.GetPrecision()); Assert.Equal(6, property.GetScale());
         var money = Entity<LaunchQuarterSummary>().FindProperty(nameof(LaunchQuarterSummary.TotalReimbursementAmount)); Assert.Equal(19, money!.GetPrecision()); Assert.Equal(4, money.GetScale());
+    }
+
+    [Fact]
+    public void Ml_lineage_is_restrictive_and_artifacts_are_unique()
+    {
+        foreach (var type in new[] { typeof(MlExperiment), typeof(ModelTrainingRun), typeof(ModelMetric), typeof(ModelArtifact), typeof(PredictionRecord) })
+        {
+            var entity = Model.FindEntityType(type); Assert.NotNull(entity); Assert.All(entity.GetForeignKeys(), key => Assert.Equal(DeleteBehavior.Restrict, key.DeleteBehavior));
+        }
+        Assert.Contains(Entity<ModelArtifact>().GetIndexes(), x => x.IsUnique && x.Properties.Single().Name == nameof(ModelArtifact.ModelVersionCode));
+        Assert.Contains(Entity<ModelArtifact>().GetIndexes(), x => x.IsUnique && x.Properties.Single().Name == nameof(ModelArtifact.Sha256));
+    }
+
+    [Fact]
+    public void Ml_statuses_are_strings_and_metrics_have_precision()
+    {
+        Assert.Equal(typeof(string), Entity<MlExperiment>().FindProperty(nameof(MlExperiment.Status))!.GetProviderClrType());
+        Assert.Equal(typeof(string), Entity<ModelArtifact>().FindProperty(nameof(ModelArtifact.ApprovalStatus))!.GetProviderClrType());
+        var metric = Entity<ModelMetric>().FindProperty(nameof(ModelMetric.MetricValue)); Assert.Equal(20, metric!.GetPrecision()); Assert.Equal(10, metric.GetScale());
     }
 
     private static IEntityType Entity<TEntity>()

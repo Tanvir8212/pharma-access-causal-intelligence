@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PharmaAccess.Domain.Entities;
 using PharmaAccess.Domain.Features;
+using PharmaAccess.Data.Entities;
 
 namespace PharmaAccess.Data;
 
@@ -29,6 +30,11 @@ public sealed class PharmaAccessDbContext(DbContextOptions<PharmaAccessDbContext
     public DbSet<LaunchQuarterSummary> LaunchQuarterSummaries => Set<LaunchQuarterSummary>();
     public DbSet<StateHistoricalProfile> StateHistoricalProfiles => Set<StateHistoricalProfile>();
     public DbSet<RegionalHistoricalProfile> RegionalHistoricalProfiles => Set<RegionalHistoricalProfile>();
+    public DbSet<MlExperiment> MlExperiments => Set<MlExperiment>();
+    public DbSet<ModelTrainingRun> ModelTrainingRuns => Set<ModelTrainingRun>();
+    public DbSet<ModelMetric> ModelMetrics => Set<ModelMetric>();
+    public DbSet<ModelArtifact> ModelArtifacts => Set<ModelArtifact>();
+    public DbSet<PredictionRecord> PredictionRecords => Set<PredictionRecord>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {

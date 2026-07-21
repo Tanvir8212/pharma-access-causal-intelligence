@@ -8,6 +8,7 @@
 - `audit`: JobRun.
 - `raw`, `stg`, `feature`, `ml`, `causal`, `rag`, and `research` are not created by Milestone 1.
 - `feature` (Milestone 3): FeatureSetVersion, FeatureDefinition, DrugStateQuarterFeature, LaunchQuarterSummary, StateHistoricalProfile, and RegionalHistoricalProfile. `core.GenericLaunch` owns the documented approval-proxy identity.
+- `ml` (Milestone 4): MlExperiment, ModelTrainingRun, ModelMetric, ModelArtifact, and optional PredictionRecord development rows. Relationships use restricted deletion and binaries remain outside SQL Server.
 
 Integer surrogate keys favor clear SQL Server and EF compatibility. Reimbursement uses `decimal(19,4)`; prescription counts and provenance row counts use `bigint` where scale warrants it. Enums persist as controlled strings. A model-wide converter restores `DateTimeKind.Utc` when UTC timestamps are materialized. Calendar dates use `date`.
 

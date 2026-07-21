@@ -1,9 +1,5 @@
 # Model card template
 
-- Purpose and task
-- Intended and prohibited uses
-- Dataset and feature versions and periods
-- Algorithm and hyperparameters
-- Metrics, calibration, subgroup performance, and uncertainty
-- Limitations, drift policy, ethical considerations
-- Approval and rollback history
+Every completed synthetic run records task/intended and prohibited uses, algorithm, dataset/feature versions, periods/groups, feature selection, excluded features, prevalence, validation/test metrics, threshold, artifact hash, code/package lineage, limitations, leakage protections, subgroup/calibration status, and manual approval state.
+
+Required statements: not for clinical use; Medicaid utilization is not complete national access; FDA approval may not equal commercial launch; probabilities are not described as calibrated; feature importance is not causal evidence; synthetic metrics are not research results.

@@ -17,3 +17,7 @@ Do not run `dotnet ef database update` against an existing database. Automatic s
 Run `dotnet tool restore`, restore/build/test the solution, then use `dotnet ef migrations has-pending-model-changes` with the Data project, API startup project, and `PharmaAccessDbContext`. Review scripts may be generated with `dotnet ef migrations script --idempotent`; never run `database update` implicitly. Feature builds default to dry-run at their caller boundary and require explicit configured persistence.
 
 The feature dictionary review artifact is under `artifacts/reports/milestone-3/`. No SQL Server is required for metadata tests or the synthetic in-memory pipeline.
+
+## Milestone 4 synthetic ML
+
+ML.NET 5.0.0 packages restore through NuGet. Generated models/cards/manifests belong under ignored `artifacts/models/`; set `PHARMAACCESS_ML_ARTIFACT_ROOT` only for an explicit local synthetic workflow. LightGBM requires its packaged native runtime. Build/tests need no SQL Server or internet after restore. Never present synthetic metrics as research results or run `dotnet ef database update` implicitly.
