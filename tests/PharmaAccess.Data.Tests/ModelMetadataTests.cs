@@ -49,6 +49,15 @@ public sealed class ModelMetadataTests
     [InlineData(typeof(ModelMetric), "ModelMetric", "ml")]
     [InlineData(typeof(ModelArtifact), "ModelArtifact", "ml")]
     [InlineData(typeof(PredictionRecord), "PredictionRecord", "ml")]
+    [InlineData(typeof(ModelCalibration), "ModelCalibration", "ml")]
+    [InlineData(typeof(CalibrationMetricEntity), "CalibrationMetric", "ml")]
+    [InlineData(typeof(CalibrationBinEntity), "CalibrationBin", "ml")]
+    [InlineData(typeof(FeatureImportanceEntity), "FeatureImportanceResult", "ml")]
+    [InlineData(typeof(SubgroupMetricEntity), "SubgroupMetric", "ml")]
+    [InlineData(typeof(ModelErrorAnalysisEntity), "ModelErrorAnalysis", "ml")]
+    [InlineData(typeof(ThresholdEvaluationEntity), "ThresholdEvaluation", "ml")]
+    [InlineData(typeof(ModelApprovalEntity), "ModelApproval", "ml")]
+    [InlineData(typeof(ModelRegistryEntry), "ModelRegistryEntry", "ml")]
     public void Entities_use_expected_tables(Type type, string table, string schema)
     {
         var entity = Model.FindEntityType(type);
@@ -135,6 +144,18 @@ public sealed class ModelMetadataTests
         Assert.Equal(typeof(string), Entity<MlExperiment>().FindProperty(nameof(MlExperiment.Status))!.GetProviderClrType());
         Assert.Equal(typeof(string), Entity<ModelArtifact>().FindProperty(nameof(ModelArtifact.ApprovalStatus))!.GetProviderClrType());
         var metric = Entity<ModelMetric>().FindProperty(nameof(ModelMetric.MetricValue)); Assert.Equal(20, metric!.GetPrecision()); Assert.Equal(10, metric.GetScale());
+    }
+
+    [Fact]
+    public void Ml_evaluation_lineage_is_restrictive_and_one_champion_is_enforced()
+    {
+        foreach (var type in new[] { typeof(ModelCalibration), typeof(CalibrationMetricEntity), typeof(CalibrationBinEntity), typeof(FeatureImportanceEntity), typeof(SubgroupMetricEntity), typeof(ModelErrorAnalysisEntity), typeof(ThresholdEvaluationEntity), typeof(ModelApprovalEntity), typeof(ModelRegistryEntry) })
+        {
+            var entity = Model.FindEntityType(type); Assert.NotNull(entity); Assert.All(entity.GetForeignKeys(), key => Assert.Equal(DeleteBehavior.Restrict, key.DeleteBehavior));
+        }
+        Assert.Contains(Entity<ModelRegistryEntry>().GetIndexes(), x => x.IsUnique && x.GetFilter() == "[IsChampion] = 1");
+        Assert.Equal(typeof(string), Entity<ModelCalibration>().FindProperty(nameof(ModelCalibration.Status))!.GetProviderClrType());
+        Assert.Equal(20, Entity<CalibrationMetricEntity>().FindProperty(nameof(CalibrationMetricEntity.MetricValue))!.GetPrecision());
     }
 
     private static IEntityType Entity<TEntity>()

@@ -27,3 +27,6 @@ All provenance-sensitive foreign keys use `Restrict`; deleting a parent must nev
 `AddPharmaAccessData` registers the context and SQL Server provider. A missing connection string is rejected only if the context is resolved. The API does not resolve the context during ordinary health startup, and it never calls `Database.Migrate`.
 
 The design-time factory uses a non-secret LocalDB-shaped placeholder only to build migration metadata. Migration creation, listing with `--no-connect`, and script generation do not connect. Migration application is an explicit future operational decision; `dotnet ef database update` was not run.
+# Milestone 5 evaluation metadata
+
+Schema `ml` adds ModelCalibration, CalibrationMetric, CalibrationBin, FeatureImportanceResult, SubgroupMetric, ModelErrorAnalysis, ThresholdEvaluation, ModelApproval and ModelRegistryEntry. Relationships restrict deletion. Numeric evaluation fields use explicit precision. A filtered unique index enforces one champion per task/environment. Reports remain hashed filesystem artifacts; plots/binaries are not stored in SQL Server.

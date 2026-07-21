@@ -35,6 +35,15 @@ public sealed class PharmaAccessDbContext(DbContextOptions<PharmaAccessDbContext
     public DbSet<ModelMetric> ModelMetrics => Set<ModelMetric>();
     public DbSet<ModelArtifact> ModelArtifacts => Set<ModelArtifact>();
     public DbSet<PredictionRecord> PredictionRecords => Set<PredictionRecord>();
+    public DbSet<ModelCalibration> ModelCalibrations => Set<ModelCalibration>();
+    public DbSet<CalibrationMetricEntity> CalibrationMetrics => Set<CalibrationMetricEntity>();
+    public DbSet<CalibrationBinEntity> CalibrationBins => Set<CalibrationBinEntity>();
+    public DbSet<FeatureImportanceEntity> FeatureImportanceResults => Set<FeatureImportanceEntity>();
+    public DbSet<SubgroupMetricEntity> SubgroupMetrics => Set<SubgroupMetricEntity>();
+    public DbSet<ModelErrorAnalysisEntity> ModelErrorAnalyses => Set<ModelErrorAnalysisEntity>();
+    public DbSet<ThresholdEvaluationEntity> ThresholdEvaluations => Set<ThresholdEvaluationEntity>();
+    public DbSet<ModelApprovalEntity> ModelApprovals => Set<ModelApprovalEntity>();
+    public DbSet<ModelRegistryEntry> ModelRegistryEntries => Set<ModelRegistryEntry>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {

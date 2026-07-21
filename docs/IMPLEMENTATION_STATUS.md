@@ -112,6 +112,24 @@ Known baseline limitation: the branch received for Milestone 3 still documents M
 - No causal inference, counterfactual simulation, Gemini/RAG, Python, real-data import, real-database connection, automatic promotion, or commit was performed.
 - Final verification: tool restore and solution restore succeeded; build succeeded with 0 warnings and 0 errors; 140 tests passed with 0 failures and 0 skips. EF reported no pending model changes and listed all four migrations with `--no-connect`. The review-only idempotent script was generated under ignored `artifacts/reports/milestone-4/`; no migration was applied.
 
+## Milestone 5 model evaluation, calibration, and error analysis
+
+- Extended only `NextQuarterStateEntry` with validation-only Platt calibration; retained raw probabilities; explicit calibration status; Brier, log-loss, ECE, MCE, slope/intercept and configurable calibration bins. Small/single-class validation inputs fail safely, and the frozen calibrator alone evaluates test rows.
+- Added support-based uncertainty (`Low`, `Moderate`, `High`, `Unsupported`) using threshold distance, calibration support, missing/out-of-range/unseen inputs, distribution distance, model disagreement and schema compatibility. It is explicitly not a confidence interval or clinical conclusion.
+- Added deterministic repeated validation-only permutation importance, safe subgroup evaluation across eight dimensions, structured error categories, and six validation-only threshold policies. Test labels cannot fit calibration, select thresholds or calculate model-selection importance.
+- Added explicit audited approval with artifact integrity/schema checks, development-only synthetic restriction, and controlled champion replacement. Training still cannot approve or promote a model; no approval endpoint was exposed.
+- Added nine restricted-lineage tables under `ml` and migration `20260721003057_AddModelEvaluationFoundation`. EF reports no pending model changes. The migration was not applied and no database connection or update occurred.
+- Generated eight JSON/Markdown synthetic development reports plus a review-only idempotent SQL script under ignored `artifacts/reports/milestone-5/`. Every evaluation report states: **Synthetic development data — not research results.**
+- No packages were added. Existing stable ML.NET 5.0.0 and EF Core 10.0.10 package families are unchanged. Domain remains free of ML.NET and EF Core.
+- Verification: local tool restore and solution restore succeeded; build succeeded with 0 warnings and 0 errors; 161 tests passed, 0 failed, 0 skipped. EF `migrations list --no-connect` listed all five migrations including `AddModelEvaluationFoundation`.
+- No causal inference, counterfactual simulation, Gemini/RAG, Python, full real-data training, database migration application, automatic model promotion, or commit was performed.
+
+Unresolved: SQL Server execution is not integration-tested because no isolated test database was authorized; EF metadata and generated SQL were verified without substituting an in-memory provider. The synthetic workflow establishes mechanics only and provides no research performance evidence.
+
 ## Next milestone
+
+Milestone 6 is not started and requires explicit authorization. Proposed scope: authenticated administrative approval/deployment controls and operational model-governance integration for `NextQuarterStateEntry`; causal inference, counterfactuals, Gemini/RAG, Python and real-data execution remain separately governed.
+
+## Superseded Milestone 4 handoff
 
 Milestone 5 must not begin until Milestone 4 is accepted. Proposed scope: next predictive task(s), richer categorical handling and calibration/subgroup diagnostics, explicit validation-only threshold policies, and controlled experiment comparison—still without causal inference, Gemini/RAG, or Python unless a later authorized milestone requires them.

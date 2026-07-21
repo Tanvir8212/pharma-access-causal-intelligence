@@ -21,3 +21,6 @@ The feature dictionary review artifact is under `artifacts/reports/milestone-3/`
 ## Milestone 4 synthetic ML
 
 ML.NET 5.0.0 packages restore through NuGet. Generated models/cards/manifests belong under ignored `artifacts/models/`; set `PHARMAACCESS_ML_ARTIFACT_ROOT` only for an explicit local synthetic workflow. LightGBM requires its packaged native runtime. Build/tests need no SQL Server or internet after restore. Never present synthetic metrics as research results or run `dotnet ef database update` implicitly.
+# Milestone 5 evaluation
+
+Synthetic reports are generated beneath `artifacts/reports/milestone-5/` and must state that they are not research results. Restore local tools before EF commands. Generate/list/script migrations only; never run `dotnet ef database update` as part of this milestone. Approval has no anonymous API endpoint.

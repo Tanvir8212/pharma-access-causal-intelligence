@@ -1,7 +1,7 @@
 namespace PharmaAccess.Application.MachineLearning;
 
 public enum MlPartition { Training, Validation, Test }
-public enum ModelApprovalStatus { Candidate, ValidationSelected, PendingApproval, Approved, Rejected, Archived, Corrupted }
+public enum ModelApprovalStatus { Candidate, ValidationSelected, PendingApproval, Approved, Champion, Challenger, Rejected, Archived, Corrupted }
 public enum MlRunStatus { Pending, Running, Succeeded, Failed, Cancelled }
 public enum TrainerKind { LogisticRegression, FastTree, FastForest, LightGbm }
 
@@ -58,9 +58,17 @@ public sealed record TrainNextQuarterStateEntryResult(string Task, string Experi
     IReadOnlyList<string> Warnings);
 
 public sealed record NextStateEntryPredictionRequest(string? ModelVersion, long FeatureRowId, int FeatureSetVersionId);
-public sealed record NextStateEntryPredictionResponse(string Task, float Probability, float Score, bool PredictedLabel,
-    double Threshold, string ModelVersion, int DatasetVersionId, int FeatureSetVersionId,
-    int ObservationQuarterId, IReadOnlyList<string> Warnings, DateTime CreatedAtUtc);
+public sealed record NextStateEntryPredictionResponse(string Task, float RawProbability, float? CalibratedProbability,
+    CalibrationStatus CalibrationStatus, float Score, bool PredictedLabel, double Threshold,
+    UncertaintyStatus UncertaintyStatus, IReadOnlyList<string> UncertaintyReasons,
+    IReadOnlyList<string> ImportantFeatureSummary, string ModelVersion, ModelApprovalStatus ModelApprovalStatus,
+    int DatasetVersionId, int FeatureSetVersionId, int ObservationQuarterId,
+    IReadOnlyList<string> Warnings, DateTime CreatedAtUtc)
+{
+    // Backward-compatible alias for Milestone 4 consumers. RawProbability is the
+    // explicit Milestone 5 name; calibration never overwrites the raw score.
+    public float Probability => RawProbability;
+}
 
 public interface INextQuarterStateEntryTrainingService
 {

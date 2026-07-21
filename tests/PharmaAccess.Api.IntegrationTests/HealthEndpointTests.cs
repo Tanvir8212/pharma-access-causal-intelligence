@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Xunit;
 using System.Text;
+using System.Text.Json;
+using PharmaAccess.Application.MachineLearning;
 
 namespace PharmaAccess.Api.IntegrationTests
 {
@@ -38,6 +40,14 @@ namespace PharmaAccess.Api.IntegrationTests
             Assert.Equal(HttpStatusCode.BadRequest, bad.StatusCode);
             var unavailable = await client.PostAsync("/api/v1/predictions/next-state-entry", new StringContent("{\"featureRowId\":1,\"featureSetVersionId\":1}", Encoding.UTF8, "application/json"));
             Assert.Equal(HttpStatusCode.ServiceUnavailable, unavailable.StatusCode);
+        }
+
+        [Fact]
+        public void Prediction_contract_serializes_raw_calibrated_uncertainty_and_lineage_fields()
+        {
+            var response = new NextStateEntryPredictionResponse("NextQuarterStateEntry", .7f, .65f, CalibrationStatus.Validated, 1.2f, true, .5, UncertaintyStatus.Moderate, ["near threshold"], ["historical volume associated with prediction"], "model-v1", ModelApprovalStatus.Approved, 2, 3, 4, ["development only"], DateTime.UnixEpoch);
+            var json = JsonSerializer.Serialize(response);
+            Assert.Contains("RawProbability", json); Assert.Contains("CalibratedProbability", json); Assert.Contains("CalibrationStatus", json); Assert.Contains("UncertaintyStatus", json); Assert.Contains("ModelApprovalStatus", json); Assert.Contains("DatasetVersionId", json); Assert.DoesNotContain("ConfidenceScore", json);
         }
     }
 }
