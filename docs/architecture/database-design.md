@@ -30,3 +30,7 @@ The design-time factory uses a non-secret LocalDB-shaped placeholder only to bui
 # Milestone 5 evaluation metadata
 
 Schema `ml` adds ModelCalibration, CalibrationMetric, CalibrationBin, FeatureImportanceResult, SubgroupMetric, ModelErrorAnalysis, ThresholdEvaluation, ModelApproval and ModelRegistryEntry. Relationships restrict deletion. Numeric evaluation fields use explicit precision. A filtered unique index enforces one champion per task/environment. Reports remain hashed filesystem artifacts; plots/binaries are not stored in SQL Server.
+
+# Milestone 6 causal metadata
+
+Schema `causal` owns CausalStudy, CausalDagDefinition, CausalAdjustmentSet, TreatmentDefinition, CausalAnalysisRow, CausalEstimate, CausalDiagnostic, CounterfactualScenario, and CounterfactualResult. Dataset/feature/core-quarter/drug/state lineage is restrictive, analytical row grain is unique per study/drug/state/observation quarter, statuses are string-converted, and estimates use decimal-compatible `decimal(20,10)` storage. No cascade delete may erase finalized lineage.

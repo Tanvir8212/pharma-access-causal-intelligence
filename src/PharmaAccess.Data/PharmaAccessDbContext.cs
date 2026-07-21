@@ -44,6 +44,15 @@ public sealed class PharmaAccessDbContext(DbContextOptions<PharmaAccessDbContext
     public DbSet<ThresholdEvaluationEntity> ThresholdEvaluations => Set<ThresholdEvaluationEntity>();
     public DbSet<ModelApprovalEntity> ModelApprovals => Set<ModelApprovalEntity>();
     public DbSet<ModelRegistryEntry> ModelRegistryEntries => Set<ModelRegistryEntry>();
+    public DbSet<CausalStudyEntity> CausalStudies => Set<CausalStudyEntity>();
+    public DbSet<CausalDagDefinitionEntity> CausalDagDefinitions => Set<CausalDagDefinitionEntity>();
+    public DbSet<CausalAdjustmentSetEntity> CausalAdjustmentSets => Set<CausalAdjustmentSetEntity>();
+    public DbSet<TreatmentDefinitionEntity> TreatmentDefinitions => Set<TreatmentDefinitionEntity>();
+    public DbSet<CausalAnalysisRowEntity> CausalAnalysisRows => Set<CausalAnalysisRowEntity>();
+    public DbSet<CausalEstimateEntity> CausalEstimates => Set<CausalEstimateEntity>();
+    public DbSet<CausalDiagnosticEntity> CausalDiagnostics => Set<CausalDiagnosticEntity>();
+    public DbSet<CounterfactualScenarioEntity> CounterfactualScenarios => Set<CounterfactualScenarioEntity>();
+    public DbSet<CounterfactualResultEntity> CounterfactualResults => Set<CounterfactualResultEntity>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {

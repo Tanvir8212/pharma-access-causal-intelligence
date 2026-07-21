@@ -58,6 +58,15 @@ public sealed class ModelMetadataTests
     [InlineData(typeof(ThresholdEvaluationEntity), "ThresholdEvaluation", "ml")]
     [InlineData(typeof(ModelApprovalEntity), "ModelApproval", "ml")]
     [InlineData(typeof(ModelRegistryEntry), "ModelRegistryEntry", "ml")]
+    [InlineData(typeof(CausalStudyEntity), "CausalStudy", "causal")]
+    [InlineData(typeof(CausalDagDefinitionEntity), "CausalDagDefinition", "causal")]
+    [InlineData(typeof(CausalAdjustmentSetEntity), "CausalAdjustmentSet", "causal")]
+    [InlineData(typeof(TreatmentDefinitionEntity), "TreatmentDefinition", "causal")]
+    [InlineData(typeof(CausalAnalysisRowEntity), "CausalAnalysisRow", "causal")]
+    [InlineData(typeof(CausalEstimateEntity), "CausalEstimate", "causal")]
+    [InlineData(typeof(CausalDiagnosticEntity), "CausalDiagnostic", "causal")]
+    [InlineData(typeof(CounterfactualScenarioEntity), "CounterfactualScenario", "causal")]
+    [InlineData(typeof(CounterfactualResultEntity), "CounterfactualResult", "causal")]
     public void Entities_use_expected_tables(Type type, string table, string schema)
     {
         var entity = Model.FindEntityType(type);
@@ -156,6 +165,17 @@ public sealed class ModelMetadataTests
         Assert.Contains(Entity<ModelRegistryEntry>().GetIndexes(), x => x.IsUnique && x.GetFilter() == "[IsChampion] = 1");
         Assert.Equal(typeof(string), Entity<ModelCalibration>().FindProperty(nameof(ModelCalibration.Status))!.GetProviderClrType());
         Assert.Equal(20, Entity<CalibrationMetricEntity>().FindProperty(nameof(CalibrationMetricEntity.MetricValue))!.GetPrecision());
+    }
+
+    [Fact]
+    public void Causal_lineage_is_restrictive_precise_and_unique()
+    {
+        foreach (var type in new[] { typeof(CausalStudyEntity), typeof(CausalAnalysisRowEntity), typeof(CausalEstimateEntity), typeof(CausalDiagnosticEntity), typeof(CounterfactualScenarioEntity), typeof(CounterfactualResultEntity) }) { var entity=Model.FindEntityType(type);Assert.NotNull(entity);Assert.All(entity.GetForeignKeys(),x=>Assert.Equal(DeleteBehavior.Restrict,x.DeleteBehavior)); }
+        Assert.Contains(Entity<CausalStudyEntity>().GetIndexes(),x=>x.IsUnique&&x.Properties.Single().Name==nameof(CausalStudyEntity.StudyCode));
+        Assert.Contains(Entity<CausalAnalysisRowEntity>().GetIndexes(),x=>x.IsUnique&&x.Properties.Select(p=>p.Name).SequenceEqual(["CausalStudyId","DrugId","StateId","ObservationQuarterId"]));
+        Assert.Equal(typeof(string),Entity<CausalStudyEntity>().FindProperty(nameof(CausalStudyEntity.Status))!.GetProviderClrType());
+        Assert.Equal(20,Entity<CausalEstimateEntity>().FindProperty(nameof(CausalEstimateEntity.Estimate))!.GetPrecision());
+        Assert.Equal(10,Entity<CausalEstimateEntity>().FindProperty(nameof(CausalEstimateEntity.Estimate))!.GetScale());
     }
 
     private static IEntityType Entity<TEntity>()

@@ -1,0 +1,13 @@
+digraph PeerStateExposureToNextQuarterEntry {
+  PeerStateExposure [role="Treatment"];
+  NextQuarterEntry [role="Outcome"];
+  BaselineHistory [role="Confounder"];
+  DrugOrLaunchCharacteristics [role="Confounder"];
+  UnmeasuredCommercialFactors [role="Unobserved"];
+  TrueMarketLaunchTiming [role="Unobserved"];
+  BaselineHistory -> PeerStateExposure; BaselineHistory -> NextQuarterEntry;
+  DrugOrLaunchCharacteristics -> PeerStateExposure; DrugOrLaunchCharacteristics -> NextQuarterEntry;
+  UnmeasuredCommercialFactors -> PeerStateExposure; UnmeasuredCommercialFactors -> NextQuarterEntry;
+  TrueMarketLaunchTiming -> PeerStateExposure; TrueMarketLaunchTiming -> NextQuarterEntry;
+  PeerStateExposure -> NextQuarterEntry;
+}

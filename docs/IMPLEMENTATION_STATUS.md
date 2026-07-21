@@ -1,8 +1,12 @@
 # Implementation status
 
-## Current milestone
+## Historical status header (superseded below)
 
 Milestone 4 — Predictive ML Baseline Vertical Slice — implemented and verified for `NextQuarterStateEntry`. Milestone 5 was not started.
+
+## Current milestone
+
+Milestone 6 — Causal Inference Foundation and Counterfactual Simulation — implemented and verified with deterministic synthetic development data only. Milestone 7 was not started.
 
 ## Environment and packages
 
@@ -129,6 +133,25 @@ Unresolved: SQL Server execution is not integration-tested because no isolated t
 ## Next milestone
 
 Milestone 6 is not started and requires explicit authorization. Proposed scope: authenticated administrative approval/deployment controls and operational model-governance integration for `NextQuarterStateEntry`; causal inference, counterfactuals, Gemini/RAG, Python and real-data execution remain separately governed.
+
+## Milestone 6 causal inference foundation
+
+- Added `PeerStateExposureToNextQuarterEntry` at eligible Drug × State × ObservationQuarter grain, with observation-quarter time zero, next-quarter binary first-entry outcome, explicit censoring exclusion, and blocking temporal-order findings.
+- Added versioned neighbor, regional, similar-state, and early-large-market exposure definitions that preserve continuous exposure and a prespecified binary assignment. Added human-authored DAG v1 JSON/DOT, leakage-safe adjustment definitions, and an assumption registry that acknowledges partial interference rather than silently claiming SUTVA.
+- Primary estimand is ATT risk difference; ATE is supported. Implemented descriptive unadjusted difference, propensity weighting, binary outcome regression, and AIPW. The deterministic C# logistic propensity model excludes outcome variables and is independent of the Milestone 4 predictive model.
+- Added ATT/ATE weights, explicit clipping, extreme-weight reporting, effective sample size, common-support/positivity diagnostics, unweighted/weighted SMD, variance ratio, missingness difference, grouped-launch percentile bootstrap, future/pre-treatment/permutation placebos, sensitivity records, and safely suppressed exploratory subgroup estimates.
+- Added support-aware counterfactual scenarios with `Supported`, `WeaklySupported`, `Extrapolative`, and `Unsupported` classifications. Results retain study/estimator/scenario lineage and are described as model-based observational scenarios, never guaranteed outcomes.
+- Added nine restrictive-lineage EF tables under schema `causal` and migration `20260721005403_AddCausalInferenceFoundation`. The migration was not applied; no database was contacted or modified.
+- Deterministic synthetic workflow: 480 generated rows across 60 launches and 8 states; 465 eligible after 15 censored rows, 195 treated, and 270 controls. The generator has a declared synthetic log-odds treatment coefficient of 1.0. Synthetic development risk-difference estimates were: descriptive 0.2362, propensity weighted 0.1875, outcome regression 0.1658, and AIPW 0.1881 with grouped-bootstrap interval [0.1254, 0.2822]. These are **synthetic development data — not research results**.
+- Generated twelve JSON/Markdown causal reports and a review-only idempotent SQL script beneath ignored `artifacts/reports/milestone-6/`. No package was added.
+- Verification: local tool restore, solution restore, and build succeeded; build produced 0 warnings and 0 errors. All 191 tests passed with 0 failures and 0 skips. EF reported no pending model changes and listed six migrations with `--no-connect`.
+- No real or previous-project data/database was accessed; no Python, DoWhy/EconML, Gemini/RAG, autonomous agent, unrestricted API endpoint, database update, or commit was added.
+
+Unresolved identification risks: strict no-interference is implausible; unmeasured manufacturer, wholesaler, payer, supply, and true launch timing can confound estimates; approval and utilization are imperfect access measures; suppression/missingness may be informative; DAG and nuisance-model specifications may be wrong; and cross-fitting is not implemented. Cross-fitting and independent Python validation are required before final research analysis.
+
+## Milestone 7 boundary
+
+Milestone 7 is not started. The exact proposed scope is an isolated, pinned Python research-validation environment; schema-versioned .NET export/import; independent cohort reconstruction; DoWhy identification/refutation; EconML DML/heterogeneous-effect sensitivity; and strict JSON result validation. It must not change the production C# estimates silently, use a real database without authorization, or add Gemini/RAG.
 
 ## Superseded Milestone 4 handoff
 

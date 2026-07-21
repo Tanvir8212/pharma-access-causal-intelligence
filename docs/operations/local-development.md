@@ -24,3 +24,7 @@ ML.NET 5.0.0 packages restore through NuGet. Generated models/cards/manifests be
 # Milestone 5 evaluation
 
 Synthetic reports are generated beneath `artifacts/reports/milestone-5/` and must state that they are not research results. Restore local tools before EF commands. Generate/list/script migrations only; never run `dotnet ef database update` as part of this milestone. Approval has no anonymous API endpoint.
+
+# Milestone 6 causal development
+
+Run only the deterministic synthetic causal workflow; never point it at a previous or real research database. Set `PHARMAACCESS_M6_REPORT_PATH=artifacts/reports/milestone-6` to retain generated reports. Restore/build/test normally, generate migration metadata and an idempotent review script, and do not run `dotnet ef database update`. Causal execution endpoints remain disabled because authentication is absent.
