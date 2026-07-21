@@ -15,6 +15,11 @@ param(
 
 $ErrorActionPreference = 'Stop'
 trap { [Console]::Error.WriteLine($_.Exception.Message); exit 1 }
+$integrityModule = Join-Path $PSScriptRoot 'modules\ResearchSourceIntegrity.psm1'
+$inheritedGlobalWhatIf = $global:WhatIfPreference
+$global:WhatIfPreference = $false
+try { Import-Module -Name $integrityModule -Force }
+finally { $global:WhatIfPreference = $inheritedGlobalWhatIf }
 
 $approvedDatabase = 'PharmaAccessCausalIntelligence_ResearchDev'
 $approvedServer = '.'
@@ -28,7 +33,9 @@ $expectedMigrations = @(
     '20260721003057_AddModelEvaluationFoundation',
     '20260721005403_AddCausalInferenceFoundation',
     '20260721022430_AddResearchFreezeFoundation',
-    '20260721041312_AddResearchDatabaseOwnership'
+    '20260721041312_AddResearchDatabaseOwnership',
+    '20260721163531_AddResearchImportPersistence',
+    '20260721164107_AddResearchReferenceRawPersistence'
 )
 
 function Assert-NativeSuccess([string]$operation) {
@@ -52,7 +59,7 @@ if (-not $serverMatch.Success -or $serverMatch.Groups[1].Value -cne $approvedSer
 $migrationOutput = @(sqlcmd -S $approvedServer -E -d $approvedDatabase -b -W -h-1 -Q 'SET NOCOUNT ON; SELECT MigrationId FROM dbo.__EFMigrationsHistory ORDER BY MigrationId;')
 Assert-NativeSuccess 'Reading migration history'
 $appliedMigrations = @($migrationOutput | ForEach-Object { $_.Trim() } | Where-Object { $_ -match '^\d{14}_' })
-if ($appliedMigrations.Count -ne 8 -or (Compare-Object $expectedMigrations $appliedMigrations)) { throw 'Exactly the eight expected migrations must be applied.' }
+if ($appliedMigrations.Count -ne $expectedMigrations.Count -or (Compare-Object $expectedMigrations $appliedMigrations)) { throw "Exactly the $($expectedMigrations.Count) expected migrations must be applied; the persistence migrations are currently pending." }
 
 $ownershipOutput = @(sqlcmd -S $approvedServer -E -d $approvedDatabase -b -W -h-1 -s '|' -Q 'SET NOCOUNT ON; SELECT ProjectId,RepositoryMarker FROM research.ResearchDatabaseOwnership;')
 Assert-NativeSuccess 'Reading database ownership marker'
@@ -72,10 +79,9 @@ $validation = Get-Content -LiteralPath $ValidationReportPath -Raw | ConvertFrom-
 if (@($validation.blockingFindings).Count -ne 0 -or [long]$validation.rejectedRows -ne 0) { throw 'Complete real-source validation still has blocking or rejected rows.' }
 $manifest = Get-Content -LiteralPath $ManifestPath -Raw | ConvertFrom-Json
 foreach ($assignment in $manifest.assignments) {
-    $sourcePath = Join-Path $PrivateRoot $assignment.relativePath
-    if (-not (Test-Path -LiteralPath $sourcePath -PathType Leaf)) { throw "Manifest source is missing: $($assignment.relativePath)" }
-    $actualHash = (Get-FileHash -LiteralPath $sourcePath -Algorithm SHA256).Hash
-    if ($actualHash -cne $assignment.sha256) { throw "Source hash changed: $($assignment.relativePath)" }
+    $integrity = Test-ResearchSourceAssignment -PrivateRoot $PrivateRoot -RelativePath $assignment.relativePath -ExpectedHash ([string]$assignment.sha256)
+    if ($integrity.Status -eq 'Missing') { throw "Manifest source is missing: $($assignment.relativePath)" }
+    if ($integrity.Status -eq 'Changed') { throw "Source hash changed: $($assignment.relativePath); expected $($integrity.ExpectedHash); actual $($integrity.ActualHash)" }
 }
 
 $datasetOutput = @(sqlcmd -S $approvedServer -E -d $approvedDatabase -b -W -h-1 -Q "SET NOCOUNT ON; SELECT COUNT(*) FROM core.DatasetVersion WHERE VersionCode=N'$($DatasetVersion.Replace("'","''"))';")
@@ -102,4 +108,13 @@ Write-Host "Batch size: $BatchSize; resume: $Resume; correlation ID: $Correlatio
 Write-Host 'Phases: safety, manifest, hashes, validation, registrations, raw FDA, raw Medicaid, references, FDA canonical selection, normalization, NDC quality, drug mapping, review queue, duplicate classification, reconciliation, non-final DatasetVersion, profiling, blocking gates.'
 
 if (-not $PSCmdlet.ShouldProcess("$approvedDatabase / $DatasetVersion", 'Execute guarded real-data import through validation without finalization, training, causal estimation, or freeze approval')) { return }
-throw 'Confirmed real-row persistence is intentionally unavailable until a separately reviewed persistence adapter and approved real protocol are present. No rows were written.'
+$gitCommit = @(git rev-parse HEAD | Select-Object -Last 1)[0].Trim()
+Assert-NativeSuccess 'Reading Git commit'
+$env:ConnectionStrings__PharmaAccess = $connection
+try {
+    dotnet run --no-build --project '.\src\PharmaAccess.Worker\PharmaAccess.Worker.csproj' -- execute-real-import $PrivateRoot $ManifestPath $ValidationReportPath $ProtocolCode $ProtocolVersion $DatasetVersion $BatchSize $CorrelationId $gitCommit ([bool]$Resume).ToString().ToLowerInvariant()
+    Assert-NativeSuccess 'Executing guarded research import'
+}
+finally {
+    Remove-Item Env:ConnectionStrings__PharmaAccess -ErrorAction SilentlyContinue
+}

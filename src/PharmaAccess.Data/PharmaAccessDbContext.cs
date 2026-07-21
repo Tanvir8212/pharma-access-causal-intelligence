@@ -65,6 +65,12 @@ public sealed class PharmaAccessDbContext(DbContextOptions<PharmaAccessDbContext
     public DbSet<ResearchExclusionRuleEntity> ResearchExclusionRules => Set<ResearchExclusionRuleEntity>();
     public DbSet<ResearchAnalysisPlanEntity> ResearchAnalysisPlans => Set<ResearchAnalysisPlanEntity>();
     public DbSet<ResearchDatabaseOwnershipEntity> ResearchDatabaseOwnership => Set<ResearchDatabaseOwnershipEntity>();
+    public DbSet<ResearchImportRunEntity> ResearchImportRuns => Set<ResearchImportRunEntity>();
+    public DbSet<ResearchImportCheckpointEntity> ResearchImportCheckpoints => Set<ResearchImportCheckpointEntity>();
+    public DbSet<ResearchRejectedRowEntity> ResearchRejectedRows => Set<ResearchRejectedRowEntity>();
+    public DbSet<ResearchMappingReviewEntity> ResearchMappingReviews => Set<ResearchMappingReviewEntity>();
+    public DbSet<ResearchImportAuditEventEntity> ResearchImportAuditEvents => Set<ResearchImportAuditEventEntity>();
+    public DbSet<ResearchReferenceRawEntity> ResearchReferenceRawRecords => Set<ResearchReferenceRawEntity>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {

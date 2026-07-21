@@ -4,6 +4,7 @@ namespace PharmaAccess.Domain.Entities;
 public sealed class FdaFirstGenericApprovalRaw
 {
     private FdaFirstGenericApprovalRaw() { }
+    public FdaFirstGenericApprovalRaw(int sourceFileId,long sourceRowNumber,string? applicationNumber,string? ingredient,string? dosageForm,string? strength,string? applicant,string? approvalDate,DateTime? parsedApprovalDate,RawParseStatus status,string? errorCode,string? errorMessage,DateTime importedAtUtc){SourceFileId=sourceFileId;SourceRowNumber=sourceRowNumber;ApplicationNumberRaw=applicationNumber;ActiveIngredientRaw=ingredient;DosageFormRaw=dosageForm;StrengthRaw=strength;ApplicantRaw=applicant;ApprovalDateRaw=approvalDate;ParsedApprovalDate=parsedApprovalDate;ParseStatus=status;ErrorCode=errorCode;ErrorMessage=errorMessage;ImportedAtUtc=importedAtUtc;}
     public long RawRecordId { get; private set; }
     public int SourceFileId { get; private set; }
     public long SourceRowNumber { get; private set; }
@@ -24,6 +25,7 @@ public sealed class FdaFirstGenericApprovalRaw
 public sealed class MedicaidStateDrugUtilizationRaw
 {
     private MedicaidStateDrugUtilizationRaw() { }
+    public MedicaidStateDrugUtilizationRaw(int sourceFileId,long sourceRowNumber,string? utilizationType,string? state,string? ndc,string? product,string? packageSize,string? year,string? quarter,string? prescriptions,string? reimbursement,int? parsedYear,int? parsedQuarter,long? parsedPrescriptions,decimal? parsedReimbursement,RawParseStatus status,string? errorCode,string? errorMessage,DateTime importedAtUtc){SourceFileId=sourceFileId;SourceRowNumber=sourceRowNumber;UtilizationTypeRaw=utilizationType;StateCodeRaw=state;NdcRaw=ndc;ProductNameRaw=product;PackageSizeRaw=packageSize;YearRaw=year;QuarterRaw=quarter;PrescriptionCountRaw=prescriptions;ReimbursementAmountRaw=reimbursement;ParsedYear=parsedYear;ParsedQuarter=parsedQuarter;ParsedPrescriptionCount=parsedPrescriptions;ParsedReimbursementAmount=parsedReimbursement;ParseStatus=status;ErrorCode=errorCode;ErrorMessage=errorMessage;ImportedAtUtc=importedAtUtc;}
     public long RawRecordId { get; private set; }
     public int SourceFileId { get; private set; }
     public long SourceRowNumber { get; private set; }
@@ -49,6 +51,7 @@ public sealed class MedicaidStateDrugUtilizationRaw
 public sealed class StateReferenceRaw
 {
     private StateReferenceRaw() { }
+    public StateReferenceRaw(int sourceFileId,long sourceRowNumber,string? code,string? name,string? region,string? division,string? eligibility,RawParseStatus status,string? errorCode,string? errorMessage,DateTime importedAtUtc){SourceFileId=sourceFileId;SourceRowNumber=sourceRowNumber;StateCodeRaw=code;StateNameRaw=name;RegionRaw=region;DivisionRaw=division;EligibilityRaw=eligibility;ParseStatus=status;ErrorCode=errorCode;ErrorMessage=errorMessage;ImportedAtUtc=importedAtUtc;}
     public long RawRecordId { get; private set; }
     public int SourceFileId { get; private set; }
     public long SourceRowNumber { get; private set; }

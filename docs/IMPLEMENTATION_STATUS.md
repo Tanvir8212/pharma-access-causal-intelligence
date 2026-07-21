@@ -178,6 +178,13 @@ Unresolved: SQL Server execution is not integration-tested because no isolated t
 
 Milestone 6 is not started and requires explicit authorization. Proposed scope: authenticated administrative approval/deployment controls and operational model-governance integration for `NextQuarterStateEntry`; causal inference, counterfactuals, Gemini/RAG, Python and real-data execution remain separately governed.
 
+## Milestone 9B protocol and persistence preparation (uncommitted)
+
+- Added a reviewable `approval-to-access-real`/`1.0` protocol definition and separate guarded Draft, UnderReview, display, and approval workflows. Creation is intentionally blocked while exact FDA cohort dates, temporal split boundaries, peer-exposure details, and NDC handling remain human decisions.
+- Added application persistence contracts/coordinator and an EF Core SQL Server adapter for source lineage, import runs, bounded transactional batches, raw FDA/Medicaid/reference rows, exclusions, rejection/duplicate records, mapping review, checkpoints/resume, reconciliation, profiling/audit, and a non-final DatasetVersion.
+- Added migrations `AddResearchImportPersistence` and `AddResearchReferenceRawPersistence`. They were generated only and were not applied; the dedicated database therefore remains at the previously verified eight migrations and confirmed import is blocked.
+- No protocol lifecycle write, database migration, real import, dataset finalization, feature/model training, causal estimation, freeze approval, or commit was performed.
+
 ## Milestone 6 causal inference foundation
 
 - Added `PeerStateExposureToNextQuarterEntry` at eligible Drug × State × ObservationQuarter grain, with observation-quarter time zero, next-quarter binary first-entry outcome, explicit censoring exclusion, and blocking temporal-order findings.

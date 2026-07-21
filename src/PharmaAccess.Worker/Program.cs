@@ -1,6 +1,9 @@
 using PharmaAccess.Application.Causal;
 using PharmaAccess.Causal;
 using PharmaAccess.Application.Research;
+using Microsoft.EntityFrameworkCore;
+using PharmaAccess.Data;
+using PharmaAccess.Data.Research;
 
 namespace PharmaAccess.Worker
 {
@@ -45,6 +48,30 @@ namespace PharmaAccess.Worker
             {
                 if (args.Length != 4) { Console.Error.WriteLine("Usage: validate-m9-real-sources <private-root> <private-manifest-json> <sanitized-validation-json>"); return 2; }
                 var report = new MilestoneNineRealSourceWorkflow().Validate(args[1], args[2], args[3]); Console.WriteLine($"Dry run inspected {report.TotalRows} rows; accepted {report.AcceptedRows}; rejected {report.RejectedRows}; blockers {report.BlockingFindings.Count}. No database writes occurred."); return report.BlockingFindings.Count == 0 ? 0 : 4;
+            }
+            if (args.Length > 0 && args[0] is "create-real-protocol" or "submit-real-protocol" or "show-real-protocol")
+            {
+                var connection = Environment.GetEnvironmentVariable("ConnectionStrings__PharmaAccess"); if (string.IsNullOrWhiteSpace(connection)) { Console.Error.WriteLine("The process-scoped PharmaAccess connection is required."); return 2; }
+                var options = new DbContextOptionsBuilder<PharmaAccessDbContext>().UseSqlServer(connection).Options; using var db = new PharmaAccessDbContext(options); var service = new ResearchProtocolCommandService(db);
+                if (args[0] == "create-real-protocol") { if (args.Length != 2) return 2; var p = service.CreateDraftAsync(args[1]).GetAwaiter().GetResult(); Console.WriteLine($"Created protocol {p.ProtocolCode}/{p.ProtocolVersion} as {p.Status}; it was not submitted or approved."); return 0; }
+                if (args.Length != 3) return 2;
+                if (args[0] == "submit-real-protocol") { var p = service.SubmitAsync(args[1], args[2]).GetAwaiter().GetResult(); Console.WriteLine($"Submitted protocol {p.ProtocolCode}/{p.ProtocolVersion} as {p.Status}; it was not approved."); return 0; }
+                var found = service.GetAsync(args[1], args[2]).GetAwaiter().GetResult(); if (found is null) { Console.Error.WriteLine("Protocol does not exist."); return 4; } Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(found, new System.Text.Json.JsonSerializerOptions { WriteIndented = true })); return 0;
+            }
+            if (args.Length > 0 && args[0] == "execute-real-import")
+            {
+                if (args.Length != 11 || !int.TryParse(args[7], out var batchSize) || !bool.TryParse(args[10], out var resume))
+                {
+                    Console.Error.WriteLine("Usage: execute-real-import <private-root> <manifest> <validation> <protocol-code> <protocol-version> <dataset-version> <batch-size> <correlation-id> <git-commit> <resume:true|false>");
+                    return 2;
+                }
+                var connection = Environment.GetEnvironmentVariable("ConnectionStrings__PharmaAccess");
+                if (string.IsNullOrWhiteSpace(connection)) { Console.Error.WriteLine("The process-scoped PharmaAccess connection is required."); return 2; }
+                var options = new DbContextOptionsBuilder<PharmaAccessDbContext>().UseSqlServer(connection).Options;
+                using var db = new PharmaAccessDbContext(options);
+                var completion = new ResearchImportExecutionService(db).ExecuteAsync(args[1], args[2], args[3], args[4], args[5], args[6], batchSize, args[8], args[9], resume, CancellationToken.None).GetAwaiter().GetResult();
+                Console.WriteLine($"Import reconciled {completion.Registered} rows and stopped with DatasetVersion non-final. Reconciliation: {completion.ReconciliationHash}");
+                return 0;
             }
             Console.WriteLine("PharmaAccess Worker is ready. No long-running jobs are configured."); return 0;
         }

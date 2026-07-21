@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PharmaAccess.Data;
 
@@ -11,9 +12,11 @@ using PharmaAccess.Data;
 namespace PharmaAccess.Data.Migrations
 {
     [DbContext(typeof(PharmaAccessDbContext))]
-    partial class PharmaAccessDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260721163531_AddResearchImportPersistence")]
+    partial class AddResearchImportPersistence
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1719,35 +1722,6 @@ namespace PharmaAccess.Data.Migrations
                     b.HasIndex("ResearchProtocolId", "DecidedAtUtc");
 
                     b.ToTable("ResearchProtocolApproval", "research");
-                });
-
-            modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchReferenceRawEntity", b =>
-                {
-                    b.Property<long>("ResearchReferenceRawId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ResearchReferenceRawId"));
-
-                    b.Property<DateTime>("ImportedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("RawValuesJson")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SourceFileId")
-                        .HasColumnType("int");
-
-                    b.Property<long>("SourceRowNumber")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("ResearchReferenceRawId");
-
-                    b.HasIndex("SourceFileId", "SourceRowNumber")
-                        .IsUnique();
-
-                    b.ToTable("ResearchReferenceRaw", "raw");
                 });
 
             modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchRejectedRowEntity", b =>
@@ -4253,15 +4227,6 @@ namespace PharmaAccess.Data.Migrations
                     b.HasOne("PharmaAccess.Domain.Research.ResearchProtocol", null)
                         .WithMany()
                         .HasForeignKey("ResearchProtocolId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("PharmaAccess.Data.Entities.ResearchReferenceRawEntity", b =>
-                {
-                    b.HasOne("PharmaAccess.Domain.Entities.SourceFile", null)
-                        .WithMany()
-                        .HasForeignKey("SourceFileId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

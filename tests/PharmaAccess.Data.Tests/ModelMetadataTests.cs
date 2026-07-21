@@ -129,6 +129,14 @@ public sealed class ModelMetadataTests
         }
     }
 
+    [Theory]
+    [InlineData(typeof(ResearchImportRunEntity),"ResearchImportRun")]
+    [InlineData(typeof(ResearchImportCheckpointEntity),"ResearchImportCheckpoint")]
+    [InlineData(typeof(ResearchRejectedRowEntity),"ResearchRejectedRow")]
+    [InlineData(typeof(ResearchMappingReviewEntity),"ResearchMappingReview")]
+    [InlineData(typeof(ResearchImportAuditEventEntity),"ResearchImportAuditEvent")]
+    public void Research_import_persistence_entities_use_research_schema(Type type,string table){var entity=Model.FindEntityType(type);Assert.NotNull(entity);Assert.Equal("research",entity.GetSchema());Assert.Equal(table,entity.GetTableName());Assert.All(entity.GetForeignKeys(),x=>Assert.Equal(DeleteBehavior.Restrict,x.DeleteBehavior));}
+
     [Fact]
     public void Feature_status_enums_are_strings_and_precision_is_explicit()
     {
