@@ -198,6 +198,14 @@ Milestone 6 is not started and requires explicit authorization. Proposed scope: 
 - Generated, but did not apply, `AddAuthoritativeReferenceIdentity`, adding immutable typed FDA/NLM snapshot, product-family, and mapping-evidence structures with restrictive lineage and lookup indexes. Reference import and final mapping were not run.
 - Read-only Medicaid feasibility baseline: 72,903 distinct raw NDC values, 72,900 valid normalized eleven-digit values, two distinct ambiguous values, one distinct invalid value, and no missing distinct value. Full linkage coverage remains unmeasured.
 
+## Milestone 9 FDA-only deterministic feasibility
+
+- Human-approved protocol amendment `approval-to-access-real/1.1` was persisted through Draft, UnderReview, and Approved with actor, timestamp, definition hash, and FDA-only conditions. Version 1.0 remains unchanged.
+- Applied `AddAuthoritativeReferenceIdentity` and the narrow `ExpandNdcPackageDescriptionRaw` correction through the guarded migration workflow. The first reference-import attempt rolled back atomically after discovering two authoritative package descriptions above 2,000 characters.
+- Imported and reconciled 48,502 Orange Book products; 29,219 Drugs@FDA applications; 51,537 products; 52,151 marketing statuses; 26,436 TE rows; 137,239 FDA NDC products; and 255,285 packages using bounded `SqlBulkCopy` batches.
+- Built 57,227 candidate-only product families. No mapping evidence was accepted. Of 72,900 valid distinct Medicaid NDCs, 38,941 exactly matched FDA NDC packages and 9,194 had one candidate family, covering 18.6720% of raw utilization rows.
+- Target-launch linkage is scientifically insufficient: 1/423 (0.2364%) of 2021–2024 launches had one deterministic candidate because all 515 raw launch rows lack product number, form/route, and strength. RxNorm is an optional but scientifically important enhancement; a one-launch restricted cohort would create extreme selection.
+
 ## Milestone 6 causal inference foundation
 
 - Added `PeerStateExposureToNextQuarterEntry` at eligible Drug × State × ObservationQuarter grain, with observation-quarter time zero, next-quarter binary first-entry outcome, explicit censoring exclusion, and blocking temporal-order findings.

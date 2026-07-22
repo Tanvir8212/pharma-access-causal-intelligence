@@ -97,6 +97,13 @@ namespace PharmaAccess.Worker
             {
                 var connection=Environment.GetEnvironmentVariable("ConnectionStrings__PharmaAccess");if(string.IsNullOrWhiteSpace(connection))return 2;var results=BulkImportBenchmark.RunAsync(connection,1_000_000,CancellationToken.None).GetAwaiter().GetResult();foreach(var result in results)Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(result));return results.All(x=>x.Reconciled)?0:5;
             }
+            if (args.Length > 0 && args[0] == "import-fda-references")
+            {
+                if(args.Length!=3){Console.Error.WriteLine("Usage: import-fda-references <repository-root> <snapshot-code>");return 2;}
+                var connection=Environment.GetEnvironmentVariable("ConnectionStrings__PharmaAccess");if(string.IsNullOrWhiteSpace(connection))return 2;
+                var options=new DbContextOptionsBuilder<PharmaAccessDbContext>().UseSqlServer(connection).Options;using var db=new PharmaAccessDbContext(options);
+                var result=new FdaReferenceImportService(db).ImportAsync(args[1],args[2],CancellationToken.None).GetAwaiter().GetResult();Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(result));return 0;
+            }
             Console.WriteLine("PharmaAccess Worker is ready. No long-running jobs are configured."); return 0;
         }
     }
