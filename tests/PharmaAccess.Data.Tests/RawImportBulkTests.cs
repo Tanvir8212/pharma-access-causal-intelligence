@@ -1,0 +1,14 @@
+using PharmaAccess.Application.Research;
+using PharmaAccess.Data.Research;
+using Xunit;
+
+namespace PharmaAccess.Data.Tests;
+
+public sealed class RawImportBulkTests
+{
+    [Fact] public void Medicaid_reader_has_exact_columns_lineage_and_suppression_nulls(){var row=new RawImportRow(42,ImportRowDisposition.Accepted,new Dictionary<string,string?>{{"Utilization Type","FFS"},{"State","CA"},{"NDC","1234567890"},{"Year","2022"},{"Quarter","2"},{"Suppression Used","true"},{"Number of Prescriptions","17"},{"Total Amount Reimbursed","21.50"}});using var reader=new RawImportBulkDataReader(ImportSourceKind.Medicaid,7,[row],DateTime.UnixEpoch);Assert.Equal(19,reader.FieldCount);Assert.Equal(RawImportBulkDataReader.MedicaidColumns,Enumerable.Range(0,reader.FieldCount).Select(reader.GetName));Assert.True(reader.Read());Assert.Equal(7,reader.GetInt32(0));Assert.Equal(42,reader.GetInt64(1));Assert.Equal(DBNull.Value,reader.GetValue(13));Assert.Equal(DBNull.Value,reader.GetValue(14));Assert.False(reader.Read());}
+    [Fact] public void Fda_reader_has_exact_columns_and_source_row(){var row=new RawImportRow(9,ImportRowDisposition.Accepted,new Dictionary<string,string?>{{"ANDA Number","12345"},{"Generic Name","fixture"},{"ANDA Applicant","applicant"},{"ANDA Approval Date","2024-01-02"}});using var reader=new RawImportBulkDataReader(ImportSourceKind.Fda,3,[row],DateTime.UnixEpoch);Assert.Equal(RawImportBulkDataReader.FdaColumns,Enumerable.Range(0,reader.FieldCount).Select(reader.GetName));Assert.True(reader.Read());Assert.Equal(3,reader.GetInt32(0));Assert.Equal(9,reader.GetInt64(1));Assert.Equal("12345",reader.GetString(2));}
+    [Theory][InlineData(20000)][InlineData(50000)][InlineData(100000)]public void Supported_bulk_batch_sizes_are_bounded(int size){var rows=Enumerable.Range(1,size).Select(i=>new RawImportRow(i,ImportRowDisposition.Accepted,new Dictionary<string,string?>())).ToArray();using var reader=new RawImportBulkDataReader(ImportSourceKind.Medicaid,1,rows,DateTime.UnixEpoch);var count=0;while(reader.Read())count++;Assert.Equal(size,count);Assert.True(GC.GetTotalMemory(false)<512L*1024*1024);}
+    [Fact] public void Persistence_uses_streaming_bulk_copy_without_tracking_raw_entities(){var root=FindRoot();var code=File.ReadAllText(Path.Combine(root,"src","PharmaAccess.Data","Research","EfResearchImportPersistence.cs"));Assert.Contains("SqlBulkCopy",code);Assert.Contains("EnableStreaming=true",code);Assert.Contains("TableLock|SqlBulkCopyOptions.CheckConstraints",code);Assert.Contains("BulkCopyTimeout=0",code);Assert.DoesNotContain("FdaFirstGenericApprovalRawRecords.Add",code);Assert.DoesNotContain("MedicaidStateDrugUtilizationRawRecords.Add",code);Assert.Contains("ChangeTracker.Clear",code);}
+    private static string FindRoot(){var d=new DirectoryInfo(AppContext.BaseDirectory);while(d is not null&&!File.Exists(Path.Combine(d.FullName,"PharmaAccess.sln")))d=d.Parent;return d?.FullName??throw new InvalidOperationException();}
+}

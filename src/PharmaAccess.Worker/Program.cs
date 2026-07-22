@@ -60,16 +60,16 @@ namespace PharmaAccess.Worker
             }
             if (args.Length > 0 && args[0] == "execute-real-import")
             {
-                if (args.Length != 11 || !int.TryParse(args[7], out var batchSize) || !bool.TryParse(args[10], out var resume))
+                if (args.Length != 12 || !int.TryParse(args[7], out var batchSize) || !bool.TryParse(args[10], out var resume))
                 {
-                    Console.Error.WriteLine("Usage: execute-real-import <private-root> <manifest> <validation> <protocol-code> <protocol-version> <dataset-version> <batch-size> <correlation-id> <git-commit> <resume:true|false>");
+                    Console.Error.WriteLine("Usage: execute-real-import <private-root> <manifest> <validation> <protocol-code> <protocol-version> <dataset-version> <batch-size> <correlation-id> <git-commit> <resume:true|false> <resume-audit-id-or-dash>");
                     return 2;
                 }
                 var connection = Environment.GetEnvironmentVariable("ConnectionStrings__PharmaAccess");
                 if (string.IsNullOrWhiteSpace(connection)) { Console.Error.WriteLine("The process-scoped PharmaAccess connection is required."); return 2; }
                 var options = new DbContextOptionsBuilder<PharmaAccessDbContext>().UseSqlServer(connection).Options;
                 using var db = new PharmaAccessDbContext(options);
-                var completion = new ResearchImportExecutionService(db).ExecuteAsync(args[1], args[2], args[3], args[4], args[5], args[6], batchSize, args[8], args[9], resume, CancellationToken.None).GetAwaiter().GetResult();
+                var completion = new ResearchImportExecutionService(db).ExecuteAsync(args[1], args[2], args[3], args[4], args[5], args[6], batchSize, args[8], args[9], resume, args[11]=="-"?null:args[11], CancellationToken.None).GetAwaiter().GetResult();
                 Console.WriteLine($"Import reconciled {completion.Registered} rows and stopped with DatasetVersion non-final. Reconciliation: {completion.ReconciliationHash}");
                 return 0;
             }
@@ -84,6 +84,18 @@ namespace PharmaAccess.Worker
                 if (args[9] != "PharmaAccess.Worker/guarded-real-import") { Console.Error.WriteLine("Registered-by identity is not authoritative."); return 2; }
                 Console.WriteLine($"Validated initialization payload: VersionCode={plan.Dataset.VersionCode}; sources={plan.Sources.Count}; correlation={plan.Run.CorrelationId}; no records persisted.");
                 return 0;
+            }
+            if (args.Length > 0 && args[0] == "validate-real-import-resume")
+            {
+                if (args.Length != 11) { Console.Error.WriteLine("Usage: validate-real-import-resume <private-root> <manifest> <validation> <protocol-code> <protocol-version> <dataset-version> <previous-correlation-id> <resume-audit-id> <git-commit> <batch-size>"); return 2; }
+                var connection = Environment.GetEnvironmentVariable("ConnectionStrings__PharmaAccess"); if (string.IsNullOrWhiteSpace(connection)) return 2;
+                var options = new DbContextOptionsBuilder<PharmaAccessDbContext>().UseSqlServer(connection).Options; using var db = new PharmaAccessDbContext(options);
+                var summary = new ResearchImportExecutionService(db).ValidateResumeAsync(args[1],args[2],args[3],args[4],args[5],args[6],args[7],args[8],args[9],CancellationToken.None).GetAwaiter().GetResult();
+                Console.WriteLine($"Resume validated: committed={summary.RowsCommitted}; nextSource={summary.NextSource}; nextRow={summary.NextRow}; remaining={summary.Remaining}; previousCorrelation={args[7]}; resumeAudit={args[8]}; batchSize={args[10]}; no records persisted."); return 0;
+            }
+            if (args.Length > 0 && args[0] == "benchmark-bulk-import")
+            {
+                var connection=Environment.GetEnvironmentVariable("ConnectionStrings__PharmaAccess");if(string.IsNullOrWhiteSpace(connection))return 2;var results=BulkImportBenchmark.RunAsync(connection,1_000_000,CancellationToken.None).GetAwaiter().GetResult();foreach(var result in results)Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(result));return results.All(x=>x.Reconciled)?0:5;
             }
             Console.WriteLine("PharmaAccess Worker is ready. No long-running jobs are configured."); return 0;
         }

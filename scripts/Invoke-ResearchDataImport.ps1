@@ -6,7 +6,7 @@ param(
     [Parameter(Mandatory)][string]$ProtocolCode,
     [Parameter(Mandatory)][string]$ProtocolVersion,
     [Parameter(Mandatory)][string]$DatasetVersion,
-    [ValidateRange(100, 100000)][int]$BatchSize = 5000,
+    [ValidateSet(20000, 50000, 100000)][int]$BatchSize = 50000,
     [string]$CorrelationId = [Guid]::NewGuid().ToString('N'),
     [switch]$Resume,
     [switch]$AllowDirtyWorktree,
@@ -121,7 +121,7 @@ finally {
 if (-not $PSCmdlet.ShouldProcess("$approvedDatabase / $DatasetVersion", 'Execute guarded real-data import through validation without finalization, training, causal estimation, or freeze approval')) { return }
 $env:ConnectionStrings__PharmaAccess = $connection
 try {
-    dotnet run --no-build --project '.\src\PharmaAccess.Worker\PharmaAccess.Worker.csproj' -- execute-real-import $PrivateRoot $ManifestPath $ValidationReportPath $ProtocolCode $ProtocolVersion $DatasetVersion $BatchSize $CorrelationId $gitCommit ([bool]$Resume).ToString().ToLowerInvariant()
+    dotnet run --no-build --project '.\src\PharmaAccess.Worker\PharmaAccess.Worker.csproj' -- execute-real-import $PrivateRoot $ManifestPath $ValidationReportPath $ProtocolCode $ProtocolVersion $DatasetVersion $BatchSize $CorrelationId $gitCommit ([bool]$Resume).ToString().ToLowerInvariant() '-'
     Assert-NativeSuccess 'Executing guarded research import'
 }
 finally {
