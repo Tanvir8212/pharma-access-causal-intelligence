@@ -228,3 +228,9 @@ The planned boundary was an isolated, pinned Python research-validation environm
 ## Superseded Milestone 4 handoff
 
 Milestone 5 must not begin until Milestone 4 is accepted. Proposed scope: next predictive task(s), richer categorical handling and calibration/subgroup diagnostics, explicit validation-only threshold policies, and controlled experiment comparison—still without causal inference, Gemini/RAG, or Python unless a later authorized milestone requires them.
+# Milestone 9 ANDA launch-unit freeze candidate (2026-07-22)
+
+- Human decision recorded as immutable `anda-launch-unit-v1`: the official FDA first-generic approval event, keyed by six-digit ANDA, approval date, approval-page year, and sequence, is the primary analytical launch unit. Strength products and package NDCs are children and remain grouped by launch.
+- Exact target eligibility reconciliation: A=231, B=30, C=101, D=4 (366 total); 261 have an authoritative package-NDC universe, 231 have observed Medicaid utilization, and 30 are known-universe/no-utilization events.
+- The dataset remains `Validating / InProgress`; `TotalRows` and `FinalizedAtUtc` remain null. No accepted mapping, panel, predictive training, causal estimation, freeze, or Milestone 10 work was performed.
+- Freeze readiness is blocked by the missing instantiated `state-eligibility-v1` membership, missing frozen `historical-market-weight-v1` values, and lack of a deterministic FDA NDC-to-strength-product number relationship for multi-product ANDAs. See `artifacts/research-audit/m9-validation-blockers.json`.
