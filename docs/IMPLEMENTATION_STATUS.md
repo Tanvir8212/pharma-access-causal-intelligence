@@ -244,3 +244,11 @@ Milestone 5 must not begin until Milestone 4 is accepted. Proposed scope: next p
 - Independent grouped cross-fitted Python AIPW is -0.01382. The material discrepancy is attributed to different nuisance-model fitting procedures, is prominently disclosed, and was accepted by the human reviewer as a methodological limitation rather than a data-integrity failure.
 - Freeze `real-2021-2025-v1-final/1.0` is `ReadyForAnalysis`, has zero blocking findings, records the discrepancy warning and human decision, and persists hashes for all required final artifacts.
 - Final verification: solution restore/build succeeded with zero warnings and errors; 283 .NET tests passed; pip check passed; 25 Python tests passed.
+
+## Runnable local read-only application
+
+- Reused `PharmaAccess.Web` as a server-rendered Razor Pages application and retained `PharmaAccess.Api` as the JSON API host; no duplicate project was created.
+- Added database-backed finalized-dataset summaries, frozen-artifact metric parsing, a deterministic evidence-linked research answer service, `/health`, `/api/ask`, and Home, Dashboard, and Ask pages.
+- Web/API EF access is `AsNoTracking` and protected by a command interceptor that rejects data-definition and data-modification commands. No `SaveChanges` path or research-write gate is registered by either host.
+- Added the guarded local runner `scripts/Run-PharmaAccessWeb.ps1` for HTTP 5187 and HTTPS 7187 using the existing User Secrets connection string.
+- Verification: solution build completed with zero warnings/errors and all 299 .NET tests passed. Live process verification was attempted but the execution environment rejected process launch after its approval quota was exhausted; endpoint behavior is covered by TestServer integration tests.

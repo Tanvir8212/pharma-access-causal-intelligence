@@ -1,0 +1,6 @@
+@page
+@model IndexModel
+@{ViewData["Title"]="Home";}
+<section class="hero"><p class="eyebrow">FINALIZED RESEARCH</p><h1>PharmaAccess AI</h1><p>State-level access intelligence for newly approved generic drugs.</p></section>
+<section class="grid"><article><span>Dataset</span><strong>@Model.Data.DatasetVersion</strong><small>@Model.Data.Status · @Model.Data.ValidationStatus</small></article><article><span>Eligible launches</span><strong>@Model.Data.EligibleLaunches</strong></article><article><span>State-quarter rows</span><strong>@Model.Data.TotalRows.ToString("N0")</strong></article><article><span>Finalized UTC</span><strong class="date">@Model.Data.FinalizedAtUtc?.ToString("yyyy-MM-dd HH:mm:ss")</strong></article></section>
+<section><h2>Chronological grouped split</h2><div class="grid"><article><span>Training</span><strong>@Model.Data.TrainLaunches</strong></article><article><span>Validation</span><strong>@Model.Data.ValidationLaunches</strong></article><article><span>Locked test</span><strong>@Model.Data.TestLaunches</strong></article></div></section>

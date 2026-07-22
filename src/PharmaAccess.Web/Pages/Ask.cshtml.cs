@@ -1,0 +1,3 @@
+using Microsoft.AspNetCore.Mvc;using Microsoft.AspNetCore.Mvc.RazorPages;using PharmaAccess.Application.Research;
+namespace PharmaAccess.Web.Pages;
+public sealed class AskModel(IResearchAnswerService answers) : PageModel { [BindProperty]public string Question{get;set;}="";public ResearchAnswer? Result{get;private set;}public async Task<IActionResult> OnPost(CancellationToken ct){if(string.IsNullOrWhiteSpace(Question)||Question.Length>500){ModelState.AddModelError(nameof(Question),"Enter a question of 1 to 500 characters.");return Page();}Result=await answers.AnswerAsync(Question,ct);return Page();} }

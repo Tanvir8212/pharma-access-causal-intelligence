@@ -1,0 +1,4 @@
+@page
+@model AskModel
+@{ViewData["Title"]="Ask";}
+<h1>Ask the finalized study</h1><p class="lede">Deterministic answers from verified database values and frozen artifacts. No generated SQL or external AI.</p><form method="post"><label asp-for="Question">Question</label><textarea asp-for="Question" maxlength="500" placeholder="What was the causal result?"></textarea><span asp-validation-for="Question"></span><button type="submit">Ask</button></form>@if(Model.Result is not null){<section class="answer"><h2>Answer</h2><p>@Model.Result.Answer</p><h3>Evidence</h3><ul>@foreach(var s in Model.Result.Sources){<li>@s</li>}</ul></section>}

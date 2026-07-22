@@ -1,6 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+  <PropertyGroup><TargetFramework>net10.0</TargetFramework><UserSecretsId>05e02c66-6a5c-4760-934a-b845ed1ac987</UserSecretsId></PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
     <ProjectReference Include="..\PharmaAccess.Application\PharmaAccess.Application.csproj" />
+    <ProjectReference Include="..\PharmaAccess.Data\PharmaAccess.Data.csproj" />
+    <ProjectReference Include="..\PharmaAccess.Infrastructure\PharmaAccess.Infrastructure.csproj" />
   </ItemGroup>
 </Project>
