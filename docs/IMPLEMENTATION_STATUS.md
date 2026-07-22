@@ -234,3 +234,13 @@ Milestone 5 must not begin until Milestone 4 is accepted. Proposed scope: next p
 - Exact target eligibility reconciliation: A=231, B=30, C=101, D=4 (366 total); 261 have an authoritative package-NDC universe, 231 have observed Medicaid utilization, and 30 are known-universe/no-utilization events.
 - The dataset remains `Validating / InProgress`; `TotalRows` and `FinalizedAtUtc` remain null. No accepted mapping, panel, predictive training, causal estimation, freeze, or Milestone 10 work was performed.
 - Freeze readiness is blocked by the missing instantiated `state-eligibility-v1` membership, missing frozen `historical-market-weight-v1` values, and lack of a deterministic FDA NDC-to-strength-product number relationship for multi-product ANDAs. See `artifacts/research-audit/m9-validation-blockers.json`.
+
+## Project closeout completed (2026-07-22)
+
+- Dataset `real-2021-2025-v1` is `Finalized / Passed` with `TotalRows=174471` and `FinalizedAtUtc=2026-07-22T20:27:06.5006245Z`.
+- The final cohort contains 261 eligible ANDA-level launches, partitioned into 147 training, 66 validation, and 48 locked-test launches without launch overlap.
+- Locked-test metrics are ROC AUC 0.8221, PR AUC 0.1112, log loss 0.0848, Brier score 0.0195, precision 0.1388, recall 0.3398, F1 0.1971, and specificity 0.9558.
+- The governed .NET AIPW ATT risk difference is 0.00157 with 95% ANDA-clustered bootstrap CI -0.00377 to 0.00928. IPTW is 0.00202, outcome regression 0.000003, and the unadjusted difference 0.00266.
+- Independent grouped cross-fitted Python AIPW is -0.01382. The material discrepancy is attributed to different nuisance-model fitting procedures, is prominently disclosed, and was accepted by the human reviewer as a methodological limitation rather than a data-integrity failure.
+- Freeze `real-2021-2025-v1-final/1.0` is `ReadyForAnalysis`, has zero blocking findings, records the discrepancy warning and human decision, and persists hashes for all required final artifacts.
+- Final verification: solution restore/build succeeded with zero warnings and errors; 283 .NET tests passed; pip check passed; 25 Python tests passed.

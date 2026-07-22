@@ -1,7 +1,8 @@
-# Final observational causal analysis
+﻿# Final causal results
 
-Under the stated identification assumptions, the estimated association interpreted through the approved causal model was an ATT risk difference of 0.00156658 (95% clustered-ANDA bootstrap CI -0.00377143 to 0.00927914).
+Governed .NET AIPW ATT risk difference: **0.00157** (95% ANDA-clustered bootstrap CI **-0.00377 to 0.00928**). Python grouped cross-fitted AIPW: **-0.01382**. The material discrepancy reflects different nuisance-model fitting procedures; .NET is the protocol-defined primary estimate and Python is a robustness analysis.
 
-This is observational and depends on consistency, exchangeability, positivity, measurement, and interference assumptions; it is not proof of causation.
+The primary AIPW estimate was a 0.157-percentage-point ATT risk difference. The 95% confidence interval ranged from -0.377 to 0.928 percentage points and included zero, so the analysis did not provide clear evidence of a nonzero causal effect under the stated observational assumptions.
 
-Blocking diagnostics: none.
+These observational results do not establish that neighbor exposure causes adoption.
+

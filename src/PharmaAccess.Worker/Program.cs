@@ -4,6 +4,7 @@ using PharmaAccess.Application.Research;
 using Microsoft.EntityFrameworkCore;
 using PharmaAccess.Data;
 using PharmaAccess.Data.Research;
+using System.Text.Json;
 
 namespace PharmaAccess.Worker
 {
@@ -11,6 +12,14 @@ namespace PharmaAccess.Worker
     {
         private static int Main(string[] args)
         {
+            if(args.Length>0&&args[0]=="finalize-research-dataset")
+            {
+                if(args.Length!=2){Console.Error.WriteLine("Usage: finalize-research-dataset <command-json>");return 2;}
+                var connection=Environment.GetEnvironmentVariable("ConnectionStrings__PharmaAccess");if(string.IsNullOrWhiteSpace(connection))return 2;
+                var command=JsonSerializer.Deserialize<FinalizeResearchDatasetCommand>(File.ReadAllText(args[1]),new JsonSerializerOptions{PropertyNameCaseInsensitive=true})??throw new InvalidOperationException("Finalization command is invalid.");
+                var options=new DbContextOptionsBuilder<PharmaAccessDbContext>().UseSqlServer(connection).Options;using var db=new PharmaAccessDbContext(options);
+                var result=new ResearchDatasetFinalizationService(db).FinalizeAsync(command).GetAwaiter().GetResult();Console.WriteLine(JsonSerializer.Serialize(result));return 0;
+            }
             if (args.Length > 0 && args[0] == "run-real-final-analysis")
             {
                 if (args.Length != 2) { Console.Error.WriteLine("Usage: run-real-final-analysis <artifact-root>"); return 2; }

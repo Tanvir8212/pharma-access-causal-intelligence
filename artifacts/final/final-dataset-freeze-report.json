@@ -1,0 +1,17 @@
+﻿{
+    "datasetVersion":  "real-2021-2025-v1",
+    "preview":  false,
+    "finalizedAtUtc":  "2026-07-22T20:27:06.5006245Z",
+    "actor":  "Tanvir Mahmud Khan",
+    "correlationId":  "real-final-closeout-001",
+    "status":  "Finalized",
+    "validationStatus":  "Passed",
+    "totalRows":  174471,
+    "humanDecision":  "I, Tanvir Mahmud Khan, accept that the governed .NET AIPW estimate is primary; the Python grouped cross-fitted estimate is an independent robustness analysis. The difference between 0.00157 and -0.01382 is material and prominently disclosed. Both estimates are uncertain, the governed confidence interval includes zero, and no claim that neighbor exposure causes adoption is made. Different nuisance-model fitting procedures explain the discrepancy. This methodological limitation is not a database-integrity or reproducibility failure and is not a finalization blocker.",
+    "governedDotNetAipw":  0.001566580700392556,
+    "confidenceInterval":  [
+                               -0.003771426329672965,
+                               0.009279144198563417
+                           ],
+    "pythonCrossFittedAipw":  -0.013823338128640627
+}

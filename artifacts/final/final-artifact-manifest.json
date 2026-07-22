@@ -1,0 +1,116 @@
+﻿[
+    {
+        "artifactType":  "final-dataset-freeze-report-md",
+        "relativePath":  "artifacts/final/final-dataset-freeze-report.md",
+        "sha256":  "6E6C072F20CC35EF4726C20153CD2485AF0C32A06D44B1672FCEF87D2D726801",
+        "byteSize":  1013
+    },
+    {
+        "artifactType":  "final-dataset-freeze-report-json",
+        "relativePath":  "artifacts/final/final-dataset-freeze-report.json",
+        "sha256":  "A55CF5A9DCEA40FB382A74718531D6EC37936EA023D5D6BBF1771B3BBE93C404",
+        "byteSize":  1182
+    },
+    {
+        "artifactType":  "final-cohort-flow-csv",
+        "relativePath":  "artifacts/final/final-cohort-flow.csv",
+        "sha256":  "52A09FB08D15C571065DF35CCE9E511E339D028D24F6D67E74A82927C426E79A",
+        "byteSize":  74
+    },
+    {
+        "artifactType":  "final-state-quarter-profile-csv",
+        "relativePath":  "artifacts/final/final-state-quarter-profile.csv",
+        "sha256":  "90A1C858FAD610BB76B30AF3953141C6266A314259A8A7E2553BAD5D839F1F30",
+        "byteSize":  100
+    },
+    {
+        "artifactType":  "final-temporal-split-profile-csv",
+        "relativePath":  "artifacts/final/final-temporal-split-profile.csv",
+        "sha256":  "3E22048B2730D46818E34130D74FE985D0EEB92463B0E26D2F49CFF738001243",
+        "byteSize":  150
+    },
+    {
+        "artifactType":  "final-predictive-results-md",
+        "relativePath":  "artifacts/final/final-predictive-results.md",
+        "sha256":  "18EF177EAEBF067B882B6B0432A7752B35B36EF6357182E1181EFFA785B55306",
+        "byteSize":  837
+    },
+    {
+        "artifactType":  "final-predictive-metrics-json",
+        "relativePath":  "artifacts/final/final-predictive-metrics.json",
+        "sha256":  "29B11A95972A5AA087ED6EFA2F763C63AA2C905E656FC607ED23F9C1E1C6BEB9",
+        "byteSize":  4720
+    },
+    {
+        "artifactType":  "final-predictive-test-predictions-csv",
+        "relativePath":  "artifacts/final/final-predictive-test-predictions.csv",
+        "sha256":  "AF8CA196522E96B1ED77137838233898241DD847E26231FA97C8693D86A36684",
+        "byteSize":  517185
+    },
+    {
+        "artifactType":  "final-calibration-data-csv",
+        "relativePath":  "artifacts/final/final-calibration-data.csv",
+        "sha256":  "412C7BCBA27458196620398AD3AF647DA94CA71BC8ECC91EAC9C516EB62A36ED",
+        "byteSize":  350
+    },
+    {
+        "artifactType":  "final-causal-results-md",
+        "relativePath":  "artifacts/final/final-causal-results.md",
+        "sha256":  "286F71E183517034EE854E13741D2E575953E4BC6C471B2B1C45838A0736EF48",
+        "byteSize":  724
+    },
+    {
+        "artifactType":  "final-causal-estimates-json",
+        "relativePath":  "artifacts/final/final-causal-estimates.json",
+        "sha256":  "455A78CA89C58A0139D0C123FAF68D4FE1F3B19E05A964C8913DC9C93EF77B6A",
+        "byteSize":  16587
+    },
+    {
+        "artifactType":  "final-balance-diagnostics-csv",
+        "relativePath":  "artifacts/final/final-balance-diagnostics.csv",
+        "sha256":  "6C4CB0EC2A847E2F694424E4EE13C68D8F316D8E51A7F306221DBDB659DEA0F4",
+        "byteSize":  899
+    },
+    {
+        "artifactType":  "final-overlap-diagnostics-csv",
+        "relativePath":  "artifacts/final/final-overlap-diagnostics.csv",
+        "sha256":  "6E0DDB861616F619B7FAE50A654D0F3328C202A126A7790777EE03AAF69FA43C",
+        "byteSize":  295
+    },
+    {
+        "artifactType":  "final-sensitivity-results-csv",
+        "relativePath":  "artifacts/final/final-sensitivity-results.csv",
+        "sha256":  "B448CC5A596E0484765F44C460FEE9CB9A45DBD0ED9F6350FCD4AE6D7596CF68",
+        "byteSize":  1152
+    },
+    {
+        "artifactType":  "final-python-validation-report-json",
+        "relativePath":  "artifacts/final/final-python-validation-report.json",
+        "sha256":  "0CDC4D857522C8C803E812D4B4EFF066E3DDAE8809D8734C4F79A89A90768FBF",
+        "byteSize":  740
+    },
+    {
+        "artifactType":  "final-methodology-md",
+        "relativePath":  "artifacts/final/final-methodology.md",
+        "sha256":  "FE6E77719B9ECC3B8959EAC947A4D2581601183B038D06AA0372DEE1D1E40DA1",
+        "byteSize":  413
+    },
+    {
+        "artifactType":  "final-limitations-md",
+        "relativePath":  "artifacts/final/final-limitations.md",
+        "sha256":  "0E561C67A1AC1C9AC12EDB2397AA0A7A0FED127831E65E929664C10EA59D3114",
+        "byteSize":  698
+    },
+    {
+        "artifactType":  "final-reproducibility-guide-md",
+        "relativePath":  "artifacts/final/final-reproducibility-guide.md",
+        "sha256":  "43222ACCDBD74B10A00999D2770DC2D81B67DE3F3E0FC26D95D19FF6180D2FED",
+        "byteSize":  344
+    },
+    {
+        "artifactType":  "final-executive-summary-md",
+        "relativePath":  "artifacts/final/final-executive-summary.md",
+        "sha256":  "88245DB5627E3E814CBFB6C6E2A875FF4747AC6995821129E924C025B3B83D59",
+        "byteSize":  319
+    }
+]

@@ -1,0 +1,20 @@
+{
+  "estimator": "cross-fitted AIPW ATT risk difference",
+  "estimate": -0.013823338128640627,
+  "rows": 89734,
+  "treated": 1829,
+  "control": 87905,
+  "folds": 5,
+  "grouping": "GenericLaunchId",
+  "propensityMinimum": 0.02,
+  "propensityMaximum": 0.98,
+  "clipping": [
+    0.02,
+    0.98
+  ],
+  "dotnetEstimate": 0.001566580700392556,
+  "absoluteDifference": 0.015389918829033183,
+  "inputSha256": "F9BD72430F6A8CA759AD442DA611E367AF044AEF9B78E15E8EB2000570BA1652",
+  "role": "independent Python methodological validation; .NET remains governed production pipeline",
+  "observationalNotice": "Association interpreted through the approved causal model under stated identification assumptions; not proof of causation."
+}
