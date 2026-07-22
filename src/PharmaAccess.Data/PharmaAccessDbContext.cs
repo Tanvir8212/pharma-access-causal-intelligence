@@ -71,6 +71,21 @@ public sealed class PharmaAccessDbContext(DbContextOptions<PharmaAccessDbContext
     public DbSet<ResearchMappingReviewEntity> ResearchMappingReviews => Set<ResearchMappingReviewEntity>();
     public DbSet<ResearchImportAuditEventEntity> ResearchImportAuditEvents => Set<ResearchImportAuditEventEntity>();
     public DbSet<ResearchReferenceRawEntity> ResearchReferenceRawRecords => Set<ResearchReferenceRawEntity>();
+    public DbSet<OrangeBookSnapshotEntity> OrangeBookSnapshots => Set<OrangeBookSnapshotEntity>();
+    public DbSet<OrangeBookProductEntity> OrangeBookProducts => Set<OrangeBookProductEntity>();
+    public DbSet<DrugsFdaSnapshotEntity> DrugsFdaSnapshots => Set<DrugsFdaSnapshotEntity>();
+    public DbSet<DrugsFdaApplicationEntity> DrugsFdaApplications => Set<DrugsFdaApplicationEntity>();
+    public DbSet<DrugsFdaProductEntity> DrugsFdaProducts => Set<DrugsFdaProductEntity>();
+    public DbSet<DrugsFdaMarketingStatusEntity> DrugsFdaMarketingStatuses => Set<DrugsFdaMarketingStatusEntity>();
+    public DbSet<DrugsFdaTherapeuticEquivalenceEntity> DrugsFdaTherapeuticEquivalences => Set<DrugsFdaTherapeuticEquivalenceEntity>();
+    public DbSet<NdcDirectorySnapshotEntity> NdcDirectorySnapshots => Set<NdcDirectorySnapshotEntity>();
+    public DbSet<NdcDirectoryProductEntity> NdcDirectoryProducts => Set<NdcDirectoryProductEntity>();
+    public DbSet<NdcDirectoryPackageEntity> NdcDirectoryPackages => Set<NdcDirectoryPackageEntity>();
+    public DbSet<RxNormSnapshotEntity> RxNormSnapshots => Set<RxNormSnapshotEntity>();
+    public DbSet<RxNormConceptEntity> RxNormConcepts => Set<RxNormConceptEntity>();
+    public DbSet<RxNormNdcAssociationEntity> RxNormNdcAssociations => Set<RxNormNdcAssociationEntity>();
+    public DbSet<ProductFamilyIdentityEntity> ProductFamilyIdentities => Set<ProductFamilyIdentityEntity>();
+    public DbSet<ProductMappingEvidenceEntity> ProductMappingEvidence => Set<ProductMappingEvidenceEntity>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {

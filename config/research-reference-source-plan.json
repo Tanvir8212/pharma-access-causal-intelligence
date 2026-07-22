@@ -4,10 +4,11 @@
   "overwriteExisting": false,
   "sha256RequiredBeforeRegistration": true,
   "offlineRerunRequired": true,
+  "snapshotDate": "2026-07-22-r2",
   "sources": [
-    { "code": "orange-book", "authority": "FDA", "officialPage": "https://www.fda.gov/drugs/drug-approvals-and-databases/orange-book-data-files", "role": "approval-and-product-evidence", "snapshot": "frozen-download" },
-    { "code": "drugs-at-fda", "authority": "FDA", "officialPage": "https://www.fda.gov/drugs/drug-approvals-and-databases/drugsfda-data-files", "role": "approval-application-product-evidence", "snapshot": "frozen-download" },
-    { "code": "ndc-directory", "authority": "FDA", "officialPage": "https://open.fda.gov/apis/drug/ndc/download/", "role": "listing-and-application-linkage-not-approval", "snapshot": "complete-download" },
-    { "code": "rxnorm-monthly", "authority": "NLM", "officialPage": "https://www.nlm.nih.gov/research/umls/rxnorm/overview.html", "role": "current-and-historical-ndc-concept-linkage", "snapshot": "full-monthly-release" }
+    { "code": "orange-book", "authority": "FDA", "officialPage": "https://www.fda.gov/drugs/drug-approvals-and-databases/orange-book-data-files", "downloadUrl": "https://www.fda.gov/media/76860/download", "filename": "EOBZIP_2026_06.zip", "releaseDate": "2026-07-10", "role": "approval-and-product-evidence", "requiredMembers": ["products.txt","patent.txt","exclusivity.txt"] },
+    { "code": "drugs-at-fda", "authority": "FDA", "officialPage": "https://www.fda.gov/drugs/drug-approvals-and-databases/drugsfda-data-files", "downloadUrl": "https://www.fda.gov/media/89850/download", "filename": "dafdata20260717.zip", "releaseDate": "2026-07-17", "role": "approval-application-product-evidence", "requiredMembers": ["Applications.txt","Products.txt","MarketingStatus.txt","MarketingStatus_Lookup.txt","Submissions.txt","TE.txt"] },
+    { "code": "ndc-directory", "authority": "FDA", "officialPage": "https://open.fda.gov/apis/drug/ndc/download/", "metadataUrl": "https://api.fda.gov/download.json", "releaseDate": "2026-07-22", "expectedRecords": 137239, "role": "listing-and-application-linkage-not-approval", "parts": [{"filename":"drug-ndc-0001-of-0001.json.zip","downloadUrl":"https://download.open.fda.gov/drug/ndc/drug-ndc-0001-of-0001.json.zip"}] },
+    { "code": "rxnorm-monthly", "authority": "NLM", "officialPage": "https://www.nlm.nih.gov/research/umls/rxnorm/docs/rxnormfiles.html", "downloadLocation": "https://uts.nlm.nih.gov/uts/", "filename": "RxNorm_full_07062026.zip", "releaseDate": "2026-07-06", "publishedMd5": "33acdc0176af35808f91b3fc74ff2bb4", "role": "current-and-historical-ndc-concept-linkage", "manualDropRequired": true, "requiredMembers": ["rrf/RXNCONSO.RRF","rrf/RXNREL.RRF","rrf/RXNSAT.RRF","README"] }
   ]
 }

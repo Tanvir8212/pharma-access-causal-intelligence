@@ -192,6 +192,12 @@ Milestone 6 is not started and requires explicit authorization. Proposed scope: 
 - Added a guarded acquisition preview that is intentionally blocked from confirmed acquisition until release-specific official URLs/versions and initial hashes receive human review. No network acquisition, mapping, migration, database write, finalization, training, or causal estimation was performed.
 - Added human-review artifacts under `artifacts/research-audit/` and offline validation tests. Typed regulatory/terminology snapshot and mapping-evidence tables remain a proposed later reviewed migration; feasibility coverage remains unmeasured.
 
+## Milestone 9 authoritative reference acquisition and schema preparation
+
+- Acquired and froze the official Orange Book 2026-06, Drugs@FDA 2026-07-17, and complete openFDA NDC 2026-07-22 snapshots under the ignored private reference root with archive/extracted hashes and inventories. The licensed RxNorm full 2026-07-06 release remains blocked pending a validated manual drop.
+- Generated, but did not apply, `AddAuthoritativeReferenceIdentity`, adding immutable typed FDA/NLM snapshot, product-family, and mapping-evidence structures with restrictive lineage and lookup indexes. Reference import and final mapping were not run.
+- Read-only Medicaid feasibility baseline: 72,903 distinct raw NDC values, 72,900 valid normalized eleven-digit values, two distinct ambiguous values, one distinct invalid value, and no missing distinct value. Full linkage coverage remains unmeasured.
+
 ## Milestone 6 causal inference foundation
 
 - Added `PeerStateExposureToNextQuarterEntry` at eligible Drug × State × ObservationQuarter grain, with observation-quarter time zero, next-quarter binary first-entry outcome, explicit censoring exclusion, and blocking temporal-order findings.
