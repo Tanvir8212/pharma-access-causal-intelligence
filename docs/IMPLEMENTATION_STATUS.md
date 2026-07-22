@@ -185,6 +185,13 @@ Milestone 6 is not started and requires explicit authorization. Proposed scope: 
 - Added migrations `AddResearchImportPersistence` and `AddResearchReferenceRawPersistence`. They were generated only and were not applied; the dedicated database therefore remains at the previously verified eight migrations and confirmed import is blocked.
 - No protocol lifecycle write, database migration, real import, dataset finalization, feature/model training, causal estimation, freeze approval, or commit was performed.
 
+## Milestone 9 product-identity amendment preparation
+
+- Added a file-only Draft proposal for `approval-to-access-real/1.1`; approved version 1.0 is unchanged. The amendment preserves the frozen scientific definitions and adds authoritative, immutable Orange Book, Drugs@FDA, FDA NDC listing, and full-monthly RxNorm evidence requirements.
+- Defined a strength-specific FDA application/product launch family and deterministic mapping tiers. Fuzzy/name/manufacturer matching, ambiguous or invalid NDCs, and multiple candidates cannot be automatically accepted. NDC Directory is listing evidence only, never approval evidence.
+- Added a guarded acquisition preview that is intentionally blocked from confirmed acquisition until release-specific official URLs/versions and initial hashes receive human review. No network acquisition, mapping, migration, database write, finalization, training, or causal estimation was performed.
+- Added human-review artifacts under `artifacts/research-audit/` and offline validation tests. Typed regulatory/terminology snapshot and mapping-evidence tables remain a proposed later reviewed migration; feasibility coverage remains unmeasured.
+
 ## Milestone 6 causal inference foundation
 
 - Added `PeerStateExposureToNextQuarterEntry` at eligible Drug × State × ObservationQuarter grain, with observation-quarter time zero, next-quarter binary first-entry outcome, explicit censoring exclusion, and blocking temporal-order findings.

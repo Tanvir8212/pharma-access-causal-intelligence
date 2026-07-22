@@ -1,0 +1,13 @@
+{
+  "version": "authoritative-product-identity-sources-v1.1",
+  "destinationRoot": "data/private/reference",
+  "overwriteExisting": false,
+  "sha256RequiredBeforeRegistration": true,
+  "offlineRerunRequired": true,
+  "sources": [
+    { "code": "orange-book", "authority": "FDA", "officialPage": "https://www.fda.gov/drugs/drug-approvals-and-databases/orange-book-data-files", "role": "approval-and-product-evidence", "snapshot": "frozen-download" },
+    { "code": "drugs-at-fda", "authority": "FDA", "officialPage": "https://www.fda.gov/drugs/drug-approvals-and-databases/drugsfda-data-files", "role": "approval-application-product-evidence", "snapshot": "frozen-download" },
+    { "code": "ndc-directory", "authority": "FDA", "officialPage": "https://open.fda.gov/apis/drug/ndc/download/", "role": "listing-and-application-linkage-not-approval", "snapshot": "complete-download" },
+    { "code": "rxnorm-monthly", "authority": "NLM", "officialPage": "https://www.nlm.nih.gov/research/umls/rxnorm/overview.html", "role": "current-and-historical-ndc-concept-linkage", "snapshot": "full-monthly-release" }
+  ]
+}
