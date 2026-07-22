@@ -1,0 +1,85 @@
+{
+  "version": "dag-v1",
+  "humanAuthored": true,
+  "nodes": [
+    {
+      "name": "QuarterSinceApproval",
+      "role": "Confounder"
+    },
+    {
+      "name": "StateDataCompleteness",
+      "role": "Confounder"
+    },
+    {
+      "name": "StateHistoricalEntryRate",
+      "role": "Confounder"
+    },
+    {
+      "name": "StateHistoricalGenericVolume",
+      "role": "Confounder"
+    },
+    {
+      "name": "StateHistoricalMarketWeight",
+      "role": "Confounder"
+    },
+    {
+      "name": "treatment",
+      "role": "Treatment"
+    },
+    {
+      "name": "outcome",
+      "role": "Outcome"
+    },
+    {
+      "name": "UnmeasuredCommercialFactors",
+      "role": "Unobserved"
+    }
+  ],
+  "edges": [
+    {
+      "from": "QuarterSinceApproval",
+      "to": "treatment"
+    },
+    {
+      "from": "QuarterSinceApproval",
+      "to": "outcome"
+    },
+    {
+      "from": "StateDataCompleteness",
+      "to": "treatment"
+    },
+    {
+      "from": "StateDataCompleteness",
+      "to": "outcome"
+    },
+    {
+      "from": "StateHistoricalEntryRate",
+      "to": "treatment"
+    },
+    {
+      "from": "StateHistoricalEntryRate",
+      "to": "outcome"
+    },
+    {
+      "from": "StateHistoricalGenericVolume",
+      "to": "treatment"
+    },
+    {
+      "from": "StateHistoricalGenericVolume",
+      "to": "outcome"
+    },
+    {
+      "from": "StateHistoricalMarketWeight",
+      "to": "treatment"
+    },
+    {
+      "from": "StateHistoricalMarketWeight",
+      "to": "outcome"
+    },
+    {
+      "from": "treatment",
+      "to": "outcome"
+    }
+  ],
+  "warning": "Assumed graph; not proven correct."
+}

@@ -1,0 +1,76 @@
+{
+  "comparisons": [
+    {
+      "absoluteDifference": 0.0,
+      "csharpEstimate": 0.23618233618233622,
+      "effectScale": "RiskDifference",
+      "estimand": "ATT",
+      "estimator": "UnadjustedDifferenceInMeans",
+      "explanation": "Formula parity reuses exported nuisance predictions.",
+      "pythonEstimate": 0.23618233618233622,
+      "relativeDifference": 0.0,
+      "status": "ExactMatch",
+      "tolerance": {
+        "absolute": 1e-09,
+        "relative": 1e-08
+      },
+      "warnings": []
+    },
+    {
+      "absoluteDifference": 5.551115123125783e-17,
+      "csharpEstimate": 0.18747381635937022,
+      "effectScale": "RiskDifference",
+      "estimand": "ATT",
+      "estimator": "PropensityScoreWeighting",
+      "explanation": "Formula parity reuses exported nuisance predictions.",
+      "pythonEstimate": 0.18747381635937016,
+      "relativeDifference": 2.9610082255352403e-16,
+      "status": "WithinTolerance",
+      "tolerance": {
+        "absolute": 1e-09,
+        "relative": 1e-08
+      },
+      "warnings": []
+    },
+    {
+      "absoluteDifference": 1.1102230246251565e-16,
+      "csharpEstimate": 0.16584905803672095,
+      "effectScale": "RiskDifference",
+      "estimand": "ATT",
+      "estimator": "OutcomeRegression",
+      "explanation": "Formula parity reuses exported nuisance predictions.",
+      "pythonEstimate": 0.16584905803672084,
+      "relativeDifference": 6.694177451278258e-16,
+      "status": "WithinTolerance",
+      "tolerance": {
+        "absolute": 1e-09,
+        "relative": 1e-08
+      },
+      "warnings": []
+    },
+    {
+      "absoluteDifference": 8.326672684688674e-17,
+      "csharpEstimate": 0.18814389682684543,
+      "effectScale": "RiskDifference",
+      "estimand": "ATT",
+      "estimator": "AugmentedInverseProbabilityWeighting",
+      "explanation": "Formula parity reuses exported nuisance predictions.",
+      "pythonEstimate": 0.18814389682684535,
+      "relativeDifference": 4.425693750965499e-16,
+      "status": "WithinTolerance",
+      "tolerance": {
+        "absolute": 1e-09,
+        "relative": 1e-08
+      },
+      "warnings": []
+    }
+  ],
+  "effectiveSampleSize": 368.559135812875,
+  "mode": "FormulaParity",
+  "passed": true,
+  "rowLevel": {
+    "aipwContributionSum": 0.18814389682684535,
+    "firstMismatchingRow": null,
+    "maxWeightAbsoluteDifference": 4.440892098500626e-16
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "declaredCommonCauses": [
+    "QuarterSinceApproval",
+    "StateDataCompleteness",
+    "StateHistoricalEntryRate",
+    "StateHistoricalGenericVolume",
+    "StateHistoricalMarketWeight"
+  ],
+  "effectScale": "RiskDifference",
+  "estimand": "Estimand type: EstimandType.NONPARAMETRIC_ATE\n\n### Estimand : 1\nEstimand name: backdoor\nEstimand expression:\n     d                                                                         \u21aa\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500(E[outcome|StateDataCompleteness,StateHistoricalEntryRate,StateHis \u21aa\nd[treatment]                                                                   \u21aa\n\n\u21aa                                                                        \n\u21aa toricalMarketWeight,StateHistoricalGenericVolume,QuarterSinceApproval])\n\u21aa                                                                        \nEstimand assumption 1, Unconfoundedness: If U\u2192{treatment} and U\u2192outcome then P(outcome|treatment,StateDataCompleteness,StateHistoricalEntryRate,StateHistoricalMarketWeight,StateHistoricalGenericVolume,QuarterSinceApproval,U) = P(outcome|treatment,StateDataCompleteness,StateHistoricalEntryRate,StateHistoricalMarketWeight,StateHistoricalGenericVolume,QuarterSinceApproval)\n\n### Estimand : 2\nEstimand name: iv\nNo such variable(s) found!\n\n### Estimand : 3\nEstimand name: frontdoor\nNo such variable(s) found!\n\n### Estimand : 4\nEstimand name: general_adjustment\nEstimand expression:\n     d                                                                         \u21aa\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500(E[outcome|StateDataCompleteness,StateHistoricalEntryRate,StateHis \u21aa\nd[treatment]                                                                   \u21aa\n\n\u21aa                                                                        \n\u21aa toricalMarketWeight,StateHistoricalGenericVolume,QuarterSinceApproval])\n\u21aa                                                                        \nEstimand assumption 1, Unconfoundedness: If U\u2192{treatment} and U\u2192outcome then P(outcome|treatment,StateDataCompleteness,StateHistoricalEntryRate,StateHistoricalMarketWeight,StateHistoricalGenericVolume,QuarterSinceApproval,U) = P(outcome|treatment,StateDataCompleteness,StateHistoricalEntryRate,StateHistoricalMarketWeight,StateHistoricalGenericVolume,QuarterSinceApproval)\n",
+  "estimate": 0.1754340369500455,
+  "identified": true,
+  "interpretation": "Identification under the exported graph; not proof that assumptions hold."
+}

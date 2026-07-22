@@ -1,0 +1,11 @@
+{
+  "version": "adjust-v1",
+  "variables": [
+    "QuarterSinceApproval",
+    "StateDataCompleteness",
+    "StateHistoricalEntryRate",
+    "StateHistoricalGenericVolume",
+    "StateHistoricalMarketWeight"
+  ],
+  "hash": "d3792faa90b0fb106df1abb99b3c7647290bf72d0683e7dee93a9083b5140e5c"
+}

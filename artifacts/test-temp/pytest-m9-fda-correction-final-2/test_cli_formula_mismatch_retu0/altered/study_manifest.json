@@ -1,0 +1,32 @@
+{
+  "contractVersion": "1.1",
+  "validationRunCode": "pytest-synthetic",
+  "causalStudyId": 1,
+  "causalStudyCode": "synthetic-peer-exposure",
+  "datasetVersion": "synthetic-v1",
+  "featureSetVersion": "synthetic-feature-v1",
+  "dagVersion": "dag-v1",
+  "adjustmentSetVersion": "adjust-v1",
+  "treatmentDefinitionVersion": "neighbor-v1",
+  "outcomeDefinitionVersion": "next-entry-v1",
+  "estimand": "ATT",
+  "effectScale": "RiskDifference",
+  "observationWindow": {
+    "start": 20210,
+    "end": 20214
+  },
+  "rowCount": 465,
+  "treatedCount": 195,
+  "controlCount": 270,
+  "excludedRowCounts": {
+    "CensoredOrMissingOutcome": 15
+  },
+  "randomSeeds": {
+    "nuisance": 17,
+    "folds": 17
+  },
+  "numericPrecisionPolicy": "IEEE-754 round-trip (R), formula abs=1e-9 rel=1e-8",
+  "sourceCodeCommit": "WORKTREE-NOT-COMMITTED",
+  "generatedTimestampUtc": "DECLARED_NONDETERMINISTIC",
+  "synthetic": true
+}

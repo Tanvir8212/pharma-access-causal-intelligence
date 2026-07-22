@@ -1,0 +1,28 @@
+{
+  "contractVersion": "1.1",
+  "analyticalKey": [
+    "feature_row_id"
+  ],
+  "nullRepresentation": "",
+  "unexpectedColumns": "reject",
+  "columns": [
+    "feature_row_id",
+    "generic_launch_id",
+    "drug_id",
+    "state_id",
+    "region",
+    "launch_cohort",
+    "observation_quarter_id",
+    "outcome_quarter_id",
+    "quarter_since_approval",
+    "continuous_exposure",
+    "treatment",
+    "outcome",
+    "row_hash",
+    "QuarterSinceApproval",
+    "StateDataCompleteness",
+    "StateHistoricalEntryRate",
+    "StateHistoricalGenericVolume",
+    "StateHistoricalMarketWeight"
+  ]
+}

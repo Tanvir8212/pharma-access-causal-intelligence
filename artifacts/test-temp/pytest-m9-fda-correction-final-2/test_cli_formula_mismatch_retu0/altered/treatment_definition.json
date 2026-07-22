@@ -1,0 +1,9 @@
+{
+  "version": "neighbor-v1",
+  "column": "treatment",
+  "domain": [
+    0,
+    1
+  ],
+  "threshold": 0.5
+}

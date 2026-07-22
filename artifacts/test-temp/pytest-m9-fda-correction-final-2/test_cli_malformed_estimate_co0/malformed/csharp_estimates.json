@@ -1,0 +1,43 @@
+{
+  "contractVersion": "1.1",
+  "estimand": "ATT",
+  "effectScale": "RiskDifference",
+  "estimates": [
+    {
+      "estimator": "UnadjustedDifferenceInMeans",
+      "estimand": "ATT",
+      "effectScale": "RiskDifference",
+      "estimate": 0.23618233618233622,
+      "standardError": null,
+      "confidenceLower": null,
+      "confidenceUpper": null,
+      "treatedCount": 195,
+      "controlCount": 270,
+      "effectiveSampleSize": null
+    },
+    {
+      "estimator": "PropensityScoreWeighting",
+      "estimand": "ATT",
+      "effectScale": "RiskDifference",
+      "estimate": 0.18747381635937022,
+      "standardError": null,
+      "confidenceLower": null,
+      "confidenceUpper": null,
+      "treatedCount": 195,
+      "controlCount": 270,
+      "effectiveSampleSize": 368.55913581287444
+    },
+    {
+      "estimator": "OutcomeRegression",
+      "estimand": "ATT",
+      "effectScale": "RiskDifference",
+      "estimate": 0.16584905803672095,
+      "standardError": null,
+      "confidenceLower": null,
+      "confidenceUpper": null,
+      "treatedCount": 195,
+      "controlCount": 270,
+      "effectiveSampleSize": null
+    }
+  ]
+}

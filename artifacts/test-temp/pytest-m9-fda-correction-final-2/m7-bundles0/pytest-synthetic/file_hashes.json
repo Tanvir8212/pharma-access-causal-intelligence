@@ -1,0 +1,17 @@
+{
+  "contractVersion": "1.1",
+  "files": {
+    "analysis_rows.csv": "e737e73ace9c114e32bcf65935991db72ba66ad51782d09b856ce54f04762391",
+    "schema.json": "6e3690a5b2219c2975596c4b0a621048313118f00e1e82908b4456a5a682c218",
+    "study_manifest.json": "e9c566b85f9f49526e9f02ccfc0b3c4c016809e15a4c101b457dbb63308a162d",
+    "dag.json": "e302e7542b5c377108151a95eed138d8b606fa218f43ba29bba83b7e82c3fd9e",
+    "adjustment_set.json": "f853326215d7a71640c9a2ea55e976a812f4f45de080b0586649dbbea26633fb",
+    "treatment_definition.json": "9e984be5d6520ed13073654eb5dfde9333e0bed44bfa02343b529ac1b681beab",
+    "outcome_definition.json": "b5f748182d6e0b0675fd83d06e8bef8de644525712c078ec578c77e08ea3d895",
+    "fold_manifest.json": "98989c24572b37b2267321d303292946e836458726291d3ce662236cdc63009d",
+    "csharp_estimates.json": "28ac0b6ebd6351e36c2aa3c29d1f2171173d858580a3a1015ef7cb4fae76ec94",
+    "csharp_diagnostics.json": "8eddf493796531f4785d447ab2446a433a5d919a18c67b31c339b1dfc9422710",
+    "nuisance_predictions.csv": "ee74eb46318e07082f5902476cd1124d9ed0d99623067cdf4f5cbc1ff219ca13"
+  },
+  "reproducibilityHash": "c26d33f26dc44f9a55de717da1ce7dd76e720a77bca763a02afb7193a7df4a4c"
+}

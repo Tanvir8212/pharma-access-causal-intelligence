@@ -1,0 +1,14 @@
+{
+  "adjustmentVariables": [
+    "QuarterSinceApproval",
+    "StateDataCompleteness",
+    "StateHistoricalEntryRate",
+    "StateHistoricalGenericVolume",
+    "StateHistoricalMarketWeight"
+  ],
+  "descendantAdjustments": [],
+  "missingNodes": [],
+  "outcomeNode": "outcome",
+  "status": "ExactMatch",
+  "treatmentNode": "treatment"
+}

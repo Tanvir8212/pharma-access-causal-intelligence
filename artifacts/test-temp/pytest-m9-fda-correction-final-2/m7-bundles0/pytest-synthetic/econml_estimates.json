@@ -1,0 +1,16 @@
+{
+  "ate": 0.18481299302095244,
+  "controlCount": 270,
+  "effectScale": "RiskDifference",
+  "estimand": "ATE",
+  "estimator": "DRLearner",
+  "exploratoryAtt": 0.19944792548405155,
+  "folds": "precomputed deterministic GenericLaunchId groups",
+  "inference": "point estimates; heterogeneous effects exploratory",
+  "nuisanceModels": [
+    "LogisticRegression",
+    "RandomForestRegressor"
+  ],
+  "treatedCount": 195,
+  "warning": "Independent estimate under observational assumptions; not proof of causation."
+}

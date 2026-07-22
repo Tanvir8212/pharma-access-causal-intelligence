@@ -1,0 +1,31 @@
+{
+  "diagnostics": [
+    {
+      "error": "AttributeError",
+      "interpretation": "Refuter unsupported or failed; no causal conclusion is drawn.",
+      "refuter": "placebo_treatment_refuter",
+      "supported": false
+    },
+    {
+      "interpretation": "No strong contradiction detected by this diagnostic; this does not prove identification.",
+      "newEffect": 0.17543403695004545,
+      "refuter": "random_common_cause",
+      "result": "Refute: Add a random common cause\nEstimated effect:0.1754340369500455\nNew effect:0.17543403695004545\np value:1.0\n",
+      "supported": true
+    },
+    {
+      "interpretation": "No strong contradiction detected by this diagnostic; this does not prove identification.",
+      "newEffect": 0.1770039601087764,
+      "refuter": "data_subset_refuter",
+      "result": "Refute: Use a subset of data\nEstimated effect:0.1754340369500455\nNew effect:0.1770039601087764\np value:0.9199999999999999\n",
+      "supported": true
+    },
+    {
+      "interpretation": "No strong contradiction detected by this diagnostic; this does not prove identification.",
+      "newEffect": 0.18871394820828158,
+      "refuter": "bootstrap_refuter",
+      "result": "Refute: Bootstrap Sample Dataset\nEstimated effect:0.1754340369500455\nNew effect:0.18871394820828158\np value:0.3679655837616198\n",
+      "supported": true
+    }
+  ]
+}

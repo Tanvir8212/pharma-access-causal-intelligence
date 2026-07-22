@@ -1,0 +1,249 @@
+{
+  "version": "fold-v1",
+  "groupKey": "generic_launch_id",
+  "foldCount": 5,
+  "seed": 17,
+  "groups": [
+    {
+      "genericLaunchId": 1,
+      "fold": 0
+    },
+    {
+      "genericLaunchId": 2,
+      "fold": 1
+    },
+    {
+      "genericLaunchId": 3,
+      "fold": 2
+    },
+    {
+      "genericLaunchId": 4,
+      "fold": 3
+    },
+    {
+      "genericLaunchId": 5,
+      "fold": 4
+    },
+    {
+      "genericLaunchId": 6,
+      "fold": 0
+    },
+    {
+      "genericLaunchId": 7,
+      "fold": 1
+    },
+    {
+      "genericLaunchId": 8,
+      "fold": 2
+    },
+    {
+      "genericLaunchId": 9,
+      "fold": 3
+    },
+    {
+      "genericLaunchId": 10,
+      "fold": 4
+    },
+    {
+      "genericLaunchId": 11,
+      "fold": 0
+    },
+    {
+      "genericLaunchId": 12,
+      "fold": 1
+    },
+    {
+      "genericLaunchId": 13,
+      "fold": 2
+    },
+    {
+      "genericLaunchId": 14,
+      "fold": 3
+    },
+    {
+      "genericLaunchId": 15,
+      "fold": 4
+    },
+    {
+      "genericLaunchId": 16,
+      "fold": 0
+    },
+    {
+      "genericLaunchId": 17,
+      "fold": 1
+    },
+    {
+      "genericLaunchId": 18,
+      "fold": 2
+    },
+    {
+      "genericLaunchId": 19,
+      "fold": 3
+    },
+    {
+      "genericLaunchId": 20,
+      "fold": 4
+    },
+    {
+      "genericLaunchId": 21,
+      "fold": 0
+    },
+    {
+      "genericLaunchId": 22,
+      "fold": 1
+    },
+    {
+      "genericLaunchId": 23,
+      "fold": 2
+    },
+    {
+      "genericLaunchId": 24,
+      "fold": 3
+    },
+    {
+      "genericLaunchId": 25,
+      "fold": 4
+    },
+    {
+      "genericLaunchId": 26,
+      "fold": 0
+    },
+    {
+      "genericLaunchId": 27,
+      "fold": 1
+    },
+    {
+      "genericLaunchId": 28,
+      "fold": 2
+    },
+    {
+      "genericLaunchId": 29,
+      "fold": 3
+    },
+    {
+      "genericLaunchId": 30,
+      "fold": 4
+    },
+    {
+      "genericLaunchId": 31,
+      "fold": 0
+    },
+    {
+      "genericLaunchId": 32,
+      "fold": 1
+    },
+    {
+      "genericLaunchId": 33,
+      "fold": 2
+    },
+    {
+      "genericLaunchId": 34,
+      "fold": 3
+    },
+    {
+      "genericLaunchId": 35,
+      "fold": 4
+    },
+    {
+      "genericLaunchId": 36,
+      "fold": 0
+    },
+    {
+      "genericLaunchId": 37,
+      "fold": 1
+    },
+    {
+      "genericLaunchId": 38,
+      "fold": 2
+    },
+    {
+      "genericLaunchId": 39,
+      "fold": 3
+    },
+    {
+      "genericLaunchId": 40,
+      "fold": 4
+    },
+    {
+      "genericLaunchId": 41,
+      "fold": 0
+    },
+    {
+      "genericLaunchId": 42,
+      "fold": 1
+    },
+    {
+      "genericLaunchId": 43,
+      "fold": 2
+    },
+    {
+      "genericLaunchId": 44,
+      "fold": 3
+    },
+    {
+      "genericLaunchId": 45,
+      "fold": 4
+    },
+    {
+      "genericLaunchId": 46,
+      "fold": 0
+    },
+    {
+      "genericLaunchId": 47,
+      "fold": 1
+    },
+    {
+      "genericLaunchId": 48,
+      "fold": 2
+    },
+    {
+      "genericLaunchId": 49,
+      "fold": 3
+    },
+    {
+      "genericLaunchId": 50,
+      "fold": 4
+    },
+    {
+      "genericLaunchId": 51,
+      "fold": 0
+    },
+    {
+      "genericLaunchId": 52,
+      "fold": 1
+    },
+    {
+      "genericLaunchId": 53,
+      "fold": 2
+    },
+    {
+      "genericLaunchId": 54,
+      "fold": 3
+    },
+    {
+      "genericLaunchId": 55,
+      "fold": 4
+    },
+    {
+      "genericLaunchId": 56,
+      "fold": 0
+    },
+    {
+      "genericLaunchId": 57,
+      "fold": 1
+    },
+    {
+      "genericLaunchId": 58,
+      "fold": 2
+    },
+    {
+      "genericLaunchId": 59,
+      "fold": 3
+    },
+    {
+      "genericLaunchId": 60,
+      "fold": 4
+    }
+  ],
+  "hash": "eb75b2a4bcaf1d966125982aca9874b96787e0256e89307928d4121d36d262be"
+}

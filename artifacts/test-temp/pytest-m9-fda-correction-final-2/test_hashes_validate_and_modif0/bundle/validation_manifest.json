@@ -1,0 +1,7 @@
+{
+  "contractVersion": "1.1",
+  "formulaParityPassed": true,
+  "notice": "Synthetic development data \u2014 not research results.",
+  "synthetic": true,
+  "validationRunCode": "pytest-synthetic"
+}

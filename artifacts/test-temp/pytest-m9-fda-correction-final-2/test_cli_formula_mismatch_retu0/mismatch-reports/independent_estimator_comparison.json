@@ -1,0 +1,7 @@
+{
+  "dowhyEstimate": 0.1754340369500455,
+  "econmlAte": 0.18481299302095244,
+  "mode": "IndependentImplementationValidation",
+  "notice": "Synthetic development data \u2014 not research results.",
+  "warning": "Different estimands are incomparable; agreement is not identification proof."
+}

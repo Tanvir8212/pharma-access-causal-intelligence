@@ -1,0 +1,81 @@
+{
+  "balance": [
+    {
+      "variable": "QuarterSinceApproval",
+      "treatedMean": 1.9846153846153847,
+      "controlMean": 2.011111111111111,
+      "standardizedMeanDifference": -0.018786400430512537,
+      "weightedTreatedMean": 1.9846153846153847,
+      "weightedControlMean": 1.9286126898999991,
+      "weightedStandardizedMeanDifference": 0.03932804589152993,
+      "varianceRatio": 0.9354919765247012,
+      "missingnessDifference": 0,
+      "status": 0
+    },
+    {
+      "variable": "StateDataCompleteness",
+      "treatedMean": 0.9499999999999978,
+      "controlMean": 0.9499999999999954,
+      "standardizedMeanDifference": 0.6885092983168464,
+      "weightedTreatedMean": 0.9499999999999978,
+      "weightedControlMean": 0.95,
+      "weightedStandardizedMeanDifference": -1.414213562373095,
+      "varianceRatio": 0.21475312314098752,
+      "missingnessDifference": 0,
+      "status": 1
+    },
+    {
+      "variable": "StateHistoricalEntryRate",
+      "treatedMean": 0.5388461538461538,
+      "controlMean": 0.4622222222222224,
+      "standardizedMeanDifference": 0.7252629490466074,
+      "weightedTreatedMean": 0.5388461538461538,
+      "weightedControlMean": 0.5349094799708121,
+      "weightedStandardizedMeanDifference": 0.03767535860204591,
+      "varianceRatio": 1.0724068366498727,
+      "missingnessDifference": 0,
+      "status": 0
+    },
+    {
+      "variable": "StateHistoricalGenericVolume",
+      "treatedMean": 109.71153846153847,
+      "controlMean": 90.55555555555556,
+      "standardizedMeanDifference": 0.72526294904661,
+      "weightedTreatedMean": 109.71153846153847,
+      "weightedControlMean": 108.72736999270302,
+      "weightedStandardizedMeanDifference": 0.037675358602046946,
+      "varianceRatio": 1.0724068366498702,
+      "missingnessDifference": 0,
+      "status": 0
+    },
+    {
+      "variable": "StateHistoricalMarketWeight",
+      "treatedMean": 1.0971153846153847,
+      "controlMean": 0.9055555555555556,
+      "standardizedMeanDifference": 0.72526294904661,
+      "weightedTreatedMean": 1.0971153846153847,
+      "weightedControlMean": 1.0872736999270314,
+      "weightedStandardizedMeanDifference": 0.0376753586020425,
+      "varianceRatio": 1.0724068366498736,
+      "missingnessDifference": 0,
+      "status": 0
+    }
+  ],
+  "positivity": {
+    "minimumPropensity": 0.18037093975399118,
+    "maximumPropensity": 0.7012765088318837,
+    "treatedMinimum": 0.18037093975399118,
+    "treatedMaximum": 0.7012765088318837,
+    "controlMinimum": 0.18037093975399118,
+    "controlMaximum": 0.7012765088318837,
+    "commonSupportLower": 0.18037093975399118,
+    "commonSupportUpper": 0.7012765088318837,
+    "outsideCommonSupport": 0,
+    "effectiveSampleSize": 368.55913581287444,
+    "extremeWeightCount": 0,
+    "treatmentPrevalence": 0.41935483870967744,
+    "status": 0,
+    "warnings": []
+  },
+  "warnings": []
+}

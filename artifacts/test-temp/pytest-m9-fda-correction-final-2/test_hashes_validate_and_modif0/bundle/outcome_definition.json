@@ -1,0 +1,9 @@
+{
+  "version": "next-entry-v1",
+  "column": "outcome",
+  "domain": [
+    0,
+    1
+  ],
+  "effectScale": "RiskDifference"
+}

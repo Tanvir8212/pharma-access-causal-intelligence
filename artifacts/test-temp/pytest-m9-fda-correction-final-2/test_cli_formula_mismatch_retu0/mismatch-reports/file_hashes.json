@@ -1,0 +1,16 @@
+{
+  "contractVersion": "1.1",
+  "files": {
+    "adjustment_set_parity.json": "cd2c8e1aa0ac46f858459e3a435651d6bd090f76e1448d2ebc0fe9ec81b8947c",
+    "dag_parity.json": "4271578f0354e2a5f803bf71488562c67da35055e959cd7cd0fb997627269f06",
+    "dowhy_identification.json": "ae932f814fc7708c5cf97531ca1c5728134c090ac2eb9efe321f104c424d2380",
+    "dowhy_refutations.json": "b9ff6d70f638e7eb0d43b9225017e89ef78a0a023d3cc8ae516c22e14d4f20ca",
+    "econml_results.json": "aa8f48d9cb7ab0bb863bb0e18b0c046d05e7252e01282ee08916f30bca597104",
+    "environment_manifest.json": "249b9abe5f6e43eaed926d844747e239f1256f7952bb2f85105eeb73676f2582",
+    "formula_parity.json": "83fc150a0cd05e2792dc0d3a631b2e696ae23e2f389285618f9ff3bb61fa0de4",
+    "independent_estimator_comparison.json": "7a6d3c83bd0e33a0c86f7bfde4b1f5ac45a64a62491d8f42658dbc25671a27aa",
+    "validation_manifest.json": "abffa6f05e0ebbaf225f5eced612c2ca52674689800160cab3d748e3b2a91589",
+    "validation_summary.md": "45e55ab8f305db1ed64dff4f41c1772630b535b190977c71fffcffa405696a4f"
+  },
+  "reproducibilityHash": "ddc770939f42167c4cbcc1e6a13e08c566dfab9d64faff94de76d8b5e3892a12"
+}

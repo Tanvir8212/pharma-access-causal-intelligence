@@ -1,0 +1,10 @@
+{
+  "status": "ExactMatch",
+  "variables": [
+    "QuarterSinceApproval",
+    "StateDataCompleteness",
+    "StateHistoricalEntryRate",
+    "StateHistoricalGenericVolume",
+    "StateHistoricalMarketWeight"
+  ]
+}
