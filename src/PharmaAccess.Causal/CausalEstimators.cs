@@ -12,11 +12,11 @@ public sealed class LogisticNuisanceModel
         if (rows.Count == 0 || rows.All(x => x.BinaryTreatment) || rows.All(x => !x.BinaryTreatment)) throw new InvalidOperationException("Propensity fitting requires treated and control rows.");
         if (variables.Any(x => x.Contains("Outcome", StringComparison.OrdinalIgnoreCase))) throw new InvalidOperationException("Outcome fields are prohibited from the propensity model.");
         var means = variables.Select(v => rows.Average(r => r.Confounders[v])).ToArray(); var scales = variables.Select((v, j) => Math.Sqrt(rows.Average(r => Math.Pow(r.Confounders[v] - means[j], 2)))).Select(x => x == 0 ? 1 : x).ToArray();
-        var beta = new double[variables.Count + 1];
+        var beta = new double[variables.Count + 1]; var prevalence = rows.Count(x => x.BinaryTreatment) / (double)rows.Count; beta[0] = Math.Log(prevalence / (1 - prevalence));
         for (var iteration = 0; iteration < configuration.MaximumIterations; iteration++)
         {
             var gradient = new double[beta.Length]; foreach (var row in rows) { var x = Vector(row, variables, means, scales); var p = Sigmoid(Dot(beta, x)); var error = p - (row.BinaryTreatment ? 1 : 0); for (var j = 0; j < beta.Length; j++) gradient[j] += error * x[j]; }
-            for (var j = 0; j < beta.Length; j++) beta[j] -= configuration.LearningRate * gradient[j] / rows.Count;
+            var maximumUpdate = 0d; for (var j = 0; j < beta.Length; j++) { var update=configuration.LearningRate*gradient[j]/rows.Count;beta[j]-=update;maximumUpdate=Math.Max(maximumUpdate,Math.Abs(update)); } if(maximumUpdate<1e-8)break;
         }
         var raw = rows.Select(r => Sigmoid(Dot(beta, Vector(r, variables, means, scales)))).ToArray(); var clipped = raw.Select(x => Math.Clamp(x, configuration.ClipLower, configuration.ClipUpper)).ToArray();
         var warnings = new List<string>(); if (raw.Any(x => x < .01 || x > .99)) warnings.Add("Quasi-separation or extreme untreated propensity probabilities detected."); if (raw.Where((_, i) => clipped[i] != raw[i]).Any()) warnings.Add($"Propensities were explicitly clipped to [{configuration.ClipLower}, {configuration.ClipUpper}].");
@@ -87,7 +87,7 @@ public static class CausalEstimators
     }
     internal static double[] FitOutcome(IReadOnlyList<CausalAnalysisRowContract> rows, IReadOnlyList<string> vars)
     {
-        var beta = new double[vars.Count + 2]; for (var iteration = 0; iteration < 1200; iteration++) { var g = new double[beta.Length]; foreach (var r in rows) { var x = new[] { 1d, r.BinaryTreatment ? 1d : 0d }.Concat(vars.Select(v => SignedLog(r.Confounders[v]))).ToArray(); var error = LogisticNuisanceModel.Sigmoid(beta.Zip(x).Sum(z => z.First * z.Second)) - (r.OutcomeValue ? 1 : 0); for (var j = 0; j < beta.Length; j++) g[j] += error * x[j]; } for (var j = 0; j < beta.Length; j++) beta[j] -= .02 * g[j] / rows.Count; } return beta;
+        var beta = new double[vars.Count + 2];var prevalence=rows.Count(x=>x.OutcomeValue)/(double)rows.Count;beta[0]=Math.Log(prevalence/(1-prevalence));for (var iteration = 0; iteration < 400; iteration++) { var g = new double[beta.Length]; foreach (var r in rows) { var x = new[] { 1d, r.BinaryTreatment ? 1d : 0d }.Concat(vars.Select(v => SignedLog(r.Confounders[v]))).ToArray(); var error = LogisticNuisanceModel.Sigmoid(beta.Zip(x).Sum(z => z.First * z.Second)) - (r.OutcomeValue ? 1 : 0); for (var j = 0; j < beta.Length; j++) g[j] += error * x[j]; }var maximumUpdate=0d;for (var j = 0; j < beta.Length; j++){var update=.02*g[j]/rows.Count;beta[j]-=update;maximumUpdate=Math.Max(maximumUpdate,Math.Abs(update));}if(maximumUpdate<1e-8)break;} return beta;
     }
     internal static double Predict(IReadOnlyList<double> beta, CausalAnalysisRowContract r, IReadOnlyList<string> vars, bool treatment) { var x = new[] { 1d, treatment ? 1d : 0d }.Concat(vars.Select(v => SignedLog(r.Confounders[v]))).ToArray(); return LogisticNuisanceModel.Sigmoid(beta.Zip(x).Sum(z => z.First * z.Second)); }
     private static double SignedLog(double value) => Math.Sign(value) * Math.Log(1 + Math.Abs(value));

@@ -1,0 +1,511 @@
+{
+  "CausalStudyId": 1,
+  "EligibleRowCount": 69752,
+  "TreatedCount": 1467,
+  "ControlCount": 68285,
+  "ExcludedRows": {
+    "MissingConfounder": 44597,
+    "IncompleteOutcomeWindow": 19982,
+    "CensoredOrMissingOutcome": 11099,
+    "MissingTreatment": 8880,
+    "AlreadyEntered": 20161
+  },
+  "TreatmentPrevalence": 0.02103165500630806,
+  "Estimand": 1,
+  "Estimates": [
+    {
+      "Estimator": 3,
+      "Estimand": 1,
+      "EffectScale": 0,
+      "Estimate": 0.001566580700392556,
+      "StandardError": 0.0034653678202642333,
+      "ConfidenceLower": -0.003771426329672965,
+      "ConfidenceUpper": 0.009279144198563417,
+      "TreatedCount": 1467,
+      "ControlCount": 68285,
+      "EffectiveSampleSize": null,
+      "Status": 1,
+      "Interpretation": "Doubly robust observational risk difference; robustness does not address unmeasured confounding.",
+      "Limitations": [
+        "Observational estimate under measured-confounder assumptions; not proof of causation.",
+        "Partial interference and unmeasured commercial factors may remain."
+      ]
+    },
+    {
+      "Estimator": 1,
+      "Estimand": 1,
+      "EffectScale": 0,
+      "Estimate": 0.0020217938346779336,
+      "StandardError": null,
+      "ConfidenceLower": null,
+      "ConfidenceUpper": null,
+      "TreatedCount": 1467,
+      "ControlCount": 68285,
+      "EffectiveSampleSize": 7698.1834569746725,
+      "Status": 1,
+      "Interpretation": "Observational propensity-weighted risk difference under stated assumptions.",
+      "Limitations": [
+        "Observational estimate under measured-confounder assumptions; not proof of causation.",
+        "Partial interference and unmeasured commercial factors may remain."
+      ]
+    },
+    {
+      "Estimator": 2,
+      "Estimand": 1,
+      "EffectScale": 0,
+      "Estimate": 3.019047295899983E-06,
+      "StandardError": null,
+      "ConfidenceLower": null,
+      "ConfidenceUpper": null,
+      "TreatedCount": 1467,
+      "ControlCount": 68285,
+      "EffectiveSampleSize": null,
+      "Status": 1,
+      "Interpretation": "Model-based potential-outcome risk difference under stated assumptions.",
+      "Limitations": [
+        "Observational estimate under measured-confounder assumptions; not proof of causation.",
+        "Partial interference and unmeasured commercial factors may remain."
+      ]
+    },
+    {
+      "Estimator": 0,
+      "Estimand": 1,
+      "EffectScale": 0,
+      "Estimate": 0.002660368431579043,
+      "StandardError": null,
+      "ConfidenceLower": null,
+      "ConfidenceUpper": null,
+      "TreatedCount": 1467,
+      "ControlCount": 68285,
+      "EffectiveSampleSize": null,
+      "Status": 0,
+      "Interpretation": "Descriptive risk difference; not an adjusted causal estimate.",
+      "Limitations": [
+        "Observational estimate under measured-confounder assumptions; not proof of causation.",
+        "Partial interference and unmeasured commercial factors may remain."
+      ]
+    }
+  ],
+  "Balance": [
+    {
+      "Variable": "Lag1PrescriptionLog",
+      "TreatedMean": 0,
+      "ControlMean": 0,
+      "StandardizedMeanDifference": 0,
+      "WeightedTreatedMean": 0,
+      "WeightedControlMean": 0,
+      "WeightedStandardizedMeanDifference": 0,
+      "VarianceRatio": null,
+      "MissingnessDifference": 0,
+      "Status": 0
+    },
+    {
+      "Variable": "PreviousQuarterAccessGap",
+      "TreatedMean": 17.184700017041685,
+      "ControlMean": 2.8935199409681576,
+      "StandardizedMeanDifference": 1.8559068190333983,
+      "WeightedTreatedMean": 17.184700017041685,
+      "WeightedControlMean": 8.784133783852285,
+      "WeightedStandardizedMeanDifference": 0.854551867309157,
+      "VarianceRatio": 1.7884845066547173,
+      "MissingnessDifference": 0,
+      "Status": 1
+    },
+    {
+      "Variable": "PreviousQuarterNumericDistribution",
+      "TreatedMean": 35.15644835173844,
+      "ControlMean": 2.9429998481212105,
+      "StandardizedMeanDifference": 2.2550562698401833,
+      "WeightedTreatedMean": 35.15644835173844,
+      "WeightedControlMean": 11.36218146288634,
+      "WeightedStandardizedMeanDifference": 1.3615787539357935,
+      "VarianceRatio": 7.0896960767866135,
+      "MissingnessDifference": 0,
+      "Status": 1
+    },
+    {
+      "Variable": "PreviousQuarterWeightedDistribution",
+      "TreatedMean": 52.341148465576495,
+      "ControlMean": 5.836519787757352,
+      "StandardizedMeanDifference": 2.6576283057348347,
+      "WeightedTreatedMean": 52.341148465576495,
+      "WeightedControlMean": 20.1463152733567,
+      "WeightedStandardizedMeanDifference": 1.3847248919326796,
+      "VarianceRatio": 2.752728982804883,
+      "MissingnessDifference": 0,
+      "Status": 1
+    },
+    {
+      "Variable": "QuarterSinceApproval",
+      "TreatedMean": 9.835719154737559,
+      "ControlMean": 6.616811891337775,
+      "StandardizedMeanDifference": 0.7761220298433856,
+      "WeightedTreatedMean": 9.835719154737559,
+      "WeightedControlMean": 7.662968515490678,
+      "WeightedStandardizedMeanDifference": 0.5177354040453334,
+      "VarianceRatio": 0.746500780133779,
+      "MissingnessDifference": 0,
+      "Status": 1
+    },
+    {
+      "Variable": "StateHistoricalMarketWeight",
+      "TreatedMean": 0.013047320137745486,
+      "ControlMean": 0.017897131444602307,
+      "StandardizedMeanDifference": -0.2785658699975209,
+      "WeightedTreatedMean": 0.013047320137745486,
+      "WeightedControlMean": 0.015277819221293622,
+      "WeightedStandardizedMeanDifference": -0.1391052775545793,
+      "VarianceRatio": 0.3630315041917377,
+      "MissingnessDifference": 0,
+      "Status": 1
+    }
+  ],
+  "Positivity": {
+    "MinimumPropensity": 0.02,
+    "MaximumPropensity": 0.6573914816564769,
+    "TreatedMinimum": 0.02,
+    "TreatedMaximum": 0.6573914816564769,
+    "ControlMinimum": 0.02,
+    "ControlMaximum": 0.5287363306014501,
+    "CommonSupportLower": 0.02,
+    "CommonSupportUpper": 0.5287363306014501,
+    "OutsideCommonSupport": 64,
+    "EffectiveSampleSize": 7698.1834569746725,
+    "ExtremeWeightCount": 0,
+    "TreatmentPrevalence": 0.02103165500630806,
+    "Status": 1,
+    "Warnings": [
+      "64 rows are outside empirical common support."
+    ]
+  },
+  "Sensitivity": [
+    {
+      "Analysis": 0,
+      "Status": 0,
+      "Estimate": 0.001566580700392556,
+      "Description": "Configured clipping [0.02,0.98]."
+    },
+    {
+      "Analysis": 1,
+      "Status": 1,
+      "Estimate": null,
+      "Description": "Requires a separately versioned rerun."
+    },
+    {
+      "Analysis": 2,
+      "Status": 1,
+      "Estimate": null,
+      "Description": "Requires a separately versioned rerun."
+    },
+    {
+      "Analysis": 3,
+      "Status": 1,
+      "Estimate": null,
+      "Description": "Requires a separately versioned rerun."
+    },
+    {
+      "Analysis": 4,
+      "Status": 1,
+      "Estimate": null,
+      "Description": "Requires a separately versioned rerun."
+    },
+    {
+      "Analysis": 6,
+      "Status": 3,
+      "Estimate": null,
+      "Description": "No validated E-value or Rosenbaum-bound implementation is claimed."
+    }
+  ],
+  "Placebos": [
+    {
+      "Test": 0,
+      "Estimate": -9.936729011883645E-05,
+      "Status": 0,
+      "Interpretation": "Future-treatment association is a leakage/residual-confounding warning, not identification proof."
+    },
+    {
+      "Test": 1,
+      "Estimate": -0.0027891522779127835,
+      "Status": 0,
+      "Interpretation": "Pre-treatment placebo is a falsification diagnostic."
+    },
+    {
+      "Test": 2,
+      "Estimate": -0.0035016339126681573,
+      "Status": 0,
+      "Interpretation": "Within-workflow permutation is a development diagnostic only."
+    }
+  ],
+  "Heterogeneity": [
+    {
+      "Dimension": "Region",
+      "Value": "Midwest",
+      "TreatedCount": 322,
+      "ControlCount": 16940,
+      "Estimate": 0.0023510086751193475,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "Region",
+      "Value": "Northeast",
+      "TreatedCount": 238,
+      "ControlCount": 11051,
+      "Estimate": -0.006967695231200797,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "Region",
+      "Value": "South",
+      "TreatedCount": 686,
+      "ControlCount": 23764,
+      "Estimate": -0.0003700135884300579,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "Region",
+      "Value": "West",
+      "TreatedCount": 221,
+      "ControlCount": 16530,
+      "Estimate": 0.02152318696569791,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "LaunchCohort",
+      "Value": "2021",
+      "TreatedCount": 488,
+      "ControlCount": 25280,
+      "Estimate": -0.001550503216434945,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "LaunchCohort",
+      "Value": "2022",
+      "TreatedCount": 810,
+      "ControlCount": 23486,
+      "Estimate": 0.006426628734954263,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "LaunchCohort",
+      "Value": "2023",
+      "TreatedCount": 120,
+      "ControlCount": 12988,
+      "Estimate": -0.004696643055127811,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "LaunchCohort",
+      "Value": "2024",
+      "TreatedCount": 49,
+      "ControlCount": 6531,
+      "Estimate": -0.014086663604348492,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "QuarterSinceApproval",
+      "Value": "1",
+      "TreatedCount": 6,
+      "ControlCount": 8168,
+      "Estimate": null,
+      "Status": 3,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "QuarterSinceApproval",
+      "Value": "10",
+      "TreatedCount": 66,
+      "ControlCount": 2810,
+      "Estimate": -0.0035587188612099642,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "QuarterSinceApproval",
+      "Value": "11",
+      "TreatedCount": 153,
+      "ControlCount": 2763,
+      "Estimate": 0.001830916948755615,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "QuarterSinceApproval",
+      "Value": "12",
+      "TreatedCount": 170,
+      "ControlCount": 3120,
+      "Estimate": 0.010162141779788839,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "QuarterSinceApproval",
+      "Value": "13",
+      "TreatedCount": 149,
+      "ControlCount": 2988,
+      "Estimate": 0.018795540102243425,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "QuarterSinceApproval",
+      "Value": "14",
+      "TreatedCount": 60,
+      "ControlCount": 1890,
+      "Estimate": -0.0015873015873015873,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "QuarterSinceApproval",
+      "Value": "15",
+      "TreatedCount": 58,
+      "ControlCount": 1157,
+      "Estimate": -0.003457216940363008,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "QuarterSinceApproval",
+      "Value": "16",
+      "TreatedCount": 66,
+      "ControlCount": 1298,
+      "Estimate": -0.0015408320493066256,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "QuarterSinceApproval",
+      "Value": "17",
+      "TreatedCount": 42,
+      "ControlCount": 980,
+      "Estimate": -0.003061224489795918,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "QuarterSinceApproval",
+      "Value": "18",
+      "TreatedCount": 11,
+      "ControlCount": 564,
+      "Estimate": 0,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "QuarterSinceApproval",
+      "Value": "2",
+      "TreatedCount": 17,
+      "ControlCount": 6217,
+      "Estimate": -0.010616052758565224,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "QuarterSinceApproval",
+      "Value": "3",
+      "TreatedCount": 56,
+      "ControlCount": 6593,
+      "Estimate": 0.006329765335529024,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "QuarterSinceApproval",
+      "Value": "4",
+      "TreatedCount": 66,
+      "ControlCount": 6538,
+      "Estimate": -0.006271030896298563,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "QuarterSinceApproval",
+      "Value": "5",
+      "TreatedCount": 91,
+      "ControlCount": 5718,
+      "Estimate": 0.014632796374664163,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "QuarterSinceApproval",
+      "Value": "6",
+      "TreatedCount": 64,
+      "ControlCount": 4520,
+      "Estimate": -0.007743362831858407,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "QuarterSinceApproval",
+      "Value": "7",
+      "TreatedCount": 140,
+      "ControlCount": 4326,
+      "Estimate": 0.003906611188164585,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "QuarterSinceApproval",
+      "Value": "8",
+      "TreatedCount": 128,
+      "ControlCount": 4583,
+      "Estimate": 0.021691918503163866,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "QuarterSinceApproval",
+      "Value": "9",
+      "TreatedCount": 124,
+      "ControlCount": 4052,
+      "Estimate": -0.0019743336623889436,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "HistoricalVolumeBand",
+      "Value": "Frozen2021Q1",
+      "TreatedCount": 1467,
+      "ControlCount": 68285,
+      "Estimate": 0.002660368431579043,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "NationalDiffusionBand",
+      "Value": "High",
+      "TreatedCount": 340,
+      "ControlCount": 162,
+      "Estimate": -0.013217138707334784,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    },
+    {
+      "Dimension": "NationalDiffusionBand",
+      "Value": "Low",
+      "TreatedCount": 1127,
+      "ControlCount": 68123,
+      "Estimate": 0.00027260310409086934,
+      "Status": 0,
+      "Warning": "Exploratory; prespecified subgroup only, with multiplicity caution."
+    }
+  ],
+  "BlockingFindings": [],
+  "Warnings": [
+    "Propensities were explicitly clipped to [0.02, 0.98].",
+    "Nuisance models are fitted without cross-fitting; this is retained as an uncertainty limitation and independently checked in Python."
+  ],
+  "ReproducibilityHash": "B42ACD300F64E991D5947D90F82FCE6B272EBA9824BF44818BDB40CE3FB0759B",
+  "ReportPaths": [],
+  "Duration": "00:09:26.3041194",
+  "DryRun": false
+}

@@ -1,0 +1,2 @@
+minimum,maximum,treated_minimum,treated_maximum,control_minimum,control_maximum,common_lower,common_upper,outside_support,effective_sample_size,extreme_weights,status
+0.02,0.6573914816564769,0.02,0.6573914816564769,0.02,0.5287363306014501,0.02,0.5287363306014501,64,7698.1834569746725,0,Warning

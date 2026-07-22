@@ -1,0 +1,16 @@
+{
+  "syntheticDevelopmentData": false,
+  "task": "NextQuarterStateEntry",
+  "DatasetVersionId": 2,
+  "FeatureSetVersionId": 1,
+  "FeatureSelectionVersion": "next-entry-features-v1",
+  "DatasetHash": "84B973AFF0545C987B52C525F0CBAB607C293BEFC1D5EBCC87ED6769DECB0C36",
+  "SplitManifestHash": "1E6909E1CA6F92D8CBA7944CDBC03E765B3042BE8744F16F6ACECDE18A9DE748",
+  "featureSchemaHash": "BE2EBF510D5E610DD4F54D4E62BB6F9BDB47EACFB496B6739659C7E6AA6C595E",
+  "RandomSeed": 17,
+  "trainer": "FastTree",
+  "selectedThreshold": 0.08,
+  "packageVersion": "5.0.0",
+  "dotnetVersion": "10.0.10",
+  "Sha256": "62C607C6462D603D04CDF43662B16EAD773138C916912080B15A7F65C85F9022"
+}

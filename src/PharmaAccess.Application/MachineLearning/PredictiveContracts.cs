@@ -55,7 +55,8 @@ public sealed record TrainNextQuarterStateEntryRequest(string ExperimentName, in
 public sealed record TrainNextQuarterStateEntryResult(string Task, string ExperimentId,
     TrainingDataset Dataset, IReadOnlyList<BaselineEvaluation> Baselines, IReadOnlyList<TrainerEvaluation> Candidates, TrainerEvaluation? Selected,
     string? ArtifactPath, string? ModelCardPath, string? ReproducibilityManifestPath,
-    IReadOnlyList<string> Warnings);
+    IReadOnlyList<string> Warnings, IReadOnlyList<BinaryPrediction>? ValidationPredictions = null,
+    IReadOnlyList<BinaryPrediction>? TestPredictions = null, double? SelectedThreshold = null);
 
 public sealed record NextStateEntryPredictionRequest(string? ModelVersion, long FeatureRowId, int FeatureSetVersionId);
 public sealed record NextStateEntryPredictionResponse(string Task, float RawProbability, float? CalibratedProbability,

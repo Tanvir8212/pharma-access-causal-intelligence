@@ -1,0 +1,11 @@
+analysis,status,estimate,description
+PropensityClipping,Acceptable,0.001566580700392556,"Configured clipping [0.02,0.98]."
+AlternativeTreatmentThreshold,Warning,,"Requires a separately versioned rerun."
+AlternativeAdjustmentSet,Warning,,"Requires a separately versioned rerun."
+AlternativeStateEntryPolicy,Warning,,"Requires a separately versioned rerun."
+AlternativeEligibleStatePolicy,Warning,,"Requires a separately versioned rerun."
+UnmeasuredConfoundingUnsupported,InsufficientData,,"No validated E-value or Rosenbaum-bound implementation is claimed."
+Estimator_AugmentedInverseProbabilityWeighting,Estimated,0.001566580700392556,"Doubly robust observational risk difference; robustness does not address unmeasured confounding."
+Estimator_PropensityScoreWeighting,Estimated,0.0020217938346779336,"Observational propensity-weighted risk difference under stated assumptions."
+Estimator_OutcomeRegression,Estimated,3.019047295899983E-06,"Model-based potential-outcome risk difference under stated assumptions."
+Estimator_UnadjustedDifferenceInMeans,DescriptiveOnly,0.002660368431579043,"Descriptive risk difference; not an adjusted causal estimate."

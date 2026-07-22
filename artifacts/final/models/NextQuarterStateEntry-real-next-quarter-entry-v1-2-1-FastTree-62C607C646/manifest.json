@@ -1,0 +1,11 @@
+{
+  "syntheticDevelopmentData": true,
+  "task": "NextQuarterStateEntry",
+  "experiment": "real-next-quarter-entry-v1",
+  "datasetVersion": 2,
+  "featureSetVersion": 1,
+  "trainer": "FastTree",
+  "schemaHash": "BE2EBF510D5E610DD4F54D4E62BB6F9BDB47EACFB496B6739659C7E6AA6C595E",
+  "artifactHash": "62C607C6462D603D04CDF43662B16EAD773138C916912080B15A7F65C85F9022",
+  "fileSize": 30813
+}

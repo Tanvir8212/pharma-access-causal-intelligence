@@ -11,6 +11,22 @@ namespace PharmaAccess.Worker
     {
         private static int Main(string[] args)
         {
+            if (args.Length > 0 && args[0] == "run-real-final-analysis")
+            {
+                if (args.Length != 2) { Console.Error.WriteLine("Usage: run-real-final-analysis <artifact-root>"); return 2; }
+                var connection=Environment.GetEnvironmentVariable("ConnectionStrings__PharmaAccess");if(string.IsNullOrWhiteSpace(connection))return 2;
+                var result=new RealFinalAnalysisWorkflow().RunAsync(connection,args[1]).GetAwaiter().GetResult();
+                Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(new{predictive=result.Predictive.Selected?.TestMetrics,threshold=result.Predictive.SelectedThreshold,causal=result.Causal.Estimates,blockers=result.Causal.BlockingFindings}));return result.Causal.BlockingFindings.Count==0?0:5;
+            }
+            if (args.Length > 0 && args[0] == "run-real-final-causal")
+            {
+                if(args.Length!=2)return 2;var connection=Environment.GetEnvironmentVariable("ConnectionStrings__PharmaAccess");if(string.IsNullOrWhiteSpace(connection))return 2;
+                var result=new RealFinalAnalysisWorkflow().RunCausalOnlyAsync(connection,args[1]).GetAwaiter().GetResult();Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(result));return result.BlockingFindings.Count==0?0:5;
+            }
+            if(args.Length>0&&args[0]=="export-real-causal-validation")
+            {
+                if(args.Length!=2)return 2;var connection=Environment.GetEnvironmentVariable("ConnectionStrings__PharmaAccess");if(string.IsNullOrWhiteSpace(connection))return 2;var count=new RealFinalAnalysisWorkflow().ExportCausalValidationRowsAsync(connection,args[1]).GetAwaiter().GetResult();Console.WriteLine($"Exported {count} governed causal validation rows.");return 0;
+            }
             if (args.Length > 0 && args[0] == "export-m7-synthetic")
             {
                 if (args.Length != 3) { Console.Error.WriteLine("Usage: export-m7-synthetic <output-root> <validation-run-code>"); return 2; }

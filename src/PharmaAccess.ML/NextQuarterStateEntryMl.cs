@@ -160,21 +160,27 @@ public sealed class NextQuarterStateEntryTrainingService(FileSystemModelArtifact
             fitted.Add((trainer, model, new(trainer, metrics, null, watch.ElapsedMilliseconds, scoreWatch.ElapsedMilliseconds, JsonSerializer.Serialize(new { seed = request.RandomSeed, threshold = request.Threshold }), null, ModelApprovalStatus.Candidate, trainer == TrainerKind.LightGbm ? ["LightGBM uses a native runtime; reproducibility can vary slightly across platforms."] : []), trainData.Schema));
         }
         var selected = fitted.OrderByDescending(x => x.Evaluation.ValidationMetrics.PrAuc).ThenBy(x => x.Evaluation.ValidationMetrics.LogLoss).ThenBy(x => x.Evaluation.ValidationMetrics.BrierScore).ThenBy(x => Complexity(x.Trainer)).First();
-        var testMetrics = BinaryMetricCalculator.Calculate(Predict(ml, selected.Model, testData, request.Threshold), request.Threshold, prevalence);
+        var selectedValidationPredictions = Predict(ml, selected.Model, validationData, request.Threshold);
+        var threshold = Enumerable.Range(5, 91).Select(x => x / 100d)
+            .Select(x => (Threshold: x, Metrics: BinaryMetricCalculator.Calculate(selectedValidationPredictions, x, prevalence)))
+            .OrderByDescending(x => x.Metrics.F1).ThenBy(x => Math.Abs(x.Threshold - .5)).First().Threshold;
+        var selectedValidationMetrics = BinaryMetricCalculator.Calculate(selectedValidationPredictions, threshold, prevalence);
+        var testPredictions = Predict(ml, selected.Model, testData, threshold);
+        var testMetrics = BinaryMetricCalculator.Calculate(testPredictions, threshold, prevalence);
         var baselines = new[]
         {
-            new BaselineEvaluation("OverallPrevalence", BinaryMetricCalculator.Calculate(BinaryMetricCalculator.PrevalenceBaseline(dataset.Validation, prevalence, request.Threshold), request.Threshold, prevalence), BinaryMetricCalculator.Calculate(BinaryMetricCalculator.PrevalenceBaseline(dataset.Test, prevalence, request.Threshold), request.Threshold, prevalence)),
-            new BaselineEvaluation("HistoricalStateEntryRate", BinaryMetricCalculator.Calculate(BinaryMetricCalculator.HistoricalStateRateBaseline(dataset.Validation, prevalence, request.Threshold), request.Threshold, prevalence), BinaryMetricCalculator.Calculate(BinaryMetricCalculator.HistoricalStateRateBaseline(dataset.Test, prevalence, request.Threshold), request.Threshold, prevalence))
+            new BaselineEvaluation("OverallPrevalence", BinaryMetricCalculator.Calculate(BinaryMetricCalculator.PrevalenceBaseline(dataset.Validation, prevalence, threshold), threshold, prevalence), BinaryMetricCalculator.Calculate(BinaryMetricCalculator.PrevalenceBaseline(dataset.Test, prevalence, threshold), threshold, prevalence)),
+            new BaselineEvaluation("HistoricalStateEntryRate", BinaryMetricCalculator.Calculate(BinaryMetricCalculator.HistoricalStateRateBaseline(dataset.Validation, prevalence, threshold), threshold, prevalence), BinaryMetricCalculator.Calculate(BinaryMetricCalculator.HistoricalStateRateBaseline(dataset.Test, prevalence, threshold), threshold, prevalence))
         };
         StoredArtifact? artifact = null; string? card = null; string? reproducibility = null;
         if (!request.ValidateOnly)
         {
             artifact = artifacts.Save(ml, selected.Model, trainData.Schema, "NextQuarterStateEntry", request.ExperimentName, request.DatasetVersionId, request.FeatureSetVersionId, selected.Trainer.ToString(), dataset.FeatureSelection.SchemaHash);
-            card = Path.Combine(Path.GetDirectoryName(artifact.ModelPath)!, "model-card.md"); File.WriteAllText(card, ModelCard(request, dataset, selected.Trainer, selected.Evaluation.ValidationMetrics, testMetrics, artifact));
-            reproducibility = Path.Combine(Path.GetDirectoryName(artifact.ModelPath)!, "reproducibility.json"); File.WriteAllText(reproducibility, JsonSerializer.Serialize(new { syntheticDevelopmentData = true, task = "NextQuarterStateEntry", request.DatasetVersionId, request.FeatureSetVersionId, request.FeatureSelectionVersion, dataset.DatasetHash, dataset.SplitManifestHash, featureSchemaHash = dataset.FeatureSelection.SchemaHash, request.RandomSeed, trainer = selected.Trainer.ToString(), packageVersion = "5.0.0", dotnetVersion = Environment.Version.ToString(), artifact.Sha256 }, new JsonSerializerOptions { WriteIndented = true }));
+            card = Path.Combine(Path.GetDirectoryName(artifact.ModelPath)!, "model-card.md"); File.WriteAllText(card, ModelCard(request, dataset, selected.Trainer, selectedValidationMetrics, testMetrics, artifact));
+            reproducibility = Path.Combine(Path.GetDirectoryName(artifact.ModelPath)!, "reproducibility.json"); File.WriteAllText(reproducibility, JsonSerializer.Serialize(new { syntheticDevelopmentData = false, task = "NextQuarterStateEntry", request.DatasetVersionId, request.FeatureSetVersionId, request.FeatureSelectionVersion, dataset.DatasetHash, dataset.SplitManifestHash, featureSchemaHash = dataset.FeatureSelection.SchemaHash, request.RandomSeed, trainer = selected.Trainer.ToString(), selectedThreshold = threshold, packageVersion = "5.0.0", dotnetVersion = Environment.Version.ToString(), artifact.Sha256 }, new JsonSerializerOptions { WriteIndented = true }));
         }
-        var candidates = fitted.Select(x => x.Trainer == selected.Trainer ? x.Evaluation with { TestMetrics = testMetrics, ArtifactVersion = artifact?.Version, ApprovalStatus = ModelApprovalStatus.ValidationSelected } : x.Evaluation).ToArray();
-        await Task.CompletedTask; return new("NextQuarterStateEntry", Guid.NewGuid().ToString("N"), dataset, baselines, candidates, candidates.Single(x => x.Trainer == selected.Trainer), artifact?.ModelPath, card, reproducibility, ["Synthetic development data — not research results", "No model was automatically approved."]);
+        var candidates = fitted.Select(x => x.Trainer == selected.Trainer ? x.Evaluation with { ValidationMetrics = selectedValidationMetrics, TestMetrics = testMetrics, ArtifactVersion = artifact?.Version, ApprovalStatus = ModelApprovalStatus.ValidationSelected } : x.Evaluation).ToArray();
+        await Task.CompletedTask; return new("NextQuarterStateEntry", Guid.NewGuid().ToString("N"), dataset, baselines, candidates, candidates.Single(x => x.Trainer == selected.Trainer), artifact?.ModelPath, card, reproducibility, ["Observational access data; predictions are not clinical advice.", "Model and threshold were selected without locked-test outcomes."], selectedValidationPredictions, testPredictions, threshold);
     }
 
     private static IEstimator<ITransformer> Pipeline(MLContext ml, TrainerKind trainer, int seed)
