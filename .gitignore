@@ -1,16 +1,16 @@
-# .NET build output
+﻿# .NET build output
 **/bin/
 **/obj/
 TestResults/
 *.trx
 
-# IDE and user settings
+# IDE files
 .vs/
 .vscode/
 *.user
 *.suo
 
-# Secrets and local configuration
+# Secrets and local settings
 .env
 .env.*
 !.env.example
@@ -18,27 +18,41 @@ secrets.json
 appsettings.Local.json
 appsettings.*.local.json
 
-# Logs and temporary output
+# Logs and temporary files
 *.log
 logs/
 tmp/
 temp/
-artifacts/models/**
-artifacts/experiments/**
-artifacts/reports/**
-!artifacts/**/.gitkeep
 
-# Data and local databases
-data/raw/
-samples/data/*.csv
-samples/data/*.parquet
+# Private datasets and local research files
+data/private/
+
+# Internal/generated development artifacts
+artifacts/test-temp/
+artifacts/research-audit/
+artifacts/experiments/
+artifacts/models/
+artifacts/reports/
+
+# Internal planning and milestone documentation
+docs/
+
+# Old internal README files
+research/README.md
+database/README.md
+
+# Redundant local-only files
+PharmaAccess.Tests.sln
+dotnet-tools.json
+
+# Local databases and archives
 *.bak
 *.mdf
 *.ldf
 *.sqlite
 *.db
 
-# Python (reserved for Milestone 7)
+# Python
 .venv/
 venv/
 __pycache__/
@@ -46,19 +60,6 @@ __pycache__/
 .pytest_cache/
 .coverage
 htmlcov/
-python/*.egg-info/
-python/src/*.egg-info/
+*.egg-info/
 .mypy_cache/
 .ipynb_checkpoints/
-
-# Generated research output
-research/snapshots/**
-research/figures/generated/
-research/tables/generated/
-artifacts/causal-validation/**
-artifacts/research-freezes/**
-/data/private/
-/artifacts/test-temp/
-/artifacts/research-audit/
-/temp/
-*.zip
