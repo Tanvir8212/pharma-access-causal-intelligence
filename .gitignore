@@ -57,3 +57,8 @@ research/figures/generated/
 research/tables/generated/
 artifacts/causal-validation/**
 artifacts/research-freezes/**
+/data/private/
+/artifacts/test-temp/
+/artifacts/research-audit/
+/temp/
+*.zip
