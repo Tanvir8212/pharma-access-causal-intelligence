@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup><TargetFramework>net10.0</TargetFramework><UserSecretsId>PharmaAccess.Web</UserSecretsId></PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <ProjectReference Include="..\PharmaAccess.Application\PharmaAccess.Application.csproj" />
     <ProjectReference Include="..\PharmaAccess.Llm\PharmaAccess.Llm.csproj" />
     <ProjectReference Include="..\PharmaAccess.ML\PharmaAccess.ML.csproj" />

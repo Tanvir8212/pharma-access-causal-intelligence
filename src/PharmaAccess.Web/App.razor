@@ -10,7 +10,11 @@
 </head>
 <body>
     <ResearchAssistant />
-    <ModelGovernance />
+    <CascadingAuthenticationState>
+        <AuthorizeView Policy="ModelGovernanceReviewer">
+            <Authorized><ModelGovernance /></Authorized>
+        </AuthorizeView>
+    </CascadingAuthenticationState>
     <script src="_framework/blazor.web.js"></script>
 </body>
 </html>

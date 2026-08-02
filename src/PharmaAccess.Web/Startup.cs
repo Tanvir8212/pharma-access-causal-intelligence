@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using PharmaAccess.Llm;
 using PharmaAccess.ML;
 using PharmaAccess.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace PharmaAccess.Web
 {
@@ -21,6 +22,10 @@ namespace PharmaAccess.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var authentication=services.AddAuthentication(o=>{o.DefaultAuthenticateScheme="ConfiguredAuthentication";o.DefaultChallengeScheme="ConfiguredAuthentication";});
+            if(_configuration["Authentication:Mode"]?.Equals("Jwt",StringComparison.OrdinalIgnoreCase)==true)authentication.AddJwtBearer("ConfiguredAuthentication",o=>{o.Authority=_configuration["Authentication:Authority"];o.Audience=_configuration["Authentication:Audience"];o.RequireHttpsMetadata=!_environment.IsDevelopment();});else authentication.AddScheme<Microsoft.AspNetCore.Authentication.AuthenticationSchemeOptions,WebDevelopmentAuthenticationHandler>("ConfiguredAuthentication",_=>{});
+            services.AddAuthorization(o=>o.AddPolicy(WebPolicies.ModelGovernanceReviewer,p=>p.RequireRole("ModelGovernanceReviewer","ModelGovernanceApprover","SystemAdministrator")));
+            services.AddCascadingAuthenticationState();services.AddAntiforgery();
             services.AddRazorComponents().AddInteractiveServerComponents();
             services.AddPharmaAccessResearchAssistant(_configuration, FindRepositoryRoot(_environment.ContentRootPath));
             services.AddSingleton(new PharmaAccess.Application.MachineLearning.DriftThresholds());
@@ -41,8 +46,10 @@ namespace PharmaAccess.Web
 
         public void Configure(IApplicationBuilder app)
         {
+            if(!_environment.IsDevelopment())app.UseHsts();app.UseMiddleware<WebSafetyMiddleware>();
             app.UseStaticFiles();
             app.UseRouting();
+            app.UseAuthentication();app.UseAuthorization();app.UseAntiforgery();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorComponents<App>().AddInteractiveServerRenderMode();

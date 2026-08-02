@@ -38,7 +38,8 @@ public sealed record GovernedModelSnapshot(string Version, string ArtifactSha256
 public sealed record MetricDifference(string Name, double Champion, double Challenger, double Change, bool HigherIsBetter);
 public sealed record ChampionChallengerComparison(Guid Id, GovernedModelSnapshot Champion,
     GovernedModelSnapshot Challenger, DateTime CreatedAtUtc, MetricDifference[] MetricDifferences,
-    string[] SubgroupWarnings, string[] BlockingReasons, bool PromotionEligible, string GovernanceNotice);
+    string[] SubgroupWarnings, string[] BlockingReasons, bool PromotionEligible, string GovernanceNotice,
+    string SubmitterIdentifier = "");
 public interface IChampionChallengerComparer { ChampionChallengerComparison Compare(GovernedModelSnapshot champion, GovernedModelSnapshot challenger); }
 
 public sealed record PromotionActionRequest(Guid ComparisonId, string ApproverIdentifier, DateTime ApprovalTimestampUtc, string Reason);
