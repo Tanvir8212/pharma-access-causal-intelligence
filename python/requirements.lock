@@ -1,4 +1,3 @@
-﻿# Editable Git install with no remote (pharma-access-validation==0.1.0)
 annotated-types==0.7.0
 causal-learn==0.1.4.8
 cffi==2.1.0
@@ -10,7 +9,6 @@ cvxpy==1.9.2
 cycler==0.12.1
 Cython==3.2.8
 dowhy==0.14
--e d:\pharmaaccesscausalintelligence\python
 econml==0.16.0
 fonttools==4.63.0
 graphviz==0.21
