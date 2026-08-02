@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+  <PropertyGroup><TargetFramework>net10.0</TargetFramework><UserSecretsId>PharmaAccess.Web</UserSecretsId></PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\PharmaAccess.Application\PharmaAccess.Application.csproj" />
+    <ProjectReference Include="..\PharmaAccess.Llm\PharmaAccess.Llm.csproj" />
   </ItemGroup>
 </Project>

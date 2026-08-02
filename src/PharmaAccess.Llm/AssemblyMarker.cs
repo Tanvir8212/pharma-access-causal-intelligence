@@ -1,8 +1,6 @@
-namespace PharmaAccess.Llm
+namespace PharmaAccess.Llm;
+
+public sealed class AssemblyMarker
 {
-    /// <summary>Identifies the future provider-agnostic LLM boundary.</summary>
-    public sealed class AssemblyMarker
-    {
-        public System.Type ApplicationBoundary => typeof(Application.AssemblyMarker);
-    }
+    public static Type ApplicationLayer => typeof(PharmaAccess.Application.AssemblyMarker);
 }

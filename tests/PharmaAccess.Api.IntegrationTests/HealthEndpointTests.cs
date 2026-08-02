@@ -49,5 +49,18 @@ namespace PharmaAccess.Api.IntegrationTests
             var json = JsonSerializer.Serialize(response);
             Assert.Contains("RawProbability", json); Assert.Contains("CalibratedProbability", json); Assert.Contains("CalibrationStatus", json); Assert.Contains("UncertaintyStatus", json); Assert.Contains("ModelApprovalStatus", json); Assert.Contains("DatasetVersionId", json); Assert.DoesNotContain("ConfidenceScore", json);
         }
+
+        [Fact]
+        public async Task Assistant_endpoint_returns_safe_fallback_without_a_Gemini_key()
+        {
+            using var host = await new HostBuilder().ConfigureWebHost(webBuilder => webBuilder.UseTestServer().UseStartup<Api.Startup>()).StartAsync();
+            using var client = host.GetTestClient();
+            var response = await client.PostAsync("/api/v1/assistant/ask",
+                new StringContent("{\"question\":\"What was the locked-test ROC AUC?\"}", Encoding.UTF8, "application/json"));
+            var body = await response.Content.ReadAsStringAsync();
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Contains("provider-unavailable", body, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain("apiKey", body, StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

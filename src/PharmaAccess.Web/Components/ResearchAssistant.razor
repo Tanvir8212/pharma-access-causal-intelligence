@@ -1,0 +1,52 @@
+@using PharmaAccess.Llm
+@inject ResearchAssistantService Assistant
+@rendermode InteractiveServer
+
+<main>
+    <p class="eyebrow">PHARMAACCESS CAUSAL INTELLIGENCE</p>
+    <h1>Research Assistant</h1>
+    <p>Ask about the finalized predictive and observational causal research. Answers are restricted to verified public evidence.</p>
+    <label for="question">Research question</label>
+    <textarea id="question" @bind="question" rows="4" placeholder="What was the locked-test ROC AUC?"></textarea>
+    <button @onclick="Ask" disabled="@busy">@(busy ? "Checking evidence…" : "Ask")</button>
+
+    @if (response is not null)
+    {
+        <section>
+            <div class="status">@response.ValidationStatus · @response.Provider / @response.Model</div>
+            <h2>Answer</h2>
+            <span class="badge">@Label(response.ExplanationType)</span>
+            <p>@response.Answer</p>
+            @if (response.Citations.Length > 0)
+            {
+                <h2>Evidence sources</h2>
+                <ul>
+                    @foreach (var source in response.Citations)
+                    {
+                        <li><code>@source.SourceIdentifier</code> — @source.Title, @source.Section <small>@source.SourcePath</small></li>
+                    }
+                </ul>
+            }
+            <h2>Methodological warnings</h2>
+            <ul>@foreach (var warning in response.Warnings) { <li>@warning</li> }</ul>
+        </section>
+    }
+</main>
+
+@code {
+    private string question = "";
+    private bool busy;
+    private AssistantAskResponse? response;
+    private async Task Ask()
+    {
+        busy = true;
+        try { response = await Assistant.AskAsync(question); }
+        finally { busy = false; }
+    }
+    private static string Label(string type) => type switch
+    {
+        "causal" => "Observational causal explanation",
+        "predictive" => "Predictive explanation",
+        _ => "Unsupported / fallback"
+    };
+}

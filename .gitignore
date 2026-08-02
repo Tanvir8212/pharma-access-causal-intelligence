@@ -33,6 +33,9 @@ artifacts/research-audit/
 artifacts/experiments/
 artifacts/models/
 artifacts/reports/
+artifacts/llm-benchmarks/
+artifacts/llm-transcripts/
+artifacts/llm-prompts/
 
 # Internal documentation
 docs/
