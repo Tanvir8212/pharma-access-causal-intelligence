@@ -45,6 +45,13 @@ public sealed class PharmaAccessDbContext(DbContextOptions<PharmaAccessDbContext
     public DbSet<ThresholdEvaluationEntity> ThresholdEvaluations => Set<ThresholdEvaluationEntity>();
     public DbSet<ModelApprovalEntity> ModelApprovals => Set<ModelApprovalEntity>();
     public DbSet<ModelRegistryEntry> ModelRegistryEntries => Set<ModelRegistryEntry>();
+    public DbSet<GovernanceDriftReport> GovernanceDriftReports => Set<GovernanceDriftReport>();
+    public DbSet<GovernanceDriftFinding> GovernanceDriftFindings => Set<GovernanceDriftFinding>();
+    public DbSet<GovernanceComparison> GovernanceComparisons => Set<GovernanceComparison>();
+    public DbSet<GovernanceChampionState> GovernanceChampionStates => Set<GovernanceChampionState>();
+    public DbSet<GovernanceDecision> GovernanceDecisions => Set<GovernanceDecision>();
+    public DbSet<GovernanceChampionHistory> GovernanceChampionHistory => Set<GovernanceChampionHistory>();
+    public DbSet<GovernanceAuditRecord> GovernanceAuditRecords => Set<GovernanceAuditRecord>();
     public DbSet<CausalStudyEntity> CausalStudies => Set<CausalStudyEntity>();
     public DbSet<CausalDagDefinitionEntity> CausalDagDefinitions => Set<CausalDagDefinitionEntity>();
     public DbSet<CausalAdjustmentSetEntity> CausalAdjustmentSets => Set<CausalAdjustmentSetEntity>();
@@ -74,6 +81,13 @@ public sealed class PharmaAccessDbContext(DbContextOptions<PharmaAccessDbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(PharmaAccessDbContext).Assembly);
+    }
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess) { GuardAuditHistory(); return base.SaveChanges(acceptAllChangesOnSuccess); }
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default) { GuardAuditHistory(); return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken); }
+    private void GuardAuditHistory()
+    {
+        if (ChangeTracker.Entries<GovernanceAuditRecord>().Any(x => x.Entity.IsCompleted && x.State is EntityState.Modified or EntityState.Deleted)) throw new InvalidOperationException("Completed governance audit records are immutable.");
     }
 
     private sealed class UtcDateTimeConverter() : ValueConverter<DateTime, DateTime>(

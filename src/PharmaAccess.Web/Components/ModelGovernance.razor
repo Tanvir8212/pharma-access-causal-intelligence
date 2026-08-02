@@ -22,11 +22,12 @@
 </main>
 
 @code {
-    private ModelGovernanceState State => Manager.State;
+    private ModelGovernanceState State = new("Loading", null, "Loading", false, [], [], []);
     private string DriftSeverity = "Not evaluated";
     protected override async Task OnInitializedAsync()
     {
         var reports = await Reports.ListAsync();
         DriftSeverity = reports.FirstOrDefault()?.Severity.ToString() ?? "Not evaluated";
+        State = await Manager.GetStateAsync();
     }
 }

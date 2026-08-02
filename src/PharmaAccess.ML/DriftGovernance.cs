@@ -106,7 +106,7 @@ public sealed class ChampionChallengerComparer(DriftThresholds thresholds) : ICh
         if (champion.FeatureSchemaHash != challenger.FeatureSchemaHash) blocks.Add("Feature schemas differ.");
         if (!champion.ArtifactHashValid || !challenger.ArtifactHashValid || !IsSha(champion.ArtifactSha256) || !IsSha(challenger.ArtifactSha256)) blocks.Add("Artifact hashes are invalid.");
         if (champion.EvaluationCohortHash != challenger.EvaluationCohortHash) blocks.Add("Frozen evaluation cohorts differ.");
-        if (champion.DatasetHash != challenger.DatasetHash || champion.ReproducibilityHash != challenger.ReproducibilityHash) blocks.Add("Dataset or reproducibility metadata differ.");
+        if (champion.DatasetHash != challenger.DatasetHash || champion.DatasetFreezeIdentifier != challenger.DatasetFreezeIdentifier || champion.ReproducibilityHash != challenger.ReproducibilityHash) blocks.Add("Dataset, freeze, or reproducibility metadata differ.");
         if (!champion.LeakageChecksPassed || !challenger.LeakageChecksPassed) blocks.Add("Leakage checks failed.");
         if (!champion.Metrics.Keys.ToHashSet(StringComparer.Ordinal).SetEquals(challenger.Metrics.Keys)) blocks.Add("Champion and challenger metric sets differ.");
         var missing = RequiredMetrics.Where(x => !champion.Metrics.ContainsKey(x) || !challenger.Metrics.ContainsKey(x)).ToArray(); if (missing.Length > 0) blocks.Add($"Required metrics are missing: {string.Join(", ", missing)}.");
@@ -126,6 +126,7 @@ public sealed class HumanGovernedModelManager : IHumanGovernedModelManager
     private string _champion; private string? _previous; private string? _challenger; private string _status = "No pending comparison";
     public HumanGovernedModelManager(string initialChampion = "fasttree-published") => _champion = initialChampion;
     public ModelGovernanceState State => new(_champion, _challenger, _status, _previous is not null, _differences, _subgroupWarnings, _audit.ToArray());
+    public Task<ModelGovernanceState> GetStateAsync(CancellationToken cancellationToken = default) => Task.FromResult(State);
     public Task RegisterComparisonAsync(ChampionChallengerComparison comparison, CancellationToken cancellationToken = default) { _comparisons[comparison.Id] = comparison; _challenger = comparison.Challenger.Version; _differences = comparison.MetricDifferences; _subgroupWarnings = comparison.SubgroupWarnings; _status = comparison.PromotionEligible ? "Awaiting human approval" : "Blocked"; return Task.CompletedTask; }
     public Task<PromotionAuditRecord> ApproveAsync(PromotionActionRequest request, CancellationToken cancellationToken = default)
     {

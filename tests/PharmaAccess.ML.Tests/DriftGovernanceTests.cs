@@ -119,6 +119,18 @@ public sealed class DriftGovernanceTests
         Assert.Equal("champion", manager.State.ChampionVersion); Assert.Equal("Awaiting human approval", manager.State.PromotionStatus); Assert.Empty(manager.State.AuditRecords);
     }
 
+    [Fact]
+    public async Task In_memory_drift_report_store_round_trips_for_unit_tests()
+    {
+        var values=Enumerable.Range(0,20).Select(x=>x/20d).ToArray();var report=Detector().Detect(Request(values,values));var store=new InMemoryDriftReportStore();await store.SaveAsync(report);Assert.Equal(report,await store.GetAsync(report.Id));Assert.Single(await store.ListAsync());
+    }
+
+    [Fact]
+    public async Task Rollback_without_previously_approved_champion_is_rejected()
+    {
+        var manager=new HumanGovernedModelManager("champion");await Assert.ThrowsAsync<InvalidOperationException>(()=>manager.RollbackAsync("reviewer",DateTime.UtcNow,"no approved target"));
+    }
+
     private static DriftDetector Detector() => new(new DriftThresholds());
     private static ChampionChallengerComparer Comparer() => new(new DriftThresholds());
     private static DriftReportRequest Request(double[] reference, double[] current) => new("fasttree-published", "2026-Q3", [new("Volume", reference, current)], [], reference, current, null, null);

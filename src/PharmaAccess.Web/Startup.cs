@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using PharmaAccess.Llm;
 using PharmaAccess.ML;
+using PharmaAccess.Data;
 
 namespace PharmaAccess.Web
 {
@@ -24,9 +25,18 @@ namespace PharmaAccess.Web
             services.AddPharmaAccessResearchAssistant(_configuration, FindRepositoryRoot(_environment.ContentRootPath));
             services.AddSingleton(new PharmaAccess.Application.MachineLearning.DriftThresholds());
             services.AddSingleton<PharmaAccess.Application.MachineLearning.IDriftDetector, DriftDetector>();
-            services.AddSingleton<PharmaAccess.Application.MachineLearning.IDriftReportStore, InMemoryDriftReportStore>();
             services.AddSingleton<PharmaAccess.Application.MachineLearning.IChampionChallengerComparer, ChampionChallengerComparer>();
-            services.AddSingleton<PharmaAccess.Application.MachineLearning.IHumanGovernedModelManager>(_ => new HumanGovernedModelManager("fasttree-published-threshold-0.08"));
+            var connection = _configuration.GetConnectionString("PharmaAccess");
+            if (!string.IsNullOrWhiteSpace(connection))
+            {
+                services.AddPharmaAccessData(connection);
+                services.AddPersistentModelGovernance(_configuration.GetSection("ModelGovernance:ApprovedArtifactRoots").Get<string[]>() ?? []);
+            }
+            else
+            {
+                services.AddSingleton<PharmaAccess.Application.MachineLearning.IDriftReportStore, InMemoryDriftReportStore>();
+                services.AddSingleton<PharmaAccess.Application.MachineLearning.IHumanGovernedModelManager>(_ => new HumanGovernedModelManager("fasttree-published-threshold-0.08"));
+            }
         }
 
         public void Configure(IApplicationBuilder app)

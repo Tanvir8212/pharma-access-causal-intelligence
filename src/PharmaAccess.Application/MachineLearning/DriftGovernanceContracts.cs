@@ -33,7 +33,8 @@ public interface IDriftReportStore
 public sealed record GovernedModelSnapshot(string Version, string ArtifactSha256, bool ArtifactHashValid,
     string FeatureSchemaHash, string EvaluationCohortHash, string DatasetHash, string ReproducibilityHash,
     bool LeakageChecksPassed, IReadOnlyDictionary<string, double> Metrics,
-    IReadOnlyDictionary<string, double> ImportantSubgroupPrAuc);
+    IReadOnlyDictionary<string, double> ImportantSubgroupPrAuc, string ArtifactPath = "",
+    string DatasetFreezeIdentifier = "");
 public sealed record MetricDifference(string Name, double Champion, double Challenger, double Change, bool HigherIsBetter);
 public sealed record ChampionChallengerComparison(Guid Id, GovernedModelSnapshot Champion,
     GovernedModelSnapshot Challenger, DateTime CreatedAtUtc, MetricDifference[] MetricDifferences,
@@ -50,8 +51,22 @@ public sealed record ModelGovernanceState(string ChampionVersion, string? Challe
 public interface IHumanGovernedModelManager
 {
     ModelGovernanceState State { get; }
+    Task<ModelGovernanceState> GetStateAsync(CancellationToken cancellationToken = default);
     Task RegisterComparisonAsync(ChampionChallengerComparison comparison, CancellationToken cancellationToken = default);
     Task<PromotionAuditRecord> ApproveAsync(PromotionActionRequest request, CancellationToken cancellationToken = default);
     Task<PromotionAuditRecord> RejectAsync(PromotionActionRequest request, CancellationToken cancellationToken = default);
     Task<PromotionAuditRecord> RollbackAsync(string approverIdentifier, DateTime approvalTimestampUtc, string reason, CancellationToken cancellationToken = default);
 }
+
+public interface IModelGovernanceRepository
+{
+    Task SaveComparisonAsync(ChampionChallengerComparison comparison, CancellationToken cancellationToken = default);
+    Task<ChampionChallengerComparison?> GetComparisonAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<ModelGovernanceState> GetStateAsync(CancellationToken cancellationToken = default);
+    Task<PromotionAuditRecord> ExecuteDecisionAsync(PromotionDecision decision, PromotionActionRequest request, CancellationToken cancellationToken = default);
+    Task<PromotionAuditRecord> ExecuteRollbackAsync(string approverIdentifier, DateTime timestampUtc, string reason, CancellationToken cancellationToken = default);
+}
+
+public sealed record ArtifactVerificationRequest(string ArtifactPath, string ExpectedSha256);
+public sealed record ArtifactVerificationResult(bool IsValid, string Status, string? ComputedSha256 = null);
+public interface IArtifactIntegrityVerifier { ArtifactVerificationResult Verify(ArtifactVerificationRequest request); }

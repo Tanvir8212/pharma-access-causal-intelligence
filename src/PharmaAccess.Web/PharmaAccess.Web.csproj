@@ -4,5 +4,6 @@
     <ProjectReference Include="..\PharmaAccess.Application\PharmaAccess.Application.csproj" />
     <ProjectReference Include="..\PharmaAccess.Llm\PharmaAccess.Llm.csproj" />
     <ProjectReference Include="..\PharmaAccess.ML\PharmaAccess.ML.csproj" />
+    <ProjectReference Include="..\PharmaAccess.Data\PharmaAccess.Data.csproj" />
   </ItemGroup>
 </Project>

@@ -7,6 +7,7 @@ using PharmaAccess.Llm;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using PharmaAccess.ML;
+using PharmaAccess.Data;
 
 namespace PharmaAccess.Api
 {
@@ -88,8 +89,10 @@ namespace PharmaAccess.Api
                 if (context.Request.Path == "/api/v1/model-governance/comparisons" && HttpMethods.IsPost(context.Request.Method))
                 {
                     var request = await ReadAsync<ComparisonRequest>(context); if (request is null) { context.Response.StatusCode = StatusCodes.Status400BadRequest; return; }
-                    var comparison = context.RequestServices.GetRequiredService<IChampionChallengerComparer>().Compare(request.Champion, request.Challenger);
-                    await context.RequestServices.GetRequiredService<IHumanGovernedModelManager>().RegisterComparisonAsync(comparison, context.RequestAborted); await WriteAsync(context, comparison); return;
+                    var champion = VerifyArtifact(context, request.Champion); var challenger = VerifyArtifact(context, request.Challenger);
+                    var comparison = context.RequestServices.GetRequiredService<IChampionChallengerComparer>().Compare(champion, challenger);
+                    await context.RequestServices.GetRequiredService<IHumanGovernedModelManager>().RegisterComparisonAsync(comparison, context.RequestAborted);
+                    await WriteAsync(context, comparison with { Champion = comparison.Champion with { ArtifactPath = "" }, Challenger = comparison.Challenger with { ArtifactPath = "" } }); return;
                 }
                 if (context.Request.Path == "/api/v1/model-governance/promotions/approve" && HttpMethods.IsPost(context.Request.Method))
                 { await ExecuteGovernanceAsync(context, true); return; }
@@ -102,7 +105,7 @@ namespace PharmaAccess.Api
                     catch (Exception error) when (error is ArgumentException or InvalidOperationException) { await WriteErrorAsync(context, StatusCodes.Status409Conflict, error.Message); } return;
                 }
                 if (context.Request.Path == "/api/v1/model-governance/state" && HttpMethods.IsGet(context.Request.Method))
-                { await WriteAsync(context, context.RequestServices.GetRequiredService<IHumanGovernedModelManager>().State); return; }
+                { await WriteAsync(context, await context.RequestServices.GetRequiredService<IHumanGovernedModelManager>().GetStateAsync(context.RequestAborted)); return; }
 
                 context.Response.StatusCode = StatusCodes.Status404NotFound;
             }));
@@ -116,16 +119,30 @@ namespace PharmaAccess.Api
             return directory?.FullName ?? start;
         }
 
-        private static void AddDriftGovernance(IServiceCollection services)
+        private void AddDriftGovernance(IServiceCollection services)
         {
             services.AddSingleton(new DriftThresholds());
             services.AddSingleton<IDriftDetector, DriftDetector>();
-            services.AddSingleton<IDriftReportStore, InMemoryDriftReportStore>();
             services.AddSingleton<IChampionChallengerComparer, ChampionChallengerComparer>();
-            services.AddSingleton<IHumanGovernedModelManager>(_ => new HumanGovernedModelManager("fasttree-published-threshold-0.08"));
+            var connection = _configuration.GetConnectionString("PharmaAccess");
+            if (!string.IsNullOrWhiteSpace(connection))
+            {
+                services.AddPharmaAccessData(connection);
+                services.AddPersistentModelGovernance(_configuration.GetSection("ModelGovernance:ApprovedArtifactRoots").Get<string[]>() ?? []);
+            }
+            else
+            {
+                services.AddSingleton<IDriftReportStore, InMemoryDriftReportStore>();
+                services.AddSingleton<IHumanGovernedModelManager>(_ => new HumanGovernedModelManager("fasttree-published-threshold-0.08"));
+            }
         }
 
         private sealed record ComparisonRequest(GovernedModelSnapshot Champion, GovernedModelSnapshot Challenger);
+        private static GovernedModelSnapshot VerifyArtifact(HttpContext context, GovernedModelSnapshot model)
+        {
+            var verifier = context.RequestServices.GetService<IArtifactIntegrityVerifier>();
+            return verifier is null ? model : model with { ArtifactHashValid = verifier.Verify(new(model.ArtifactPath, model.ArtifactSha256)).IsValid };
+        }
         private sealed record RollbackRequest(string ApproverIdentifier, DateTime ApprovalTimestampUtc, string Reason);
         private static async Task<T?> ReadAsync<T>(HttpContext context) => await JsonSerializer.DeserializeAsync<T>(context.Request.Body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, context.RequestAborted);
         private static async Task WriteAsync<T>(HttpContext context, T value) { context.Response.ContentType = "application/json"; await JsonSerializer.SerializeAsync(context.Response.Body, value, cancellationToken: context.RequestAborted); }
