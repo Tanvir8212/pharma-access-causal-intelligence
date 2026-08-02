@@ -62,5 +62,16 @@ namespace PharmaAccess.Api.IntegrationTests
             Assert.Contains("provider-unavailable", body, StringComparison.OrdinalIgnoreCase);
             Assert.DoesNotContain("apiKey", body, StringComparison.OrdinalIgnoreCase);
         }
+
+        [Fact]
+        public async Task Drift_report_endpoints_generate_list_and_view_reports_without_promoting()
+        {
+            using var host = await new HostBuilder().ConfigureWebHost(webBuilder => webBuilder.UseTestServer().UseStartup<Api.Startup>()).StartAsync(); using var client = host.GetTestClient();
+            const string json = """{"championVersion":"fasttree-published","evaluationWindow":"2026-Q3","numericFeatures":[{"name":"Volume","reference":[0.1,0.2,0.3],"current":[0.1,0.2,0.3]}],"categoricalFeatures":[],"referencePredictions":[0.1,0.2,0.3],"currentPredictions":[0.1,0.2,0.3]}""";
+            var generated = await client.PostAsync("/api/v1/model-governance/drift-reports", new StringContent(json, Encoding.UTF8, "application/json")); var body = await generated.Content.ReadAsStringAsync();
+            Assert.Equal(HttpStatusCode.OK, generated.StatusCode); using var document = JsonDocument.Parse(body); var id = document.RootElement.GetProperty("Id").GetGuid(); Assert.Contains("advisory", body, StringComparison.OrdinalIgnoreCase);
+            Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/v1/model-governance/drift-reports")).StatusCode); Assert.Equal(HttpStatusCode.OK, (await client.GetAsync($"/api/v1/model-governance/drift-reports/{id}")).StatusCode);
+            var state = await client.GetStringAsync("/api/v1/model-governance/state"); Assert.Contains("fasttree-published-threshold-0.08", state); Assert.DoesNotContain("Human-approved promotion", state);
+        }
     }
 }

@@ -6,6 +6,7 @@ using PharmaAccess.Application.MachineLearning;
 using PharmaAccess.Llm;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Hosting;
+using PharmaAccess.ML;
 
 namespace PharmaAccess.Api
 {
@@ -23,11 +24,12 @@ namespace PharmaAccess.Api
         {
             services.AddSingleton<INextStateEntryPredictionService, UnavailablePredictionService>();
             services.AddPharmaAccessResearchAssistant(_configuration, FindRepositoryRoot(_environment.ContentRootPath));
+            AddDriftGovernance(services);
         }
 
         public void Configure(IApplicationBuilder app)
         {
-            app.Run(async context =>
+            app.Run((RequestDelegate)(async context =>
             {
                 if (context.Request.Path == "/health")
                 {
@@ -67,8 +69,43 @@ namespace PharmaAccess.Api
                     return;
                 }
 
+                if (context.Request.Path == "/api/v1/model-governance/drift-reports" && HttpMethods.IsPost(context.Request.Method))
+                {
+                    var request = await ReadAsync<DriftReportRequest>(context);
+                    if (request is null) { context.Response.StatusCode = StatusCodes.Status400BadRequest; return; }
+                    try { var report = context.RequestServices.GetRequiredService<IDriftDetector>().Detect(request); await context.RequestServices.GetRequiredService<IDriftReportStore>().SaveAsync(report, context.RequestAborted); await WriteAsync(context, report); }
+                    catch (ArgumentException error) { await WriteErrorAsync(context, StatusCodes.Status400BadRequest, error.Message); }
+                    return;
+                }
+                if (context.Request.Path == "/api/v1/model-governance/drift-reports" && HttpMethods.IsGet(context.Request.Method))
+                { await WriteAsync(context, await context.RequestServices.GetRequiredService<IDriftReportStore>().ListAsync(context.RequestAborted)); return; }
+                if (context.Request.Path.StartsWithSegments("/api/v1/model-governance/drift-reports", out var reportRemainder) && HttpMethods.IsGet(context.Request.Method))
+                {
+                    if (!Guid.TryParse(reportRemainder.Value?.Trim('/'), out var id)) { context.Response.StatusCode = StatusCodes.Status400BadRequest; return; }
+                    var report = await context.RequestServices.GetRequiredService<IDriftReportStore>().GetAsync(id, context.RequestAborted);
+                    if (report is null) { context.Response.StatusCode = StatusCodes.Status404NotFound; return; } await WriteAsync(context, report); return;
+                }
+                if (context.Request.Path == "/api/v1/model-governance/comparisons" && HttpMethods.IsPost(context.Request.Method))
+                {
+                    var request = await ReadAsync<ComparisonRequest>(context); if (request is null) { context.Response.StatusCode = StatusCodes.Status400BadRequest; return; }
+                    var comparison = context.RequestServices.GetRequiredService<IChampionChallengerComparer>().Compare(request.Champion, request.Challenger);
+                    await context.RequestServices.GetRequiredService<IHumanGovernedModelManager>().RegisterComparisonAsync(comparison, context.RequestAborted); await WriteAsync(context, comparison); return;
+                }
+                if (context.Request.Path == "/api/v1/model-governance/promotions/approve" && HttpMethods.IsPost(context.Request.Method))
+                { await ExecuteGovernanceAsync(context, true); return; }
+                if (context.Request.Path == "/api/v1/model-governance/promotions/reject" && HttpMethods.IsPost(context.Request.Method))
+                { await ExecuteGovernanceAsync(context, false); return; }
+                if (context.Request.Path == "/api/v1/model-governance/rollback" && HttpMethods.IsPost(context.Request.Method))
+                {
+                    var request = await ReadAsync<RollbackRequest>(context); if (request is null) { context.Response.StatusCode = StatusCodes.Status400BadRequest; return; }
+                    try { await WriteAsync(context, await context.RequestServices.GetRequiredService<IHumanGovernedModelManager>().RollbackAsync(request.ApproverIdentifier, request.ApprovalTimestampUtc, request.Reason, context.RequestAborted)); }
+                    catch (Exception error) when (error is ArgumentException or InvalidOperationException) { await WriteErrorAsync(context, StatusCodes.Status409Conflict, error.Message); } return;
+                }
+                if (context.Request.Path == "/api/v1/model-governance/state" && HttpMethods.IsGet(context.Request.Method))
+                { await WriteAsync(context, context.RequestServices.GetRequiredService<IHumanGovernedModelManager>().State); return; }
+
                 context.Response.StatusCode = StatusCodes.Status404NotFound;
-            });
+            }));
         }
 
         private static string FindRepositoryRoot(string start)
@@ -77,6 +114,27 @@ namespace PharmaAccess.Api
             while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "PharmaAccess.sln")))
                 directory = directory.Parent;
             return directory?.FullName ?? start;
+        }
+
+        private static void AddDriftGovernance(IServiceCollection services)
+        {
+            services.AddSingleton(new DriftThresholds());
+            services.AddSingleton<IDriftDetector, DriftDetector>();
+            services.AddSingleton<IDriftReportStore, InMemoryDriftReportStore>();
+            services.AddSingleton<IChampionChallengerComparer, ChampionChallengerComparer>();
+            services.AddSingleton<IHumanGovernedModelManager>(_ => new HumanGovernedModelManager("fasttree-published-threshold-0.08"));
+        }
+
+        private sealed record ComparisonRequest(GovernedModelSnapshot Champion, GovernedModelSnapshot Challenger);
+        private sealed record RollbackRequest(string ApproverIdentifier, DateTime ApprovalTimestampUtc, string Reason);
+        private static async Task<T?> ReadAsync<T>(HttpContext context) => await JsonSerializer.DeserializeAsync<T>(context.Request.Body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, context.RequestAborted);
+        private static async Task WriteAsync<T>(HttpContext context, T value) { context.Response.ContentType = "application/json"; await JsonSerializer.SerializeAsync(context.Response.Body, value, cancellationToken: context.RequestAborted); }
+        private static async Task WriteErrorAsync(HttpContext context, int status, string message) { context.Response.StatusCode = status; await context.Response.WriteAsJsonAsync(new { error = message }, context.RequestAborted); }
+        private static async Task ExecuteGovernanceAsync(HttpContext context, bool approve)
+        {
+            var request = await ReadAsync<PromotionActionRequest>(context); if (request is null) { context.Response.StatusCode = StatusCodes.Status400BadRequest; return; }
+            try { var manager = context.RequestServices.GetRequiredService<IHumanGovernedModelManager>(); var result = approve ? await manager.ApproveAsync(request, context.RequestAborted) : await manager.RejectAsync(request, context.RequestAborted); await WriteAsync(context, result); }
+            catch (Exception error) when (error is ArgumentException or InvalidOperationException or KeyNotFoundException) { await WriteErrorAsync(context, StatusCodes.Status409Conflict, error.Message); }
         }
 
         private sealed class UnavailablePredictionService : INextStateEntryPredictionService
