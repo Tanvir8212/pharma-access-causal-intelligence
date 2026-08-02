@@ -1,0 +1,60 @@
+name: pharmaaccess
+services:
+  api:
+    build:
+      context: .
+      dockerfile: src/PharmaAccess.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Authentication__Mode: Jwt
+      Authentication__Authority: ${AUTHORITY:-}
+      Authentication__Audience: ${AUDIENCE:-}
+      ConnectionStrings__PharmaAccess: ${PHARMAACCESS_CONNECTION_STRING:-}
+      Gemini__ApiKey: ${GEMINI_API_KEY:-}
+      Gemini__Model: ${GEMINI_MODEL:-gemini-flash-latest}
+    ports:
+      - "${API_PORT:-8080}:8080"
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: src/PharmaAccess.Web/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Authentication__Mode: Jwt
+      Authentication__Authority: ${AUTHORITY:-}
+      Authentication__Audience: ${AUDIENCE:-}
+      PharmaAccess__ApiBaseUrl: http://api:8080/
+      ConnectionStrings__PharmaAccess: ${PHARMAACCESS_CONNECTION_STRING:-}
+      Gemini__ApiKey: ${GEMINI_API_KEY:-}
+      Gemini__Model: ${GEMINI_MODEL:-gemini-flash-latest}
+    ports:
+      - "${WEB_PORT:-8081}:8080"
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+  sql:
+    image: mcr.microsoft.com/mssql/server:2022-CU18-ubuntu-22.04
+    profiles: ["sql"]
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:-}
+    ports:
+      - "${SQL_PORT:-1433}:1433"
+    volumes:
+      - sql-data:/var/opt/mssql
+    restart: unless-stopped
+
+volumes:
+  sql-data:

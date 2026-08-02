@@ -66,3 +66,7 @@ htmlcov/
 *.egg-info/
 .mypy_cache/
 .ipynb_checkpoints/
+
+# Local container and release-validation output
+.release-validation/
+docker-compose.override.yml

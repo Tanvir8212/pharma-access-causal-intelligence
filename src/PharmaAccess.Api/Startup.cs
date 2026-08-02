@@ -61,6 +61,7 @@ namespace PharmaAccess.Api
                 if((context.Request.Headers.ContainsKey("Authorization")||context.Request.Headers.ContainsKey("X-Development-User"))&&!Acquire(context,"auth"))return;
                 if (context.Request.Path == "/health/live") { await WriteAsync(context,new{status="Healthy"}); return; }
                 if (context.Request.Path == "/health/ready") { await WriteReadinessAsync(context); return; }
+                if (context.Request.Path == "/version" && HttpMethods.IsGet(context.Request.Method)) { await WriteAsync(context, ReleaseMetadata.Current); return; }
                 if (context.Request.Path == "/health")
                 {
                     context.Response.ContentType = "application/json";

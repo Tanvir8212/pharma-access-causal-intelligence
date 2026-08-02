@@ -4,26 +4,74 @@ on:
   push:
   pull_request:
 
-jobs:
-  dotnet:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install pinned .NET SDK
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 10.0.302
-      - name: Restore
-        run: dotnet restore PharmaAccess.sln
-      - name: Build
-        run: dotnet build PharmaAccess.sln --configuration Release --no-restore
-      - name: Test
-        run: dotnet test PharmaAccess.sln --configuration Release --no-build
+permissions:
+  contents: read
 
-  python-boundary:
+jobs:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Confirm Python work remains deferred
-        shell: bash
-        run: test ! -f research/python/pyproject.toml
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.302
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: python/requirements.lock
+      - name: Restore
+        run: dotnet restore PharmaAccess.sln --locked-mode
+      - name: Release build
+        run: dotnet build PharmaAccess.sln --configuration Release --no-restore /p:ReleaseVersion=0.0.0-ci /p:SourceRevisionId=${{ github.sha }} /p:BuildTimestamp=ci
+      - name: .NET tests
+        run: dotnet test PharmaAccess.sln --configuration Release --no-build --no-restore
+      - name: Python validation tests
+        run: |
+          python -m pip install -r python/requirements.lock
+          python -m pytest python/tests
+      - name: Dependency vulnerability audit
+        run: dotnet list PharmaAccess.sln package --vulnerable --include-transitive --no-restore
+      - name: Repository integrity check
+        shell: pwsh
+        run: ./scripts/Test-ReleaseContents.ps1 -RepositoryOnly
+      - name: Whitespace check
+        run: git diff --check
+      - name: Verify clean checkout
+        run: git diff --exit-code
+
+  containers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@v3
+      - name: Build API image without publishing
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: src/PharmaAccess.Api/Dockerfile
+          push: false
+          tags: pharmaaccess-api:ci
+          build-args: |
+            APP_VERSION=0.0.0-ci
+            COMMIT_SHA=${{ github.sha }}
+            BUILD_TIMESTAMP=ci
+          cache-from: type=gha,scope=api
+          cache-to: type=gha,mode=max,scope=api
+      - name: Build Web image without publishing
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: src/PharmaAccess.Web/Dockerfile
+          push: false
+          tags: pharmaaccess-web:ci
+          build-args: |
+            APP_VERSION=0.0.0-ci
+            COMMIT_SHA=${{ github.sha }}
+            BUILD_TIMESTAMP=ci
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,mode=max,scope=web

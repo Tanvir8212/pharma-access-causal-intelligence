@@ -7,8 +7,26 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System.Reflection;
 
 namespace PharmaAccess.Api;
+
+public sealed record ReleaseMetadata(string ApplicationVersion,string CommitHash,string BuildTimestamp)
+{
+    public static ReleaseMetadata Current { get; }=Create();
+    private static ReleaseMetadata Create()
+    {
+        var assembly=typeof(ReleaseMetadata).Assembly;
+        var version=assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion??"unknown";
+        var metadata=assembly.GetCustomAttributes<AssemblyMetadataAttribute>().ToDictionary(x=>x.Key,x=>x.Value??"unknown",StringComparer.OrdinalIgnoreCase);
+        return new(Safe(version,64),Safe(metadata.GetValueOrDefault("CommitHash")??"unknown",64),Safe(metadata.GetValueOrDefault("BuildTimestamp")??"unknown",40));
+    }
+    private static string Safe(string value,int length)
+    {
+        var safe=new string(value.Where(c=>char.IsAsciiLetterOrDigit(c)||c is '.' or '-' or ':' or 'T' or 'Z').Take(length).ToArray());
+        return safe.Length>0?safe:"unknown";
+    }
+}
 
 public static class SecurityPolicies
 {

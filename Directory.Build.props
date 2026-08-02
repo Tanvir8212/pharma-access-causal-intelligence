@@ -8,5 +8,10 @@
     <DebugType>portable</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
+    <Version Condition="'$(ReleaseVersion)' != ''">$(ReleaseVersion)</Version>
   </PropertyGroup>
+  <ItemGroup>
+    <AssemblyMetadata Include="CommitHash" Value="$(SourceRevisionId)" Condition="'$(SourceRevisionId)' != ''" />
+    <AssemblyMetadata Include="BuildTimestamp" Value="$(BuildTimestamp)" Condition="'$(BuildTimestamp)' != ''" />
+  </ItemGroup>
 </Project>
