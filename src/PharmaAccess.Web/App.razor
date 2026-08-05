@@ -9,12 +9,7 @@
     <HeadOutlet />
 </head>
 <body>
-    <ResearchAssistant />
-    <CascadingAuthenticationState>
-        <AuthorizeView Policy="ModelGovernanceReviewer">
-            <Authorized><ModelGovernance /></Authorized>
-        </AuthorizeView>
-    </CascadingAuthenticationState>
+    <Routes @rendermode="new InteractiveServerRenderMode(prerender: false)" />
     <script src="_framework/blazor.web.js"></script>
 </body>
 </html>

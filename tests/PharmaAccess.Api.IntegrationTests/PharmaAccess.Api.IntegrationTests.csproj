@@ -10,5 +10,6 @@
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="All" />
     <ProjectReference Include="..\..\src\PharmaAccess.Api\PharmaAccess.Api.csproj" />
+    <ProjectReference Include="..\..\src\PharmaAccess.Web\PharmaAccess.Web.csproj" />
   </ItemGroup>
 </Project>

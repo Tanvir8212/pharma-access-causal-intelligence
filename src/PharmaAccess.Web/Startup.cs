@@ -28,6 +28,7 @@ namespace PharmaAccess.Web
             services.AddCascadingAuthenticationState();services.AddAntiforgery();
             services.AddHttpClient("ApiReadiness",client=>client.Timeout=TimeSpan.FromSeconds(3));
             services.AddRazorComponents().AddInteractiveServerComponents();
+            services.AddScoped<GovernanceStateLoader>();
             services.AddPharmaAccessResearchAssistant(_configuration, FindRepositoryRoot(_environment.ContentRootPath));
             services.AddSingleton(new PharmaAccess.Application.MachineLearning.DriftThresholds());
             services.AddSingleton<PharmaAccess.Application.MachineLearning.IDriftDetector, DriftDetector>();

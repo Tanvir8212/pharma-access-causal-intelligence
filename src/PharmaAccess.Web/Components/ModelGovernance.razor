@@ -1,33 +1,44 @@
 @using PharmaAccess.Application.MachineLearning
-@inject IHumanGovernedModelManager Manager
-@inject IDriftReportStore Reports
-@rendermode InteractiveServer
+@inject GovernanceStateLoader Loader
 
 <main class="governance">
     <p class="eyebrow">HUMAN-GOVERNED MODEL MANAGEMENT</p>
     <h1>Champion–Challenger</h1>
     <p>Monitoring is advisory. Drift never retrains, promotes, or deploys a model automatically.</p>
-    <dl>
-        <dt>Current champion</dt><dd>@State.ChampionVersion</dd>
-        <dt>Challenger</dt><dd>@(State.ChallengerVersion ?? "None registered")</dd>
-        <dt>Drift severity</dt><dd>@DriftSeverity</dd>
-        <dt>Promotion status</dt><dd>@State.PromotionStatus</dd>
-        <dt>Rollback available</dt><dd>@(State.RollbackAvailable ? "Yes — human approval required" : "No")</dd>
-    </dl>
-    <h2>Metric differences</h2>
-    <p>@(State.MetricDifferences.Length == 0 ? "Generate a comparison through the governance API." : string.Join(", ", State.MetricDifferences.Select(x => $"{x.Name}: {x.Change:+0.####;-0.####;0}")))</p>
-    <h2>Subgroup warnings</h2>
-    <p>@(State.SubgroupWarnings.Length == 0 ? "No active subgroup warning." : string.Join("; ", State.SubgroupWarnings))</p>
-    <p class="badge">All promotion and rollback actions are human-governed and audit recorded.</p>
+    @if (_loading)
+    {
+        <p>Loading governance status…</p>
+    }
+    else if (_result is null || !_result.IsAvailable)
+    {
+        <p role="status">@_result?.Message</p>
+    }
+    else
+    {
+        <dl>
+            <dt>Current champion</dt><dd>@_result.State.ChampionVersion</dd>
+            <dt>Challenger</dt><dd>@(_result.State.ChallengerVersion ?? "None registered")</dd>
+            <dt>Drift severity</dt><dd>@_result.DriftSeverity</dd>
+            <dt>Promotion status</dt><dd>@_result.State.PromotionStatus</dd>
+            <dt>Rollback available</dt><dd>@(_result.State.RollbackAvailable ? "Yes — human approval required" : "No")</dd>
+        </dl>
+        <h2>Metric differences</h2>
+        <p>@(_result.State.MetricDifferences.Length == 0 ? "Generate a comparison through the governance API." : string.Join(", ", _result.State.MetricDifferences.Select(x => $"{x.Name}: {x.Change:+0.####;-0.####;0}")))</p>
+        <h2>Subgroup warnings</h2>
+        <p>@(_result.State.SubgroupWarnings.Length == 0 ? "No active subgroup warning." : string.Join("; ", _result.State.SubgroupWarnings))</p>
+        <p class="badge">All promotion and rollback actions are human-governed and audit recorded.</p>
+    }
 </main>
 
 @code {
-    private ModelGovernanceState State = new("Loading", null, "Loading", false, [], [], []);
-    private string DriftSeverity = "Not evaluated";
-    protected override async Task OnInitializedAsync()
+    private bool _loading = true;
+    private GovernanceLoadResult? _result;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var reports = await Reports.ListAsync();
-        DriftSeverity = reports.FirstOrDefault()?.Severity.ToString() ?? "Not evaluated";
-        State = await Manager.GetStateAsync();
+        if (!firstRender) return;
+        _result = await Loader.LoadAsync();
+        _loading = false;
+        await InvokeAsync(StateHasChanged);
     }
 }

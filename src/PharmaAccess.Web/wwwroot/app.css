@@ -1,8 +1,24 @@
-:root { color-scheme: light; font-family: Inter, system-ui, sans-serif; color: #172221; background: #edf3f0; }
+:root { color-scheme: light; color: #172221; background: #edf3f0; }
+html,
+body,
+input,
+textarea,
+select,
+button,
+label,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+}
 body { margin: 0; }
 main { max-width: 760px; margin: 5rem auto; padding: 2.5rem; background: #fff; border-top: 6px solid #177568; box-shadow: 0 18px 50px #173c3520; }
 .eyebrow, .status { color: #177568; font-size: .75rem; font-weight: 750; letter-spacing: .12em; }
-h1 { font-family: Georgia, serif; font-size: 3rem; margin: .4rem 0 1rem; }
+h1 { font-size: 3rem; margin: .4rem 0 1rem; }
 label { display: block; font-weight: 700; margin: 2rem 0 .5rem; }
 textarea { box-sizing: border-box; width: 100%; padding: 1rem; border: 1px solid #91a7a1; border-radius: 4px; font: inherit; }
 button { margin-top: .8rem; padding: .75rem 1.2rem; border: 0; border-radius: 3px; background: #177568; color: #fff; font-weight: 700; cursor: pointer; }

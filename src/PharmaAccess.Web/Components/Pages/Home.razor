@@ -1,0 +1,13 @@
+@page "/"
+@using PharmaAccess.Web.Components
+
+<PageTitle>PharmaAccess Research Assistant</PageTitle>
+
+<ResearchAssistant />
+<CascadingAuthenticationState>
+    <AuthorizeView Policy="ModelGovernanceReviewer">
+        <Authorized>
+            <ModelGovernance />
+        </Authorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>

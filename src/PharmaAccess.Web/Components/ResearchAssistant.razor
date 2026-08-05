@@ -1,14 +1,24 @@
 @using PharmaAccess.Llm
-@inject ResearchAssistantService Assistant
-@rendermode InteractiveServer
+@using Microsoft.Extensions.DependencyInjection
+@inject IServiceProvider Services
+@inject IConfiguration Configuration
 
 <main>
     <p class="eyebrow">PHARMAACCESS CAUSAL INTELLIGENCE</p>
     <h1>Research Assistant</h1>
     <p>Ask about the finalized predictive and observational causal research. Answers are restricted to verified public evidence.</p>
-    <label for="question">Research question</label>
+    <label for="question">Ask a question</label>
     <textarea id="question" @bind="question" rows="4" placeholder="What was the locked-test ROC AUC?"></textarea>
-    <button @onclick="Ask" disabled="@busy">@(busy ? "Checking evidence…" : "Ask")</button>
+    <button type="button" @onclick="AskAsync" disabled="@busy">Ask</button>
+
+    @if (busy)
+    {
+        <p role="status">Checking the research evidence…</p>
+    }
+    else if (!string.IsNullOrWhiteSpace(feedback))
+    {
+        <p role="alert">@feedback</p>
+    }
 
     @if (response is not null)
     {
@@ -36,12 +46,47 @@
 @code {
     private string question = "";
     private bool busy;
+    private string? feedback;
     private AssistantAskResponse? response;
-    private async Task Ask()
+
+    private async Task AskAsync()
     {
+        if (string.IsNullOrWhiteSpace(question))
+        {
+            feedback = "Enter a research question before asking.";
+            response = null;
+            return;
+        }
+
         busy = true;
-        try { response = await Assistant.AskAsync(question); }
-        finally { busy = false; }
+        feedback = null;
+        response = null;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+
+        var configuredSeconds = Configuration.GetValue<int?>("ResearchAssistant:RequestTimeoutSeconds") ?? 30;
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(Math.Clamp(configuredSeconds, 1, 30)));
+        try
+        {
+            var request = question;
+            response = await Task.Run(async () =>
+            {
+                var assistant = Services.GetRequiredService<ResearchAssistantService>();
+                return await assistant.AskAsync(request, timeout.Token);
+            }, timeout.Token).WaitAsync(timeout.Token);
+        }
+        catch (OperationCanceledException) when (timeout.IsCancellationRequested)
+        {
+            feedback = "The research assistant timed out. Please try again.";
+        }
+        catch (Exception)
+        {
+            feedback = "The research assistant is temporarily unavailable. Please try again.";
+        }
+        finally
+        {
+            busy = false;
+        }
     }
     private static string Label(string type) => type switch
     {
