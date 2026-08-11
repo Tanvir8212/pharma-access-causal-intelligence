@@ -129,6 +129,11 @@ public sealed class ModelInput
 public sealed class ModelOutput { public bool Label { get; set; } public bool PredictedLabel { get; set; } public float Score { get; set; } [ColumnName("Probability")] public float Probability { get; set; } }
 public sealed class ModelOutputWithoutProbability { public bool Label { get; set; } public bool PredictedLabel { get; set; } public float Score { get; set; } }
 
+public static class ServingDecisionPolicy
+{
+    public static bool IsPredicted(float probability, double selectedThreshold) => probability >= selectedThreshold;
+}
+
 public sealed record StoredArtifact(string Version, string ModelPath, string ManifestPath, string Sha256, long FileSize, string SchemaHash);
 
 public sealed class FileSystemModelArtifactStore(string root, long maximumArtifactBytes = 100_000_000)
@@ -231,7 +236,7 @@ public sealed class NextStateEntryPredictionService(FileSystemModelArtifactStore
         else { var prediction = ml.Data.CreateEnumerable<ModelOutputWithoutProbability>(scored, false).Single(); score = prediction.Score; probability = (float)(1d / (1d + Math.Exp(-score))); }
         var warnings = new List<string>(); if (row.IsMissing || row.IsSuppressed || row.MissingFeatureCount > 0) warnings.Add("One or more inputs are missing or suppressed; training-fitted imputation is applied.");
         var uncertainty = new UncertaintyIndicatorService().Assess(probability, artifact.Threshold, 0, (int)row.MissingFeatureCount, 0, 0, 0, null, true);
-        return new("NextQuarterStateEntry", probability, null, CalibrationStatus.NotAttempted, score, probability >= artifact.Threshold, artifact.Threshold, uncertainty.Status, uncertainty.Reasons, [], artifact.Version, artifact.Status, artifact.DatasetVersionId, artifact.FeatureSetVersionId, row.ObservationQuarterId, warnings, DateTime.UtcNow);
+        return new("NextQuarterStateEntry", probability, null, CalibrationStatus.NotAttempted, score, ServingDecisionPolicy.IsPredicted(probability, artifact.Threshold), artifact.Threshold, uncertainty.Status, uncertainty.Reasons, [], artifact.Version, artifact.Status, artifact.DatasetVersionId, artifact.FeatureSetVersionId, row.ObservationQuarterId, warnings, DateTime.UtcNow);
     }
 
     private static ModelInput ToScoringInput(NextQuarterTrainingRow x) => new() { Label = x.LabelNextQuarterEntry ?? false, QuarterSinceApproval = x.QuarterSinceApproval, NumberOfObservedQuarters = x.NumberOfObservedQuarters, ObservedPrescriptionCount = x.ObservedPrescriptionCount, ObservedReimbursementAmount = x.ObservedReimbursementAmount, Lag1PrescriptionCount = x.Lag1PrescriptionCount, Lag2PrescriptionCount = x.Lag2PrescriptionCount, Lag1ReimbursementAmount = x.Lag1ReimbursementAmount, Lag2ReimbursementAmount = x.Lag2ReimbursementAmount, PrescriptionGrowthRate = x.PrescriptionGrowthRate, ReimbursementGrowthRate = x.ReimbursementGrowthRate, InitialActiveStateCount = x.InitialActiveStateCount, InitialPrescriptionVolume = x.InitialPrescriptionVolume, PreviousQuarterNumericDistribution = x.PreviousQuarterNumericDistribution, PreviousQuarterWeightedDistribution = x.PreviousQuarterWeightedDistribution, PreviousQuarterAccessGap = x.PreviousQuarterAccessGap, StateHistoricalGenericVolume = x.StateHistoricalGenericVolume, StateHistoricalLaunchCount = x.StateHistoricalLaunchCount, StateHistoricalEntryRate = x.StateHistoricalEntryRate, StateHistoricalMedianEntryDelay = x.StateHistoricalMedianEntryDelay, StateHistoricalMarketWeight = x.StateHistoricalMarketWeight, StateVolumePercentile = x.StateVolumePercentile, StateDataCompleteness = x.StateDataCompleteness, RegionActiveStateShare = x.RegionActiveStateShare, RegionHistoricalEntryRate = x.RegionHistoricalEntryRate, NeighborStateAdoptionShare = x.NeighborStateAdoptionShare, SimilarStateAdoptionShare = x.SimilarStateAdoptionShare, RegionPrescriptionGrowth = x.RegionPrescriptionGrowth, NationalPrescriptionGrowth = x.NationalPrescriptionGrowth, MissingFeatureCount = x.MissingFeatureCount, IsObservedZero = x.IsObservedZero ? 1 : 0, IsMissing = x.IsMissing ? 1 : 0, IsSuppressed = x.IsSuppressed ? 1 : 0 };

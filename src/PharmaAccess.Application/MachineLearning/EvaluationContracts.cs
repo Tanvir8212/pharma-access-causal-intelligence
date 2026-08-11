@@ -46,6 +46,8 @@ public sealed record ThresholdEvaluation(ThresholdPolicyKind Policy, double Thre
 public sealed record ApproveModelVersionCommand(long ModelArtifactId, ApprovalDecision Decision,
     string ApprovedBy, string ApprovalReason, string TargetEnvironment, bool PromoteToChampion,
     string ModelCardVersion);
+public sealed record AssignChampionCommand(long ModelArtifactId, string AssignedBy, string AssignmentReason,
+    string TargetEnvironment, string ModelCardVersion);
 public sealed record ModelRegistryRecord(long ModelArtifactId, string Task, string Environment,
     ModelApprovalStatus Status, bool IsSyntheticDevelopmentOnly, bool ArtifactIntegrityValid,
     string FeatureSchemaHash, string ExpectedFeatureSchemaHash, string? ApprovedBy,
@@ -66,12 +68,27 @@ public sealed class ModelApprovalService(IModelRegistryRepository repository)
         var model = await repository.GetAsync(command.ModelArtifactId, cancellationToken) ?? throw new KeyNotFoundException("Model artifact is not registered.");
         if (!model.ArtifactIntegrityValid || model.Status == ModelApprovalStatus.Corrupted) throw new InvalidOperationException("Corrupted artifacts cannot be approved.");
         if (!model.FeatureSchemaHash.Equals(model.ExpectedFeatureSchemaHash, StringComparison.Ordinal)) throw new InvalidOperationException("Feature schema is incompatible.");
-        if (command.PromoteToChampion && command.Decision != ApprovalDecision.Approve) throw new InvalidOperationException("Only an approval decision may promote a champion.");
-        if (command.PromoteToChampion && model.IsSyntheticDevelopmentOnly && !command.TargetEnvironment.Equals("Development", StringComparison.OrdinalIgnoreCase)) throw new InvalidOperationException("Synthetic models are development-only.");
-        var status = command.Decision == ApprovalDecision.Reject ? ModelApprovalStatus.Rejected : command.PromoteToChampion ? ModelApprovalStatus.Champion : ModelApprovalStatus.Approved;
-        var previous = command.PromoteToChampion ? await repository.GetChampionAsync(model.Task, command.TargetEnvironment, cancellationToken) : null;
+        if (command.PromoteToChampion) throw new InvalidOperationException("Champion assignment is a separate explicit human action after approval.");
+        var status = command.Decision == ApprovalDecision.Reject ? ModelApprovalStatus.Rejected : ModelApprovalStatus.Approved;
         var updated = model with { Environment = command.TargetEnvironment, Status = status, ApprovedBy = command.ApprovedBy.Trim(), ApprovedAtUtc = DateTime.UtcNow, ApprovalReason = command.ApprovalReason.Trim(), ModelCardVersion = command.ModelCardVersion.Trim() };
-        await repository.SaveApprovalAsync(updated, previous is null || previous.ModelArtifactId == updated.ModelArtifactId ? null : previous with { Status = ModelApprovalStatus.Archived }, cancellationToken);
+        await repository.SaveApprovalAsync(updated, null, cancellationToken);
         return updated;
+    }
+}
+
+public sealed class ModelChampionAssignmentService(IModelRegistryRepository repository)
+{
+    public async Task<ModelRegistryRecord> ExecuteAsync(AssignChampionCommand command, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(command.AssignedBy) || string.IsNullOrWhiteSpace(command.AssignmentReason) || string.IsNullOrWhiteSpace(command.TargetEnvironment) || string.IsNullOrWhiteSpace(command.ModelCardVersion)) throw new ArgumentException("Champion-assignment audit metadata is required.");
+        var model = await repository.GetAsync(command.ModelArtifactId, cancellationToken) ?? throw new KeyNotFoundException("Model artifact is not registered.");
+        if (model.Status != ModelApprovalStatus.Approved || model.ApprovedAtUtc is null || string.IsNullOrWhiteSpace(model.ApprovedBy)) throw new InvalidOperationException("Only an explicitly approved model may be assigned as Champion.");
+        if (!model.ArtifactIntegrityValid || !model.FeatureSchemaHash.Equals(model.ExpectedFeatureSchemaHash, StringComparison.Ordinal)) throw new InvalidOperationException("Model integrity or schema compatibility failed.");
+        if (!model.Environment.Equals(command.TargetEnvironment, StringComparison.OrdinalIgnoreCase)) throw new InvalidOperationException("Champion environment must match the approved environment.");
+        if (model.IsSyntheticDevelopmentOnly && !command.TargetEnvironment.Equals("Development", StringComparison.OrdinalIgnoreCase)) throw new InvalidOperationException("Synthetic models are development-only.");
+        var previous = await repository.GetChampionAsync(model.Task, command.TargetEnvironment, cancellationToken);
+        var champion = model with { Status = ModelApprovalStatus.Champion, ApprovalReason = command.AssignmentReason.Trim(), ModelCardVersion = command.ModelCardVersion.Trim() };
+        await repository.SaveApprovalAsync(champion, previous is null || previous.ModelArtifactId == champion.ModelArtifactId ? null : previous with { Status = ModelApprovalStatus.Archived }, cancellationToken);
+        return champion;
     }
 }

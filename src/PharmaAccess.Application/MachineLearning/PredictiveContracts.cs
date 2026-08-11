@@ -82,7 +82,8 @@ public interface INextStateEntryPredictionService
 
 public sealed record SelectedModelArtifact(string Version, string ModelPath, string ManifestPath, string Sha256,
     long FileSize, string SchemaHash, ModelApprovalStatus Status, int DatasetVersionId, int FeatureSetVersionId,
-    double Threshold);
+    double Threshold, string ProbabilityOutput = "serialized ML.NET calibrated Probability",
+    double? PlattA = null, double? PlattB = null);
 
 public interface IModelArtifactRegistry
 {
