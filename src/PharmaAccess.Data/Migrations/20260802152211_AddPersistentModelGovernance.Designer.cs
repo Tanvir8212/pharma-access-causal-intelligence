@@ -1625,12 +1625,10 @@ namespace PharmaAccess.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<float>("Probability")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("real(20)");
+                        .HasColumnType("real");
 
                     b.Property<float>("Score")
-                        .HasPrecision(20, 10)
-                        .HasColumnType("real(20)");
+                        .HasColumnType("real");
 
                     b.Property<int>("StateId")
                         .HasColumnType("int");

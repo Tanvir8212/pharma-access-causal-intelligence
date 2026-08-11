@@ -164,8 +164,8 @@ namespace PharmaAccess.Data.Migrations
                     StateId = table.Column<int>(type: "int", nullable: false),
                     ObservationQuarterId = table.Column<int>(type: "int", nullable: false),
                     Label = table.Column<bool>(type: "bit", nullable: false),
-                    Score = table.Column<float>(type: "real(20)", precision: 20, scale: 10, nullable: false),
-                    Probability = table.Column<float>(type: "real(20)", precision: 20, scale: 10, nullable: false),
+                    Score = table.Column<float>(type: "real", nullable: false),
+                    Probability = table.Column<float>(type: "real", nullable: false),
                     PredictedLabel = table.Column<bool>(type: "bit", nullable: false),
                     Threshold = table.Column<double>(type: "float(20)", precision: 20, scale: 10, nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false)

@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
+using System.Text.RegularExpressions;
 using PharmaAccess.Domain.Entities;
 using PharmaAccess.Domain.Features;
 using PharmaAccess.Domain.Research;
@@ -154,6 +157,21 @@ public sealed class ModelMetadataTests
         Assert.Equal(typeof(string), Entity<MlExperiment>().FindProperty(nameof(MlExperiment.Status))!.GetProviderClrType());
         Assert.Equal(typeof(string), Entity<ModelArtifact>().FindProperty(nameof(ModelArtifact.ApprovalStatus))!.GetProviderClrType());
         var metric = Entity<ModelMetric>().FindProperty(nameof(ModelMetric.MetricValue)); Assert.Equal(20, metric!.GetPrecision()); Assert.Equal(10, metric.GetScale());
+    }
+
+    [Fact]
+    public void Full_migration_script_maps_single_predictions_to_real_without_precision()
+    {
+        var options = new DbContextOptionsBuilder<Data.PharmaAccessDbContext>()
+            .UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=MigrationScriptOnly;Trusted_Connection=True;TrustServerCertificate=True")
+            .Options;
+        using var context = new Data.PharmaAccessDbContext(options);
+        var sql = context.GetService<IMigrator>().GenerateScript("0", "20260802152211_AddPersistentModelGovernance");
+
+        Assert.DoesNotContain("real(", sql, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("[Score] real NOT NULL", sql, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("[Probability] real NOT NULL", sql, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(8, Regex.Matches(sql, "INSERT INTO \\[__EFMigrationsHistory\\]", RegexOptions.IgnoreCase).Count);
     }
 
     [Fact]
