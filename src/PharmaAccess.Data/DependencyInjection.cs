@@ -30,6 +30,8 @@ public static class DependencyInjection
         services.AddScoped<IDriftReportStore, EfDriftReportStore>();
         services.AddScoped<IModelGovernanceRepository, EfModelGovernanceRepository>();
         services.AddScoped<IHumanGovernedModelManager, PersistentHumanGovernedModelManager>();
+        services.AddScoped<IModelRegistryRepository, EfModelRegistryRepository>();
+        services.AddScoped<ModelApprovalService>();
         services.AddSingleton<IArtifactIntegrityVerifier>(new ApprovedRootArtifactIntegrityVerifier(approvedArtifactRoots));
         return services;
     }

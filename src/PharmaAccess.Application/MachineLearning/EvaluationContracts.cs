@@ -51,7 +51,8 @@ public sealed record AssignChampionCommand(long ModelArtifactId, string Assigned
 public sealed record ModelRegistryRecord(long ModelArtifactId, string Task, string Environment,
     ModelApprovalStatus Status, bool IsSyntheticDevelopmentOnly, bool ArtifactIntegrityValid,
     string FeatureSchemaHash, string ExpectedFeatureSchemaHash, string? ApprovedBy,
-    DateTime? ApprovedAtUtc, string? ApprovalReason, string? ModelCardVersion);
+    DateTime? ApprovedAtUtc, string? ApprovalReason, string? ModelCardVersion,
+    string? ArtifactSubmitterIdentifier = null, string? ExperimentSubmitterIdentifier = null);
 
 public interface IModelRegistryRepository
 {
@@ -66,6 +67,11 @@ public sealed class ModelApprovalService(IModelRegistryRepository repository)
     {
         if (string.IsNullOrWhiteSpace(command.ApprovedBy) || string.IsNullOrWhiteSpace(command.ApprovalReason) || string.IsNullOrWhiteSpace(command.TargetEnvironment) || string.IsNullOrWhiteSpace(command.ModelCardVersion)) throw new ArgumentException("Approval audit metadata is required.");
         var model = await repository.GetAsync(command.ModelArtifactId, cancellationToken) ?? throw new KeyNotFoundException("Model artifact is not registered.");
+        if (model.Status != ModelApprovalStatus.ValidationSelected) throw new InvalidOperationException("Only a ValidationSelected artifact may be approved.");
+        if (model.IsSyntheticDevelopmentOnly) throw new InvalidOperationException("Synthetic artifacts cannot be approved for real serving.");
+        if (string.IsNullOrWhiteSpace(model.ArtifactSubmitterIdentifier) || string.IsNullOrWhiteSpace(model.ExperimentSubmitterIdentifier)) throw new InvalidOperationException("Submitter provenance is missing.");
+        if (!model.ArtifactSubmitterIdentifier.Equals(model.ExperimentSubmitterIdentifier, StringComparison.OrdinalIgnoreCase)) throw new InvalidOperationException("Submitter provenance is contradictory.");
+        if (model.ArtifactSubmitterIdentifier.Equals(command.ApprovedBy.Trim(), StringComparison.OrdinalIgnoreCase)) throw new InvalidOperationException("A model submitter cannot approve the same artifact.");
         if (!model.ArtifactIntegrityValid || model.Status == ModelApprovalStatus.Corrupted) throw new InvalidOperationException("Corrupted artifacts cannot be approved.");
         if (!model.FeatureSchemaHash.Equals(model.ExpectedFeatureSchemaHash, StringComparison.Ordinal)) throw new InvalidOperationException("Feature schema is incompatible.");
         if (command.PromoteToChampion) throw new InvalidOperationException("Champion assignment is a separate explicit human action after approval.");

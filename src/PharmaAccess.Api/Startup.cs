@@ -135,6 +135,14 @@ namespace PharmaAccess.Api
                 { if(!await RequirePolicyAsync(context,SecurityPolicies.ModelGovernanceApprover)||!Acquire(context,"governance"))return;await ExecuteGovernanceAsync(context, true); return; }
                 if (context.Request.Path == "/api/v1/model-governance/promotions/reject" && HttpMethods.IsPost(context.Request.Method))
                 { if(!await RequirePolicyAsync(context,SecurityPolicies.ModelGovernanceReviewer)||!Acquire(context,"governance"))return;await ExecuteGovernanceAsync(context, false); return; }
+                if (context.Request.Path.StartsWithSegments("/api/v1/model-governance/artifacts",out var artifactRemainder)&&HttpMethods.IsPost(context.Request.Method)&&artifactRemainder.Value?.EndsWith("/approve",StringComparison.Ordinal)==true)
+                {
+                    if(!await RequirePolicyAsync(context,SecurityPolicies.ModelGovernanceApprover)||!Acquire(context,"governance"))return;
+                    var idText=artifactRemainder.Value[..^"/approve".Length].Trim('/');if(!long.TryParse(idText,out var artifactId)||artifactId<=0){await WriteProblemAsync(context,StatusCodes.Status400BadRequest,"The model artifact identifier is invalid.");return;}
+                    var request=await ReadAsync<ArtifactApprovalRequest>(context);if(request is null){context.Response.StatusCode=StatusCodes.Status400BadRequest;return;}
+                    try{if(!string.Equals(request.Decision,nameof(ApprovalDecision.Approve),StringComparison.Ordinal))throw new ArgumentException("Decision must be Approve for this endpoint.");var command=new ApproveModelVersionCommand(artifactId,ApprovalDecision.Approve,Actor(context),request.ApprovalReason,request.TargetEnvironment,false,request.ModelCardVersion);var result=await context.RequestServices.GetRequiredService<ModelApprovalService>().ExecuteAsync(command,context.RequestAborted);LogGovernance(context,"ApproveArtifact",artifactId.ToString(),result.Status.ToString(),true);await WriteAsync(context,result);}
+                    catch(Exception error)when(error is ArgumentException or InvalidOperationException or KeyNotFoundException){LogGovernance(context,"ApproveArtifact",artifactId.ToString(),"Failed",false);await WriteProblemAsync(context,StatusCodes.Status409Conflict,error.Message);}return;
+                }
                 if (context.Request.Path == "/api/v1/model-governance/rollback" && HttpMethods.IsPost(context.Request.Method))
                 {
                     if(!await RequirePolicyAsync(context,SecurityPolicies.ModelGovernanceApprover)||!Acquire(context,"governance"))return;
@@ -176,6 +184,7 @@ namespace PharmaAccess.Api
         }
 
         private sealed record ComparisonRequest(GovernedModelSnapshot Champion, GovernedModelSnapshot Challenger);
+        private sealed record ArtifactApprovalRequest(string Decision,string ApprovalReason,string TargetEnvironment,string ModelCardVersion);
         private static GovernedModelSnapshot VerifyArtifact(HttpContext context, GovernedModelSnapshot model)
         {
             var verifier = context.RequestServices.GetService<IArtifactIntegrityVerifier>();

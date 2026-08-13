@@ -25,7 +25,16 @@ public sealed class MilestoneFiveApprovalTests
         repo.Value = Model(3); await approval.ExecuteAsync(new(3, ApprovalDecision.Approve, "approver", "development only", "Development", false, "card")); await Assert.ThrowsAsync<InvalidOperationException>(() => assignment.ExecuteAsync(new(3, "operator", "assign", "Production", "card")));
     }
 
-    private static ModelRegistryRecord Model(long id) => new(id, "NextQuarterStateEntry", "Development", ModelApprovalStatus.ValidationSelected, true, true, "schema", "schema", null, null, null, null);
+    [Theory][InlineData("submitter")][InlineData("SUBMITTER")]
+    public async Task Submitter_cannot_approve_and_provenance_must_be_complete_and_consistent(string actor)
+    {
+        var repo=new FakeRepository(Model(1));var service=new ModelApprovalService(repo);
+        await Assert.ThrowsAsync<InvalidOperationException>(()=>service.ExecuteAsync(new(1,ApprovalDecision.Approve,actor,"reason","Production",false,"card")));
+        repo.Value=Model(1) with{ArtifactSubmitterIdentifier=null};await Assert.ThrowsAsync<InvalidOperationException>(()=>service.ExecuteAsync(new(1,ApprovalDecision.Approve,"reviewer","reason","Production",false,"card")));
+        repo.Value=Model(1) with{ExperimentSubmitterIdentifier="other"};await Assert.ThrowsAsync<InvalidOperationException>(()=>service.ExecuteAsync(new(1,ApprovalDecision.Approve,"reviewer","reason","Production",false,"card")));
+    }
+
+    private static ModelRegistryRecord Model(long id) => new(id, "NextQuarterStateEntry", "Development", ModelApprovalStatus.ValidationSelected, false, true, "schema", "schema", null, null, null, null,"submitter","submitter");
     private sealed class FakeRepository(ModelRegistryRecord value) : IModelRegistryRepository
     {
         public ModelRegistryRecord Value { get; set; } = value; public ModelRegistryRecord? Champion { get; set; } public ModelRegistryRecord? PreviousChampion { get; private set; }
