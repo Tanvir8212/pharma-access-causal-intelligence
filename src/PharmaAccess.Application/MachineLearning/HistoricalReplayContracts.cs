@@ -16,3 +16,13 @@ public interface IHistoricalPredictionReplayService
 public sealed record HistoricalReplayExplanationRequest(int GenericLaunchId,int AsOfQuarter);
 public sealed record HistoricalReplayExplanationResponse(string Explanation,string Provider,string ModelName,DateTime GeneratedAtUtc,string GroundingMode);
 public interface IHistoricalReplayExplanationService { Task<HistoricalReplayExplanationResponse> ExplainAsync(HistoricalReplayExplanationRequest request,CancellationToken cancellationToken=default); }
+public static class DynamicAsOfMode { public const string Name="ResearchDevelopmentDynamicAsOf"; }
+public sealed record DynamicAsOfRequest(int GenericLaunchId,int AsOfQuarter);
+public sealed record DynamicAsOfResponse(string Mode,int GenericLaunchId,string LaunchDisplayIdentifier,int AsOfQuarter,int TargetQuarter,int CandidateJurisdictionCount,IReadOnlyList<HistoricalReplayStateResult> RankedStates,string ModelVersion,string ModelArtifactSha256,string DatasetVersion,string FeatureSetVersion,double SelectedThreshold,[property:JsonConverter(typeof(JsonStringEnumConverter))] ModelApprovalStatus GovernanceStatus,bool ProductionApproved,bool Champion,IReadOnlyList<string> Warnings);
+public interface IDynamicAsOfPredictionService
+{
+ Task<IReadOnlyList<HistoricalReplayLaunch>> GetLaunchesAsync(CancellationToken cancellationToken=default);
+ Task<IReadOnlyList<int>> GetQuartersAsync(int genericLaunchId,CancellationToken cancellationToken=default);
+ Task<DynamicAsOfResponse> ScoreAsync(DynamicAsOfRequest request,CancellationToken cancellationToken=default);
+}
+public interface IDynamicAsOfExplanationService { Task<HistoricalReplayExplanationResponse> ExplainAsync(DynamicAsOfRequest request,CancellationToken cancellationToken=default); }

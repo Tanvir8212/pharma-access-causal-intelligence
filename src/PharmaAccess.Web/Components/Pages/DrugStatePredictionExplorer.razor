@@ -1,41 +1,31 @@
 @page "/drug-state-prediction-explorer"
 @using PharmaAccess.Application.MachineLearning
 @inject IHistoricalPredictionReplayService Replay
-@inject IHistoricalReplayExplanationService Explainer
-
+@inject IDynamicAsOfPredictionService Dynamic
+@inject IHistoricalReplayExplanationService ReplayExplainer
+@inject IDynamicAsOfExplanationService DynamicExplainer
 <PageTitle>Drug State Prediction Explorer</PageTitle>
 <main class="explorer">
- <p class="mode-banner">RESEARCH / DEVELOPMENT MODE</p>
- <h1>Drug State Prediction Explorer</h1>
- <p class="lede">Historical replay ranking of eligible U.S. Medicaid jurisdictions by predicted probability of first observed eligible Medicaid utilization in T+1.</p>
+ <p class="mode-banner">RESEARCH / DEVELOPMENT MODE</p><h1>Drug State Prediction Explorer</h1>
  <p class="badge">ValidationSelected — Not Production Approved</p>
+ <label>Research mode<select value="@_mode" @onchange="ModeChanged"><option value="Historical">Historical Replay</option><option value="Dynamic">Dynamic As-Of Research Prediction</option></select></label>
+ <p class="lede">@(_mode=="Dynamic"?"Dynamic as-of reconstruction from authoritative historical research data.":"Historical replay of the verified locked-test snapshot.")</p>
  @if(!string.IsNullOrWhiteSpace(_error)){<p role="alert" class="error">@_error</p>}
- <div class="selectors">
-  <label>Verified generic launch identifier<select value="@_launchId" @onchange="LaunchChanged"><option value="0">Select a launch</option>@foreach(var launch in _launches){<option value="@launch.GenericLaunchId">@launch.DisplayIdentifier</option>}</select></label>
-  <label>Historical as-of quarter<select value="@_quarter" @onchange="QuarterChanged" disabled="@(_quarters.Count==0)"><option value="0">Select a quarter</option>@foreach(var quarter in _quarters){<option value="@quarter">@FormatQuarter(quarter)</option>}</select></label>
- </div>
- <button disabled="@(_loading||_launchId==0||_quarter==0)" @onclick="Score">@(_loading?"Scoring verified rows…":"Run historical replay")</button>
- @if(_result is not null)
- {
-  <section>
-   <h2>Ranked jurisdictions</h2>
-   <p><strong>@_result.LaunchDisplayIdentifier</strong> · as of @FormatQuarter(_result.AsOfQuarter) · target @FormatQuarter(_result.TargetQuarter)</p>
-   <p>@_result.TotalEligibleJurisdictions jurisdictions scored with serialized ML.NET Probability and the external research threshold @_result.SelectedThreshold.ToString("0.00").</p>
-   <div class="table-wrap"><table><thead><tr><th>Rank</th><th>Jurisdiction</th><th>Probability</th><th>Research threshold</th></tr></thead><tbody>@foreach(var state in _result.RankedStates){<tr><td>@state.Rank</td><td>@state.StateName (@state.StateCode)</td><td>@state.Probability.ToString("P1")</td><td>@(state.AboveSelectedThreshold?"Meets selected research threshold":"Below selected research threshold")</td></tr>}</tbody></table></div>
-   <button disabled="@_explaining" @onclick="Explain">@(_explaining?"Generating explanation…":"Explain results")</button>
-   @if(_explanation is not null){<aside class="explanation"><h2>AI explanation of verified prediction results</h2><p><small>The explanation summarizes structured model output and does not calculate or change the prediction.</small></p><p>@_explanation.Explanation</p><small>Provider: @_explanation.Provider · Model: @_explanation.ModelName · Grounding: @_explanation.GroundingMode · Generated @_explanation.GeneratedAtUtc.ToString("u")</small></aside>}
-   <h2>Scientific limitations</h2>@foreach(var warning in _result.Warnings){<p class="limitation">@warning</p>}
-   <small>Model @_result.ModelVersion · Governance @_result.GovernanceStatus · Production approved: @_result.ProductionApproved · Champion: @_result.Champion</small>
-  </section>
- }
+ <div class="selectors"><label>Verified generic launch identifier<select value="@_launchId" @onchange="LaunchChanged"><option value="0">Select a launch</option>@foreach(var launch in _launches){<option value="@launch.GenericLaunchId">@launch.DisplayIdentifier</option>}</select></label><label>Historical as-of quarter<select value="@_quarter" @onchange="QuarterChanged" disabled="@(_quarters.Count==0)"><option value="0">Select a quarter</option>@foreach(var q in _quarters){<option value="@q">@FormatQuarter(q)</option>}</select></label></div>
+ <button disabled="@(_loading||_launchId==0||_quarter==0)" @onclick="Score">@(_loading?"Scoring verified rows…":_mode=="Dynamic"?"Run dynamic as-of prediction":"Run historical replay")</button>
+ @if(_historical is not null){<section><h2>Historical replay ranked jurisdictions</h2>@Ranking(_historical.RankedStates,_historical.SelectedThreshold)<button disabled="@_explaining" @onclick="Explain">Explain results</button>@Explanation()<h2>Scientific limitations</h2>@foreach(var w in _historical.Warnings){<p class="limitation">@w</p>}<small>Model @_historical.ModelVersion · Governance @_historical.GovernanceStatus · Production approved: @_historical.ProductionApproved · Champion: @_historical.Champion</small></section>}
+ @if(_dynamic is not null){<section><h2>Dynamic as-of ranked candidate jurisdictions</h2><p><strong>@_dynamic.LaunchDisplayIdentifier</strong> · as of @FormatQuarter(_dynamic.AsOfQuarter) · target @FormatQuarter(_dynamic.TargetQuarter) · @_dynamic.CandidateJurisdictionCount candidates</p>@Ranking(_dynamic.RankedStates,_dynamic.SelectedThreshold)<button disabled="@_explaining" @onclick="Explain">Explain results</button>@Explanation()<h2>Scientific limitations</h2>@foreach(var w in _dynamic.Warnings){<p class="limitation">@w</p>}<small>Model @_dynamic.ModelVersion · Governance @_dynamic.GovernanceStatus · Production approved: @_dynamic.ProductionApproved · Champion: @_dynamic.Champion</small></section>}
 </main>
-
 @code{
- private IReadOnlyList<HistoricalReplayLaunch> _launches=[];private IReadOnlyList<int> _quarters=[];private int _launchId;private int _quarter;private bool _loading;private bool _explaining;private string? _error;private HistoricalReplayResponse? _result;private HistoricalReplayExplanationResponse? _explanation;
- protected override async Task OnInitializedAsync(){try{_launches=await Replay.GetLaunchesAsync();}catch(Exception){_error="Research historical replay is disabled or its verified local evidence is unavailable.";}}
- private async Task LaunchChanged(ChangeEventArgs e){_result=null;_explanation=null;_error=null;_launchId=int.TryParse(e.Value?.ToString(),out var id)?id:0;_quarter=0;_quarters=_launchId==0?[]:await Replay.GetQuartersAsync(_launchId);}
- private void QuarterChanged(ChangeEventArgs e){_result=null;_explanation=null;_quarter=int.TryParse(e.Value?.ToString(),out var value)?value:0;}
- private async Task Score(){_loading=true;_explanation=null;_error=null;try{_result=await Replay.ReplayAsync(new(_launchId,_quarter));}catch(Exception){_error="Historical replay could not be completed. Verify research-mode configuration and the selected locked-test row set.";}finally{_loading=false;}}
- private async Task Explain(){if(_result is null)return;_explaining=true;_error=null;try{_explanation=await Explainer.ExplainAsync(new(_result.GenericLaunchId,_result.AsOfQuarter));}catch(InvalidOperationException e){_error=e.Message;}catch(Exception){_error="The optional AI explanation could not be generated. The verified prediction result is unchanged.";}finally{_explaining=false;}}
- private static string FormatQuarter(int value)=>$"{value/10}-Q{value%10}";
+ string _mode="Historical";IReadOnlyList<HistoricalReplayLaunch> _launches=[];IReadOnlyList<int> _quarters=[];int _launchId,_quarter;bool _loading,_explaining;string? _error;HistoricalReplayResponse? _historical;DynamicAsOfResponse? _dynamic;HistoricalReplayExplanationResponse? _explanation;
+ protected override async Task OnInitializedAsync()=>await LoadLaunches();
+ async Task ModeChanged(ChangeEventArgs e){_mode=e.Value?.ToString()=="Dynamic"?"Dynamic":"Historical";Reset();await LoadLaunches();}
+ async Task LoadLaunches(){try{_launches=_mode=="Dynamic"?await Dynamic.GetLaunchesAsync():await Replay.GetLaunchesAsync();}catch(Exception){_error="The selected research mode is disabled or its verified evidence is unavailable.";}}
+ async Task LaunchChanged(ChangeEventArgs e){ClearResults();_launchId=int.TryParse(e.Value?.ToString(),out var id)?id:0;_quarter=0;_quarters=_launchId==0?[]:_mode=="Dynamic"?await Dynamic.GetQuartersAsync(_launchId):await Replay.GetQuartersAsync(_launchId);}
+ void QuarterChanged(ChangeEventArgs e){ClearResults();_quarter=int.TryParse(e.Value?.ToString(),out var q)?q:0;}
+ async Task Score(){_loading=true;ClearResults();try{if(_mode=="Dynamic")_dynamic=await Dynamic.ScoreAsync(new(_launchId,_quarter));else _historical=await Replay.ReplayAsync(new(_launchId,_quarter));}catch(Exception e){_error=e.Message.Contains("InsufficientHistoricalContext",StringComparison.Ordinal)?"InsufficientHistoricalContext":"Research scoring could not be completed.";}finally{_loading=false;}}
+ async Task Explain(){_explaining=true;_error=null;try{_explanation=_mode=="Dynamic"?await DynamicExplainer.ExplainAsync(new(_launchId,_quarter)):await ReplayExplainer.ExplainAsync(new(_launchId,_quarter));}catch(InvalidOperationException e){_error=e.Message;}finally{_explaining=false;}}
+ RenderFragment Ranking(IReadOnlyList<HistoricalReplayStateResult> states,double threshold)=>@<div class="table-wrap"><table><thead><tr><th>Rank</th><th>Jurisdiction</th><th>Probability</th><th>Research threshold @threshold.ToString("0.00")</th></tr></thead><tbody>@foreach(var s in states){<tr><td>@s.Rank</td><td>@s.StateName (@s.StateCode)</td><td>@s.Probability.ToString("P1")</td><td>@(s.AboveSelectedThreshold?"Meets selected research threshold":"Below selected research threshold")</td></tr>}</tbody></table></div>;
+ RenderFragment Explanation()=>@<text>@if(_explanation is not null){<aside class="explanation"><h2>AI explanation of verified prediction results</h2><p><small>The explanation summarizes structured model output and does not calculate or change the prediction.</small></p><p>@_explanation.Explanation</p><small>@_explanation.Provider · @_explanation.ModelName · @_explanation.GroundingMode · @_explanation.GeneratedAtUtc.ToString("u")</small></aside>}</text>;
+ void ClearResults(){_historical=null;_dynamic=null;_explanation=null;_error=null;}void Reset(){_launchId=0;_quarter=0;_quarters=[];_launches=[];ClearResults();}static string FormatQuarter(int q)=>$"{q/10}-Q{q%10}";
 }
