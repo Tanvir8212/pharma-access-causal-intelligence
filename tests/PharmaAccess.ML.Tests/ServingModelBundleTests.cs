@@ -19,6 +19,7 @@ public sealed class ServingModelBundleTests : IDisposable
     private static string BundlePath => Path.Combine(BundleRoot, Version);
 
     [Fact]
+    [Trait("Category","LocalResearchIntegration")]
     public async Task Corrected_real_bundle_has_verified_identity_lineage_and_is_not_active()
     {
         var modelPath = Path.Combine(BundlePath, "model.zip");
@@ -46,6 +47,7 @@ public sealed class ServingModelBundleTests : IDisposable
     }
 
     [Theory]
+    [Trait("Category","LocalResearchIntegration")]
     [InlineData("artifactHash", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "Model artifact hash mismatch")]
     [InlineData("modelInputSchemaHash", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "schema compatibility")]
     [InlineData("datasetHash", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "Dataset compatibility")]
@@ -59,6 +61,7 @@ public sealed class ServingModelBundleTests : IDisposable
     }
 
     [Fact]
+    [Trait("Category","LocalResearchIntegration")]
     public void Existing_synthetic_bundle_is_rejected_by_real_registry()
     {
         var copy = CopyBundle(); var manifestPath = Path.Combine(copy, "manifest.json"); var text = File.ReadAllText(manifestPath).Replace("\"syntheticDevelopmentData\": false", "\"syntheticDevelopmentData\": true", StringComparison.Ordinal); File.WriteAllText(manifestPath, text);

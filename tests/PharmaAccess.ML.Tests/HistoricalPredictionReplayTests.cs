@@ -5,6 +5,7 @@ using Xunit;
 
 namespace PharmaAccess.ML.Tests;
 
+[Trait("Category","LocalResearchIntegration")]
 public sealed class HistoricalPredictionReplayTests
 {
     [Fact]public void Verified_state_reference_is_complete_and_unique(){Assert.Equal(51,VerifiedStateReference.All.Count);Assert.Equal(51,VerifiedStateReference.All.Select(x=>x.StateId).Distinct().Count());Assert.Equal(51,VerifiedStateReference.All.Select(x=>x.StateCode).Distinct(StringComparer.Ordinal).Count());Assert.All(VerifiedStateReference.All,x=>{Assert.False(string.IsNullOrWhiteSpace(x.StateName));Assert.Same(x,VerifiedStateReference.Get(x.StateId));});}

@@ -2,6 +2,7 @@ using PharmaAccess.Application.MachineLearning;
 using PharmaAccess.ML;
 using Xunit;
 namespace PharmaAccess.ML.Tests;
+[Trait("Category","LocalResearchIntegration")]
 public sealed class DynamicAsOfPredictionTests
 {
  static string Root{get{var p=AppContext.BaseDirectory;while(p is not null&&!File.Exists(Path.Combine(p,"PharmaAccess.sln")))p=Directory.GetParent(p)?.FullName;return p??throw new DirectoryNotFoundException();}}
