@@ -1,0 +1,9 @@
+using PharmaAccess.Application.MachineLearning;
+using Xunit;
+namespace PharmaAccess.Llm.Tests;
+public sealed class DynamicAsOfExplanationTests
+{
+ [Fact]public async Task Explanation_reconstructs_server_result_and_contains_no_features_or_labels(){var scoring=new Scoring();var model=new FakeModel();var service=new DynamicAsOfExplanationService(scoring,model,TimeProvider.System);var response=await service.ExplainAsync(new(7,20243));Assert.Equal(new DynamicAsOfRequest(7,20243),scoring.Request);Assert.Equal("StructuredPredictionOnly",response.GroundingMode);Assert.Contains("\"Probability\":0.2",model.Prompt);Assert.DoesNotContain("\"Features\":",model.Prompt,StringComparison.OrdinalIgnoreCase);Assert.DoesNotContain("ObservedPrescriptionCount",model.Prompt,StringComparison.OrdinalIgnoreCase);Assert.DoesNotContain("LabelNextQuarterEntry",model.Prompt,StringComparison.OrdinalIgnoreCase);}
+ sealed class Scoring:IDynamicAsOfPredictionService{public DynamicAsOfRequest? Request;public Task<IReadOnlyList<HistoricalReplayLaunch>> GetLaunchesAsync(CancellationToken t=default)=>throw new NotSupportedException();public Task<IReadOnlyList<int>> GetQuartersAsync(int id,CancellationToken t=default)=>throw new NotSupportedException();public Task<DynamicAsOfResponse> ScoreAsync(DynamicAsOfRequest r,CancellationToken t=default){Request=r;return Task.FromResult(new DynamicAsOfResponse(DynamicAsOfMode.Name,7,"Generic launch 7",20243,20244,1,[new(48,"TX","Texas",.2f,true,1)],"v","h","d","f",.08,ModelApprovalStatus.ValidationSelected,false,false,[]));}}
+ sealed class FakeModel:ILanguageModelClient{public string Prompt="";public string Provider=>"Fake";public string Model=>"fake";public bool IsAvailable=>true;public Task<string> GenerateAsync(string prompt,CancellationToken t=default){Prompt=prompt;return Task.FromResult("safe");}}
+}

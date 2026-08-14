@@ -5,8 +5,10 @@ using Xunit;
 
 namespace PharmaAccess.ML.Tests;
 
+[Trait("Category","LocalResearchIntegration")]
 public sealed class HistoricalPredictionReplayTests
 {
+    [Fact]public void Verified_state_reference_is_complete_and_unique(){Assert.Equal(51,VerifiedStateReference.All.Count);Assert.Equal(51,VerifiedStateReference.All.Select(x=>x.StateId).Distinct().Count());Assert.Equal(51,VerifiedStateReference.All.Select(x=>x.StateCode).Distinct(StringComparer.Ordinal).Count());Assert.All(VerifiedStateReference.All,x=>{Assert.False(string.IsNullOrWhiteSpace(x.StateName));Assert.Same(x,VerifiedStateReference.Get(x.StateId));});}
     private static string Root=>FindRoot();private static string Snapshot=>Path.Combine(Root,"artifacts","recovery","next-state-entry-r2a","reconstructed-final-test-features","final-test-features.csv");private static string Bundle=>Path.Combine(Root,"artifacts","models","NextQuarterStateEntry-real-next-quarter-entry-serving-v1");
     [Theory][InlineData(false,false)][InlineData(false,true)][InlineData(true,false)]public async Task Replay_fails_closed_unless_development_and_explicitly_enabled(bool development,bool enabled){var service=HistoricalPredictionReplayService.Create(development,enabled,Snapshot,Bundle);await Assert.ThrowsAsync<InvalidOperationException>(()=>service.GetLaunchesAsync());}
     [Fact]public async Task Verified_snapshot_catalog_and_replay_are_deterministic_and_match_r2b_anchor()

@@ -11,6 +11,7 @@ public sealed class CandidateRegistrationTests
     private static string Bundle => Path.Combine(FindRoot(), "artifacts", "models", "NextQuarterStateEntry-real-next-quarter-entry-serving-v1");
 
     [Fact]
+    [Trait("Category","LocalResearchIntegration")]
     public async Task Verified_candidate_registration_is_transactional_idempotent_and_never_approves_or_promotes()
     {
         var root=Path.Combine(Environment.GetEnvironmentVariable("TEMP")??Path.GetTempPath(),$"r2d-{Guid.NewGuid():N}"); Directory.CreateDirectory(root);
@@ -37,6 +38,7 @@ public sealed class CandidateRegistrationTests
     }
 
     [Fact]
+    [Trait("Category","LocalResearchIntegration")]
     public void Synthetic_or_tampered_bundle_fails_closed()
     {
         var root=Path.Combine(Environment.GetEnvironmentVariable("TEMP")??Path.GetTempPath(),$"r2d-bundle-{Guid.NewGuid():N}"); Copy(Bundle,root);
