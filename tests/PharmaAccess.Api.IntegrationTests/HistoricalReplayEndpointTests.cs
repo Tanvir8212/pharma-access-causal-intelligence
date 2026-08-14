@@ -1,0 +1,19 @@
+using System.Net;
+using System.Text;
+using System.Text.Json;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Xunit;
+
+namespace PharmaAccess.Api.IntegrationTests;
+
+public sealed class HistoricalReplayEndpointTests
+{
+    [Fact]public async Task Development_enabled_exposes_catalog_and_safe_replay_only(){using var host=await Host("Development",true);using var client=host.GetTestClient();var launches=await client.GetAsync("/api/v1/drug-state-prediction-explorer/launches");Assert.Equal(HttpStatusCode.OK,launches.StatusCode);using var catalog=JsonDocument.Parse(await launches.Content.ReadAsStringAsync());Assert.Equal(48,catalog.RootElement.GetArrayLength());var response=await client.PostAsync("/api/v1/drug-state-prediction-explorer/historical-replay",new StringContent("{\"genericLaunchId\":291,\"asOfQuarter\":20244}",Encoding.UTF8,"application/json"));var body=await response.Content.ReadAsStringAsync();Assert.Equal(HttpStatusCode.OK,response.StatusCode);Assert.Contains("ResearchDevelopmentHistoricalReplay",body);using var result=JsonDocument.Parse(body);var state=result.RootElement.GetProperty("RankedStates")[0];Assert.False(state.TryGetProperty("Label",out _));Assert.False(state.TryGetProperty("Features",out _));Assert.False(result.RootElement.TryGetProperty("ArtifactPath",out _));}
+    [Theory][InlineData("Development",false)][InlineData("Production",true)][InlineData("Production",false)]public async Task Disabled_or_non_development_fails_closed(string environment,bool enabled){using var host=await Host(environment,enabled);using var client=host.GetTestClient();Assert.Equal(HttpStatusCode.NotFound,(await client.GetAsync("/api/v1/drug-state-prediction-explorer/launches")).StatusCode);}
+    [Fact]public async Task Malformed_and_unavailable_requests_fail_cleanly(){using var host=await Host("Development",true);using var client=host.GetTestClient();Assert.Equal(HttpStatusCode.BadRequest,(await client.PostAsync("/api/v1/drug-state-prediction-explorer/historical-replay",new StringContent("{}",Encoding.UTF8,"application/json"))).StatusCode);Assert.Equal(HttpStatusCode.Conflict,(await client.PostAsync("/api/v1/drug-state-prediction-explorer/historical-replay",new StringContent("{\"genericLaunchId\":999999,\"asOfQuarter\":20244}",Encoding.UTF8,"application/json"))).StatusCode);}
+    private static async Task<IHost> Host(string environment,bool enabled){var root=FindRoot();var values=new Dictionary<string,string?>{{"ModelServing:ResearchDevelopmentModeEnabled",enabled.ToString()},{"ModelServing:ResearchReplaySnapshotPath",Path.Combine(root,"artifacts","recovery","next-state-entry-r2a","reconstructed-final-test-features","final-test-features.csv")},{"ModelServing:ServingBundlePath",Path.Combine(root,"artifacts","models","NextQuarterStateEntry-real-next-quarter-entry-serving-v1")},{"ConnectionStrings:PharmaAccess",""}};return await new HostBuilder().ConfigureAppConfiguration(c=>c.AddInMemoryCollection(values)).ConfigureWebHost(w=>w.UseEnvironment(environment).UseTestServer().UseStartup<Api.Startup>()).StartAsync();}
+    private static string FindRoot(){var value=AppContext.BaseDirectory;while(value is not null&&!File.Exists(Path.Combine(value,"PharmaAccess.sln")))value=Directory.GetParent(value)?.FullName;return value??throw new DirectoryNotFoundException();}
+}

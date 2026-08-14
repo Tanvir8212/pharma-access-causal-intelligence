@@ -30,6 +30,7 @@ namespace PharmaAccess.Web
             services.AddRazorComponents().AddInteractiveServerComponents();
             services.AddScoped<GovernanceStateLoader>();
             services.AddPharmaAccessResearchAssistant(_configuration, FindRepositoryRoot(_environment.ContentRootPath));
+            var repositoryRoot=FindRepositoryRoot(_environment.ContentRootPath);string ResolveReplayPath(string key){var value=_configuration[key];return string.IsNullOrWhiteSpace(value)?"":Path.GetFullPath(value,repositoryRoot);}services.AddSingleton<PharmaAccess.Application.MachineLearning.IHistoricalPredictionReplayService>(HistoricalPredictionReplayService.Create(_environment.IsDevelopment(),_configuration.GetValue<bool>("ModelServing:ResearchDevelopmentModeEnabled"),ResolveReplayPath("ModelServing:ResearchReplaySnapshotPath"),ResolveReplayPath("ModelServing:ServingBundlePath")));
             services.AddSingleton(new PharmaAccess.Application.MachineLearning.DriftThresholds());
             services.AddSingleton<PharmaAccess.Application.MachineLearning.IDriftDetector, DriftDetector>();
             services.AddSingleton<PharmaAccess.Application.MachineLearning.IChampionChallengerComparer, ChampionChallengerComparer>();

@@ -46,6 +46,7 @@ namespace PharmaAccess.Api
             services.AddSingleton<INextStateEntryPredictionService, UnavailablePredictionService>();
             services.AddPharmaAccessResearchAssistant(_configuration, FindRepositoryRoot(_environment.ContentRootPath));
             AddDriftGovernance(services);
+            AddHistoricalReplay(services);
         }
 
         public void Configure(IApplicationBuilder app)
@@ -103,6 +104,10 @@ namespace PharmaAccess.Api
                     OperationalTelemetry.GeminiCalls.Add(1);if(response.ValidationStatus!="validated")OperationalTelemetry.GeminiFallbacks.Add(1);if(response.ValidationStatus=="validation-failed")OperationalTelemetry.ValidationFailures.Add(1);Log(context,"ResearchAssistant",new Dictionary<string,object?>{{"PromptVersion","rag-v1"},{"Provider",response.Provider},{"ModelName",response.Model},{"RetrievedDocumentIdentifiers",string.Join(',',response.Citations.Select(x=>x.SourceIdentifier))},{"ValidationResult",response.ValidationStatus},{"FallbackStatus",response.ValidationStatus!="validated"},{"LatencyMs",Stopwatch.GetElapsedTime(started).TotalMilliseconds},{"TokenUsage",null}});
                     return;
                 }
+
+                if(context.Request.Path=="/api/v1/drug-state-prediction-explorer/launches"&&HttpMethods.IsGet(context.Request.Method)){try{await WriteAsync(context,await context.RequestServices.GetRequiredService<IHistoricalPredictionReplayService>().GetLaunchesAsync(context.RequestAborted));}catch(InvalidOperationException){await WriteProblemAsync(context,404,"Research development historical replay is unavailable.");}return;}
+                if(context.Request.Path.StartsWithSegments("/api/v1/drug-state-prediction-explorer/launches",out var replayRemainder)&&HttpMethods.IsGet(context.Request.Method)&&replayRemainder.Value?.EndsWith("/quarters",StringComparison.Ordinal)==true){var idText=replayRemainder.Value[..^"/quarters".Length].Trim('/');if(!int.TryParse(idText,out var id)){await WriteProblemAsync(context,400,"Invalid launch identifier.");return;}try{await WriteAsync(context,await context.RequestServices.GetRequiredService<IHistoricalPredictionReplayService>().GetQuartersAsync(id,context.RequestAborted));}catch(Exception error)when(error is InvalidOperationException or KeyNotFoundException){await WriteProblemAsync(context,404,"Historical replay selection is unavailable.");}return;}
+                if(context.Request.Path=="/api/v1/drug-state-prediction-explorer/historical-replay"&&HttpMethods.IsPost(context.Request.Method)){var started=Stopwatch.GetTimestamp();try{var request=await ReadAsync<HistoricalReplayRequest>(context);if(request is null)throw new ArgumentException("Replay request is required.");var result=await context.RequestServices.GetRequiredService<IHistoricalPredictionReplayService>().ReplayAsync(request,context.RequestAborted);Log(context,"ResearchHistoricalReplay",new Dictionary<string,object?>{{"ModelVersionId",result.ModelVersion},{"GenericLaunchId",result.GenericLaunchId},{"AsOfQuarter",result.AsOfQuarter},{"JurisdictionsScored",result.TotalEligibleJurisdictions},{"LatencyMs",Stopwatch.GetElapsedTime(started).TotalMilliseconds},{"Success",true}});await WriteAsync(context,result);}catch(Exception error)when(error is ArgumentException or InvalidOperationException or KeyNotFoundException or InvalidDataException){Log(context,"ResearchHistoricalReplay",new Dictionary<string,object?>{{"FailureReason",error.GetType().Name},{"Success",false}});await WriteProblemAsync(context,error is ArgumentException?400:409,"Historical replay could not be completed.");}return;}
 
                 if (context.Request.Path == "/api/v1/model-governance/drift-reports" && HttpMethods.IsPost(context.Request.Method))
                 {
@@ -193,6 +198,7 @@ namespace PharmaAccess.Api
         private sealed record RollbackRequest(string ApproverIdentifier, DateTime ApprovalTimestampUtc, string Reason);
         private static async Task<T?> ReadAsync<T>(HttpContext context) => await JsonSerializer.DeserializeAsync<T>(context.Request.Body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, context.RequestAborted);
         private static async Task WriteAsync<T>(HttpContext context, T value) { context.Response.ContentType = "application/json"; await JsonSerializer.SerializeAsync(context.Response.Body, value, cancellationToken: context.RequestAborted); }
+        private void AddHistoricalReplay(IServiceCollection services){var root=FindRepositoryRoot(_environment.ContentRootPath);string Resolve(string key){var value=_configuration[key];return string.IsNullOrWhiteSpace(value)?"":Path.GetFullPath(value,root);}services.AddSingleton<IHistoricalPredictionReplayService>(HistoricalPredictionReplayService.Create(_environment.IsDevelopment(),_configuration.GetValue<bool>("ModelServing:ResearchDevelopmentModeEnabled"),Resolve("ModelServing:ResearchReplaySnapshotPath"),Resolve("ModelServing:ServingBundlePath")));}
         private static async Task ExecuteGovernanceAsync(HttpContext context, bool approve)
         {
             var request = await ReadAsync<PromotionActionRequest>(context); if (request is null) { context.Response.StatusCode = StatusCodes.Status400BadRequest; return; }
