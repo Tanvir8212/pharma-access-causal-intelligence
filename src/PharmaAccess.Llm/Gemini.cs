@@ -33,6 +33,7 @@ public sealed class GeminiHttpException : HttpRequestException
 
 public sealed class GeminiLanguageModelClient : ILanguageModelClient
 {
+    private static readonly SemaphoreSlim Concurrency = new(2, 2);
     private readonly HttpClient _http;
     private readonly GeminiOptions _options;
     public GeminiLanguageModelClient(HttpClient http, IOptions<GeminiOptions> options) { _http = http; _options = options.Value; }
@@ -43,6 +44,9 @@ public sealed class GeminiLanguageModelClient : ILanguageModelClient
     public async Task<string> GenerateAsync(string prompt, CancellationToken cancellationToken = default)
     {
         if (!IsAvailable) throw new InvalidOperationException("Gemini is unavailable: configure Gemini__ApiKey via an environment variable or .NET user secrets.");
+        if (!await Concurrency.WaitAsync(TimeSpan.FromSeconds(2), cancellationToken)) throw new InvalidOperationException("Gemini explanation capacity is temporarily unavailable.");
+        try
+        {
         using var request = new HttpRequestMessage(HttpMethod.Post, $"v1beta/models/{Uri.EscapeDataString(Model)}:generateContent");
         request.Headers.Add("x-goog-api-key", _options.ApiKey);
         request.Content = JsonContent.Create(
@@ -56,6 +60,8 @@ public sealed class GeminiLanguageModelClient : ILanguageModelClient
         using var json = JsonDocument.Parse(await response.Content.ReadAsStreamAsync(cancellationToken));
         return json.RootElement.GetProperty("candidates")[0].GetProperty("content").GetProperty("parts")[0].GetProperty("text").GetString()
                ?? throw new InvalidOperationException("Gemini returned an empty response.");
+        }
+        finally { Concurrency.Release(); }
     }
 
     private static string NormalizeModel(string configuredModel)
