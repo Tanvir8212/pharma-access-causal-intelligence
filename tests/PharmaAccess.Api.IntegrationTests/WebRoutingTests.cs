@@ -20,6 +20,20 @@ namespace PharmaAccess.Api.IntegrationTests;
 public sealed class WebRoutingTests
 {
     [Fact]
+    public void Explorer_business_experience_has_discovery_workflow_summary_and_accessible_AI_panel()
+    {
+        var root=FindRoot();
+        var page=File.ReadAllText(Path.Combine(root,"src","PharmaAccess.Web","Components","Pages","DrugStatePredictionExplorer.razor"));
+        Assert.Contains("What does this tell me?",page);Assert.Contains("Latest FDA approvals in this research dataset",page);
+        Assert.Contains("Search drug name, active ingredient, ANDA, or launch ID",page);Assert.DoesNotContain("No launches match the current search",page);
+        Assert.Contains("Historical Replay",page);Assert.Contains("Dynamic As-Of Research Prediction",page);Assert.Contains("Prediction Summary",page);
+        Assert.Contains("Highest model-estimated next-entry probabilities",page);Assert.Contains("Full state ranking",page);
+        Assert.Contains("Generating AI summary...",page);Assert.Contains("tabindex=\"-1\"",page);Assert.Contains("AI Insights",page);
+        Assert.Contains("Download CSV",page);Assert.Contains("Download JSON",page);Assert.Contains("Model &amp; Research Details",page);
+        Assert.Contains("Below selected research threshold",page);Assert.DoesNotContain("Recommended state",page,StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task Research_assistant_renders_readable_text()
     {
         var services = new ServiceCollection();
@@ -119,6 +133,8 @@ public sealed class WebRoutingTests
         public Task<IReadOnlyList<ResearchChunk>> IngestAsync(CancellationToken cancellationToken = default) =>
             throw new InvalidOperationException("Document ingestion must not run during initial page rendering.");
     }
+
+    private static string FindRoot(){var value=AppContext.BaseDirectory;while(value is not null&&!File.Exists(Path.Combine(value,"PharmaAccess.sln")))value=Directory.GetParent(value)?.FullName;return value??throw new DirectoryNotFoundException();}
 
     private sealed class NeverCompletingGovernanceServices : IDriftReportStore, IHumanGovernedModelManager
     {
