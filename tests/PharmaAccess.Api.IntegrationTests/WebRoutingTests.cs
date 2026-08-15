@@ -34,6 +34,14 @@ public sealed class WebRoutingTests
     }
 
     [Fact]
+    public void Historical_outcome_check_is_replay_only_and_contains_no_raw_label_rendering()
+    {
+        var root=FindRoot();var page=File.ReadAllText(Path.Combine(root,"src","PharmaAccess.Web","Components","Pages","DrugStatePredictionExplorer.razor"));
+        Assert.Contains("_mode==\"Historical\"&&_historical is not null",page);Assert.Contains("Historical outcome check",page);Assert.Contains("Actual observed outcome in",page);Assert.Contains("Top-predicted state check",page);Assert.Contains("Threshold check",page);Assert.Contains("Best actual observed rank",page);Assert.Contains("Show actual observed states",page);
+        Assert.DoesNotContain("LabelNextQuarterEntry",page);Assert.DoesNotContain("feature vector",page,StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task Research_assistant_renders_readable_text()
     {
         var services = new ServiceCollection();

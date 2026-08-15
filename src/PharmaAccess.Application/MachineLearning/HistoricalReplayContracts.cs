@@ -25,7 +25,28 @@ public static class ResearchLaunchSearch
 }
 public sealed record HistoricalReplayRequest(int GenericLaunchId,int AsOfQuarter);
 public sealed record HistoricalReplayStateResult(int StateId,string StateCode,string StateName,float Probability,bool AboveSelectedThreshold,int Rank);
-public sealed record HistoricalReplayResponse(string Mode,int GenericLaunchId,string LaunchDisplayIdentifier,int AsOfQuarter,int TargetQuarter,string ModelVersion,string ModelArtifactSha256,string DatasetVersion,int DatasetVersionId,string FeatureSetVersion,int FeatureSetVersionId,double SelectedThreshold,int TotalEligibleJurisdictions,IReadOnlyList<HistoricalReplayStateResult> RankedStates,IReadOnlyList<string> Warnings,[property:JsonConverter(typeof(JsonStringEnumConverter))] ModelApprovalStatus GovernanceStatus,bool ProductionApproved,bool Champion);
+public sealed record HistoricalObservedState(int Rank,int StateId,string StateCode,string StateName);
+public sealed record HistoricalReplayResponse(string Mode,int GenericLaunchId,string LaunchDisplayIdentifier,int AsOfQuarter,int TargetQuarter,string ModelVersion,string ModelArtifactSha256,string DatasetVersion,int DatasetVersionId,string FeatureSetVersion,int FeatureSetVersionId,double SelectedThreshold,int TotalEligibleJurisdictions,IReadOnlyList<HistoricalReplayStateResult> RankedStates,IReadOnlyList<string> Warnings,[property:JsonConverter(typeof(JsonStringEnumConverter))] ModelApprovalStatus GovernanceStatus,bool ProductionApproved,bool Champion)
+{
+ public int ActualObservedEntryCount{get;init;}
+ public IReadOnlyList<HistoricalObservedState> ActualObservedStates{get;init;}=[];
+ public bool TopPredictedStateActuallyEntered{get;init;}
+ public int? BestActualObservedRank{get;init;}
+ public bool AnyActualEntryObserved{get;init;}
+ public bool ThresholdDecisionCorrect{get;init;}
+ public string HistoricalOutcomeSummary{get;init;}="";
+}
+public sealed record HistoricalOutcomeCheck(int ActualObservedEntryCount,IReadOnlyList<HistoricalObservedState> ActualObservedStates,bool TopPredictedStateActuallyEntered,int? BestActualObservedRank,bool AnyActualEntryObserved,bool ThresholdDecisionCorrect,string HistoricalOutcomeSummary);
+public static class HistoricalOutcomeDerivation
+{
+ public static HistoricalOutcomeCheck Create(IReadOnlyList<HistoricalReplayStateResult> rankedStates,IEnumerable<int> actualObservedStateIds,int targetQuarter)
+ {
+  var actualIds=actualObservedStateIds.ToHashSet();var actual=rankedStates.Where(x=>actualIds.Contains(x.StateId)).OrderBy(x=>x.Rank).Select(x=>new HistoricalObservedState(x.Rank,x.StateId,x.StateCode,x.StateName)).ToArray();
+  var anyActual=actual.Length>0;var topEntered=rankedStates.OrderBy(x=>x.Rank).FirstOrDefault() is { } top&&actualIds.Contains(top.StateId);var thresholdCorrect=rankedStates.Any(x=>x.AboveSelectedThreshold)==anyActual;
+  var quarter=ExplorerPresentation.Quarter(targetQuarter);var summary=anyActual?$"{actual.Length} eligible state{(actual.Length==1?"":"s")} showed first observed utilization in {quarter}. The best-ranked observed state was rank {actual[0].Rank}.":$"No eligible state showed first observed utilization in {quarter}.";
+  return new(actual.Length,actual,topEntered,actual.FirstOrDefault()?.Rank,anyActual,thresholdCorrect,summary);
+ }
+}
 public interface IHistoricalPredictionReplayService
 {
     Task<IReadOnlyList<HistoricalReplayLaunch>> GetLaunchesAsync(CancellationToken cancellationToken=default);
