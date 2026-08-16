@@ -6,6 +6,7 @@ using Xunit.Abstractions;
 
 namespace PharmaAccess.ML.Tests;
 
+[Trait("Category","LocalResearchIntegration")]
 public sealed class StateMarketContextPerformanceTests(ITestOutputHelper output)
 {
     [Fact]
