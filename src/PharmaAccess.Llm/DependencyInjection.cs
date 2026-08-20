@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PharmaAccess.Application.MachineLearning;
 
 namespace PharmaAccess.Llm;
 
@@ -28,6 +29,9 @@ public static class DependencyInjection
             return new InMemoryRetrievalService(chunks);
         });
         services.AddSingleton<ILlmResponseValidator, StrictLlmResponseValidator>();
+        services.AddSingleton<ExplorerAnalysisSessionStore>();
+        services.AddScoped<ExplorerBusinessAnalysisComposer>();
+        services.AddScoped<IExplorerAnalysisChatService,ExplorerAnalysisChatService>();
         services.AddScoped<ResearchAssistantService>();
         return services;
     }

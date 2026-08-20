@@ -54,7 +54,11 @@ public interface IHistoricalPredictionReplayService
     Task<HistoricalReplayResponse> ReplayAsync(HistoricalReplayRequest request,CancellationToken cancellationToken=default);
 }
 public sealed record HistoricalReplayExplanationRequest(int GenericLaunchId,int AsOfQuarter);
-public sealed record HistoricalReplayExplanationResponse(string Explanation,string Provider,string ModelName,DateTime GeneratedAtUtc,string GroundingMode);
+public sealed record HistoricalReplayExplanationResponse(string Explanation,string Provider,string ModelName,DateTime GeneratedAtUtc,string GroundingMode)
+{
+ public Guid SessionId{get;init;}
+ public ExplorerBusinessAnalysisResponse? Analysis{get;init;}
+}
 public interface IHistoricalReplayExplanationService { Task<HistoricalReplayExplanationResponse> ExplainAsync(HistoricalReplayExplanationRequest request,CancellationToken cancellationToken=default); }
 public static class DynamicAsOfMode { public const string Name="ResearchDevelopmentDynamicAsOf"; }
 public static class ExplorerPresentation

@@ -24,11 +24,12 @@ public sealed class WebRoutingTests
     {
         var root=FindRoot();
         var page=File.ReadAllText(Path.Combine(root,"src","PharmaAccess.Web","Components","Pages","DrugStatePredictionExplorer.razor"));
+        var analysis=File.ReadAllText(Path.Combine(root,"src","PharmaAccess.Web","Components","ExplorerAiAnalysis.razor"));
         Assert.Contains("What does this tell me?",page);Assert.Contains("Latest FDA approvals in this research dataset",page);
         Assert.Contains("Search drug name, active ingredient, ANDA, or launch ID",page);Assert.DoesNotContain("No launches match the current search",page);
         Assert.Contains("Historical Replay",page);Assert.Contains("Dynamic As-Of Research Prediction",page);Assert.Contains("Prediction Summary",page);
         Assert.Contains("Highest model-estimated next-entry probabilities",page);Assert.Contains("Full state ranking",page);
-        Assert.Contains("Generating AI summary...",page);Assert.Contains("tabindex=\"-1\"",page);Assert.Contains("AI Insights",page);
+        Assert.Contains("Analyzing the verified results...",page);Assert.Contains("tabindex=\"-1\"",page);Assert.Contains("AI ANALYSIS",analysis);Assert.Contains("ASK ABOUT THIS ANALYSIS",analysis);
         Assert.Contains("Download CSV",page);Assert.Contains("Download JSON",page);Assert.Contains("Model &amp; Research Details",page);
         Assert.Contains("Below selected research threshold",page);Assert.DoesNotContain("Recommended state",page,StringComparison.OrdinalIgnoreCase);
     }

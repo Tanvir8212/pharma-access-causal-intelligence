@@ -1,0 +1,31 @@
+@using PharmaAccess.Application.MachineLearning
+@inject IExplorerAnalysisChatService AnalysisChat
+
+<div class="ai-heading"><div><p class="step-label">AI ANALYSIS</p><h2 id="ai-title">@ProductName</h2><p>@ExplorerPresentation.Quarter(AsOfQuarter) → @ExplorerPresentation.Quarter(TargetQuarter)</p></div><button class="close-button" @onclick="Close" aria-label="Close AI Analysis">×</button></div>
+@if(Explanation.Analysis is { } analysis)
+{
+ <section><h3>WHAT YOU SHOULD KNOW</h3><ul>@foreach(var item in analysis.WhatYouShouldKnow){<li>@item</li>}</ul></section>
+ <section><h3>SIGNAL SNAPSHOT</h3><div class="analysis-snapshot"><article><strong>Entry Outlook</strong><p>@analysis.SignalSnapshot.EntryOutlook</p></article><article><strong>Medicaid Market</strong><p>@analysis.SignalSnapshot.MedicaidMarket</p></article><article><strong>Historical State Behavior</strong><p>@analysis.SignalSnapshot.HistoricalStateBehavior</p></article><article><strong>Nearby Adoption</strong><p>@analysis.SignalSnapshot.NearbyAdoption</p></article></div></section>
+ <section><h3>WHAT STANDS OUT</h3>@foreach(var finding in analysis.WhatStandsOut){<article class="analysis-finding"><strong>@finding.Headline</strong><p>@finding.Explanation</p>@if(finding.WhyThisMatters is not null){<small>@finding.WhyThisMatters</small>}</article>}</section>
+ <section><h3>STATES WORTH UNDERSTANDING</h3>@foreach(var state in analysis.StatesWorthUnderstanding){<article class="analysis-finding"><strong>@state.StateName (@state.StateCode) · @state.Descriptor</strong><p>@state.Narrative</p><small>@string.Join(" · ",state.Metrics)</small></article>}</section>
+ <section><h3>DID THE MODEL GET IT RIGHT?</h3><p>@analysis.ModelOutcomeAssessment</p></section>
+ <section><h3>HOW SHOULD I USE THIS?</h3><ul>@foreach(var item in analysis.HowToUse){<li>@item</li>}</ul></section>
+ <section><h3>IMPORTANT LIMITATIONS</h3><ul>@foreach(var item in analysis.Limitations){<li>@item</li>}</ul></section>
+ <section><h3>EXPLORE THIS ANALYSIS</h3><div class="suggested-questions">@foreach(var question in analysis.SuggestedQuestions){<button @onclick="()=>Ask(question)">@question</button>}</div><h4>ASK ABOUT THIS ANALYSIS</h4><div class="analysis-chat-input"><input @bind="_question" placeholder="Ask about these verified results"/><button disabled="@_sending" @onclick="()=>Ask(_question)">@(_sending?"Sending...":"Send")</button></div>@foreach(var message in _messages){<div class="chat-message @message.Role"><strong>@(message.Role=="user"?"You":"AI")</strong><p>@message.Text</p></div>}</section>
+}
+else
+{
+ <div class="explanation-body">@Explanation.Explanation</div>
+}
+<div class="ai-metadata"><span>@Explanation.Provider</span><span>@Explanation.ModelName</span><span>Generated @Explanation.GeneratedAtUtc.ToString("g") UTC</span><span>Grounding: @Explanation.GroundingMode</span></div>
+
+@code{
+ [Parameter,EditorRequired]public HistoricalReplayExplanationResponse Explanation{get;set;}=null!;
+ [Parameter]public string ProductName{get;set;}="Selected product";
+ [Parameter]public int AsOfQuarter{get;set;}
+ [Parameter]public int TargetQuarter{get;set;}
+ [Parameter]public EventCallback OnClose{get;set;}
+ string _question="";bool _sending;readonly List<(string Role,string Text)> _messages=[];
+ async Task Close()=>await OnClose.InvokeAsync();
+ async Task Ask(string question){if(Explanation.SessionId==Guid.Empty||string.IsNullOrWhiteSpace(question))return;_sending=true;_question="";_messages.Add(("user",question));try{var result=await AnalysisChat.AskAsync(new(Explanation.SessionId,question));_messages.Add(("assistant",result.Answer));}catch{_messages.Add(("assistant","AI analysis is temporarily unavailable. Verified dashboard results remain available."));}finally{_sending=false;}}
+}

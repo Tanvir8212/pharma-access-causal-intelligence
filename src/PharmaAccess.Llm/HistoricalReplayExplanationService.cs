@@ -1,7 +1,6 @@
-using System.Text.Json;
 using PharmaAccess.Application.MachineLearning;
 namespace PharmaAccess.Llm;
-public sealed class HistoricalReplayExplanationService(IHistoricalPredictionReplayService replay,ILanguageModelClient languageModel,TimeProvider clock):IHistoricalReplayExplanationService
+public sealed class HistoricalReplayExplanationService(IHistoricalPredictionReplayService replay,ExplorerBusinessAnalysisComposer composer):IHistoricalReplayExplanationService
 {
- public async Task<HistoricalReplayExplanationResponse> ExplainAsync(HistoricalReplayExplanationRequest request,CancellationToken token=default){var result=await replay.ReplayAsync(new(request.GenericLaunchId,request.AsOfQuarter),token);var grounding=new{result.Mode,result.LaunchDisplayIdentifier,result.GenericLaunchId,result.AsOfQuarter,result.TargetQuarter,Jurisdictions=result.RankedStates.Take(15).Select(x=>new{x.StateCode,x.StateName,x.Rank,x.Probability,x.AboveSelectedThreshold}),result.SelectedThreshold,result.ModelVersion,result.GovernanceStatus,result.DatasetVersion,result.FeatureSetVersion};string? generated=null;if(languageModel.IsAvailable)try{generated=await languageModel.GenerateAsync(StructuredPredictionExplanation.ProseInstruction+" Grounding JSON: "+JsonSerializer.Serialize(grounding),token);}catch(Exception)when(!token.IsCancellationRequested){}var text=StructuredPredictionExplanation.SelectOrFallback(generated,result.Mode,result.LaunchDisplayIdentifier,result.TargetQuarter,result.RankedStates,result.SelectedThreshold,result.GovernanceStatus,result.ProductionApproved,result.Champion);return new(text,languageModel.Provider,languageModel.Model,clock.GetUtcNow().UtcDateTime,"StructuredPredictionOnly");}
+ public async Task<HistoricalReplayExplanationResponse> ExplainAsync(HistoricalReplayExplanationRequest request,CancellationToken token=default)=>await composer.HistoricalAsync(await replay.ReplayAsync(new(request.GenericLaunchId,request.AsOfQuarter),token),token);
 }
